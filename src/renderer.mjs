@@ -26,7 +26,10 @@ export function renderArtifact(doc) {
     </section>
   </main>
   <div class="toast" id="toast">已复制</div>
-  <script>${clientJs(doc)}</script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>${clientJs(doc)}
+if (typeof lucide !== "undefined") lucide.createIcons();
+</script>
 </body>
 </html>`;
 }
@@ -67,7 +70,7 @@ function defaultSpan(type) {
     promptEditor: 4,
     diffReview: 8,
     matrix: 12,
-    timeline: 4,
+    timeline: 12,
     evidenceBoard: 8,
     kanban: 4,
     formEditor: 6,
@@ -82,6 +85,7 @@ function defaultSpan(type) {
     embed: 12,
     decisionTree: 4,
     variantGrid: 8,
+    splitPanel: 12,
     codeAnnotation: 6,
     chart: 8,
     crossRef: 12,
@@ -114,6 +118,7 @@ function renderByType(block) {
     evidenceBoard: renderEvidenceBoard,
     variantGrid: renderVariantGrid,
     kanban: renderKanban,
+    splitPanel: renderSplitPanel,
     formEditor: renderFormEditor,
     sliderLab: renderSliderLab,
     promptEditor: renderPromptEditor,
@@ -541,7 +546,14 @@ function sortValue(value) {
 
 function renderDecisionTree(block) {
   return `${renderHead(block)}<div class="decision-tree">
-    ${(block.items || []).map((item) => `<div class="decision-node" style="--indent:${(item.level || 0) * 16 + 12}px"><strong>${rich(item.condition || item.title || "")}</strong><p class="text-sm">${rich(item.result || item.body || "")}</p></div>`).join("")}
+    ${(block.items || []).map((item) => {
+      const level = item.level || 0;
+      return `<div class="decision-node" data-level="${level}" style="--indent:${level * 20}px">
+        <span class="dt-cond">${rich(item.condition || item.title || "")}</span>
+        <span class="dt-sep">→</span>
+        <span class="dt-res">${rich(item.result || item.body || "")}</span>
+      </div>`;
+    }).join("")}
   </div>`;
 }
 
@@ -696,16 +708,27 @@ function layoutLayeredArchitecture(block) {
     const from = nodeById.get(edge.from);
     const to = nodeById.get(edge.to);
     if (!from || !to) return null;
-    const fromSide = to.x >= from.x ? "right" : "left";
-    const toSide = to.x >= from.x ? "left" : "right";
-    const start = anchorPoint(from, fromSide);
-    const end = anchorPoint(to, toSide);
-    const midX = (start.x + end.x) / 2;
-    const path = `M ${start.x} ${start.y} L ${midX} ${start.y} L ${midX} ${end.y} L ${end.x} ${end.y}`;
-    const labelX = (start.x + end.x) / 2 - 22;
-    const labelY = Math.min(start.y, end.y) - 22;
-    const stepX = labelX - 24;
-    const stepY = labelY - 2;
+    const dx = to.x - from.x;
+    const sameLane = Math.abs(dx) < 60;
+    let path, labelX, labelY;
+    if (sameLane) {
+      const goDown = to.y >= from.y;
+      const start = anchorPoint(from, goDown ? "bottom" : "top");
+      const end = anchorPoint(to, goDown ? "top" : "bottom");
+      path = `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
+      labelX = from.x + from.w + 6;
+      labelY = (start.y + end.y) / 2 - 8;
+    } else {
+      const goRight = dx > 0;
+      const start = anchorPoint(from, goRight ? "right" : "left");
+      const end = anchorPoint(to, goRight ? "left" : "right");
+      const midX = (start.x + end.x) / 2;
+      path = `M ${start.x} ${start.y} L ${midX} ${start.y} L ${midX} ${end.y} L ${end.x} ${end.y}`;
+      labelX = midX - 22;
+      labelY = Math.min(from.y, to.y) - 20;
+    }
+    const stepX = labelX - 28;
+    const stepY = labelY;
     return { ...edge, path, labelX, labelY, stepX, stepY };
   }).filter(Boolean);
   return { width, height, lanes: laneLayouts, nodes: nodeLayouts, edges: edgeLayouts, legend: block.legend || [] };
@@ -759,6 +782,74 @@ function renderKanbanItem(item) {
       <span class="kanban-text">${data.icon ? `<span class="kanban-item-icon">${rich(data.icon)}</span>` : ""}${rich(data.title || data.body || "")}</span>
     </label>
   </li>`;
+}
+
+function renderIcon(name) {
+  if (!name) return "";
+  // Lucide icon name: lowercase letters, digits, hyphens only
+  return /^[a-z][a-z0-9-]*$/.test(name)
+    ? `<i data-lucide="${escAttr(name)}"></i>`
+    : esc(name);
+}
+
+function renderSplitPanel(block) {
+  const variant = block.variant || "lr";
+  const head = renderHead(block);
+
+  if (variant === "quote") {
+    return `${head}<div class="sp-quote-wrap">
+      <div class="sp-quote-text">${rich(block.quote || "")}</div>
+      ${block.attribution ? `<div class="sp-quote-attr">— ${rich(block.attribution)}</div>` : ""}
+    </div>`;
+  }
+
+  if (["columns", "2col", "3col", "4col"].includes(variant)) {
+    const items = block.items || [];
+    const cols = block.cols || (variant === "2col" ? 2 : variant === "4col" ? 4 : 3);
+    return `${head}<div class="split-panel sp-columns" style="--sp-col-count:${cols}">
+      ${items.map((item) => `<div class="sp-cell">
+        ${item.icon ? `<div class="sp-icon">${renderIcon(item.icon)}</div>` : ""}
+        ${item.kicker ? `<div class="sp-kicker">${rich(item.kicker)}</div>` : ""}
+        ${item.title ? `<div class="sp-title">${rich(item.title)}</div>` : ""}
+        ${item.body ? `<div class="sp-body">${rich(item.body)}</div>` : ""}
+        ${Array.isArray(item.list) ? `<ul class="sp-list">${item.list.map((l) => `<li>${rich(typeof l === "string" ? l : l.text || "")}</li>`).join("")}</ul>` : ""}
+        ${item.meta ? `<div class="sp-meta">${rich(item.meta)}</div>` : ""}
+      </div>`).join("")}
+    </div>`;
+  }
+
+  if (variant === "tb") {
+    const top = block.top || {};
+    const bottom = block.bottom || {};
+    return `${head}<div class="split-panel sp-tb">
+      ${renderSpCell(top, "sp-cell sp-top")}
+      ${renderSpCell(bottom, "sp-cell sp-bottom")}
+    </div>`;
+  }
+
+  // lr / rl
+  const ratio = block.ratio || "1:1";
+  const [a, b] = ratio.split(":").map((n) => Number(n) || 1);
+  const left = block.left || {};
+  const right = block.right || {};
+  const leftPrimary = variant !== "rl" && a >= b;
+  const rightPrimary = variant === "rl" || b > a;
+  return `${head}<div class="split-panel sp-lr" style="--sp-cols:${a}fr ${b}fr">
+    ${renderSpCell(left, `sp-cell${leftPrimary ? " sp-primary" : ""}`)}
+    ${renderSpCell(right, `sp-cell${rightPrimary ? " sp-primary" : ""}`)}
+  </div>`;
+}
+
+function renderSpCell(cell, className) {
+  const parts = [];
+  if (cell.kicker) parts.push(`<div class="sp-kicker">${rich(cell.kicker)}</div>`);
+  if (cell.title) parts.push(`<div class="sp-title">${rich(cell.title)}</div>`);
+  if (cell.body) parts.push(`<div class="sp-body">${rich(cell.body)}</div>`);
+  if (Array.isArray(cell.list)) {
+    parts.push(`<ul class="sp-list">${cell.list.map((l) => `<li>${rich(typeof l === "string" ? l : l.text || "")}</li>`).join("")}</ul>`);
+  }
+  if (cell.meta) parts.push(`<div class="sp-meta">${rich(cell.meta)}</div>`);
+  return `<div class="${className}">${parts.join("")}</div>`;
 }
 
 function renderFormEditor(block) {

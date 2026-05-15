@@ -116,11 +116,15 @@ button:hover { border-color: var(--text-main); }
   width: 100%;
   justify-self: stretch;
   margin: var(--space-6) 0 var(--space-8);
+  border-left: 1px solid var(--border-base);
 }
 .block {
   grid-column: span var(--span, 12);
   min-height: var(--min-h, auto);
   background: var(--bg-canvas);
+  border-top: 1px solid var(--border-base);
+  border-right: 1px solid var(--border-base);
+  border-bottom: 1px solid var(--border-base);
   padding: var(--space-4);
   overflow: hidden;
 }
@@ -409,9 +413,23 @@ strong { color: var(--text-main); font-weight: 650; }
   font-size: var(--fs-xs);
   line-height: 1.45;
 }
-.decision-tree { display: grid; gap: var(--space-2); }
-.decision-node { border-left: 1px solid var(--border-strong); padding-left: var(--indent, 12px); margin-left: var(--indent, 0); }
-.decision-node strong { font-weight: 600; }
+.decision-tree { display: grid; gap: 3px; }
+.decision-node {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 6px;
+  padding: 7px var(--space-3);
+  padding-left: calc(var(--space-3) + var(--indent, 0px));
+  border-left: 2px solid var(--dt-color, var(--border-strong));
+  background: rgba(255,255,255,.45);
+}
+.decision-node[data-level="0"] { --dt-color: var(--accent-primary); }
+.decision-node[data-level="1"] { --dt-color: var(--accent-secondary); }
+.decision-node[data-level="2"] { --dt-color: var(--accent-tertiary); }
+.dt-cond { font-weight: 650; font-size: var(--fs-sm); color: var(--text-main); }
+.dt-sep { font-size: var(--fs-xs); color: var(--text-faint); flex: 0 0 auto; }
+.dt-res { font-size: var(--fs-sm); color: var(--text-muted); }
 .code-wrap { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(180px, .6fr); gap: 1px; background: var(--border-base); border: 1px solid var(--border-base); }
 .diff-wrap { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(220px, .65fr); gap: 20px; align-items: start; }
 pre, .annotation-pane { margin: 0; background: var(--bg-soft); padding: var(--space-3); overflow: auto; }
@@ -1253,12 +1271,12 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
 .crossref-section { padding: var(--space-3); border-bottom: 1px solid var(--border-base); }
 .crossref-section:last-child { border-bottom: 0; }
 .crossref-section-title { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .05em; color: var(--text-faint); margin-bottom: var(--space-2); }
-.crossref-section pre { font: 12px/1.6 var(--font-mono); color: var(--text-main); white-space: pre-wrap; word-break: break-all; margin: 0; background: transparent; padding: 0; overflow: hidden; }
+.crossref-section pre { font: 12px/1.6 var(--font-mono); color: var(--text-main); white-space: pre-wrap; word-break: break-all; margin: 0; background: transparent; padding: 0; max-height: 260px; overflow: auto; }
 .crossref-hl { background: rgba(212, 163, 91, 0.25); border-bottom: 1px solid var(--accent-tertiary); padding: 0 1px; cursor: default; }
 .crossref-refs { display: grid; gap: var(--space-4); }
 .crossref-ref { border: 1px solid var(--accent-tertiary); }
 .crossref-ref-label { font: 500 var(--fs-sm)/1.4 var(--font-mono); color: var(--accent-tertiary); padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--border-base); background: rgba(212, 163, 91, 0.06); }
-.crossref-ref pre { font: 12px/1.6 var(--font-mono); padding: var(--space-3); color: var(--text-main); white-space: pre-wrap; word-break: break-all; margin: 0; background: transparent; max-height: 200px; overflow: hidden; }
+.crossref-ref pre { font: 12px/1.6 var(--font-mono); padding: var(--space-3); color: var(--text-main); white-space: pre-wrap; word-break: break-all; margin: 0; background: transparent; max-height: 220px; overflow: auto; }
 .crossref-arrows { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 10; }
 .chart-wrap { width: 100%; }
 .chart-svg { width: 100%; height: auto; display: block; }
@@ -1277,65 +1295,70 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
 </head>
 <body>
   <header class="toolbar">
-    <div class="toolbar-title"><strong>html-doc</strong><span>Warm Nomad Component Showcase</span></div>
+    <div class="toolbar-title"><strong>html-doc</strong><span>Component Showcase — 全组件参考</span></div>
     <div class="toolbar-actions">
-      <button class="" data-copy="component showcase" data-action="0">Copy JSON</button><button class="primary" data-copy="Render this JSON with scripts/render-html-doc.mjs" data-action="1">Export Layout</button>
+      <button class="primary" data-copy="node scripts/render-html-doc.mjs examples/component-showcase.md dist/component-showcase.html" data-action="0">View Source</button>
     </div>
   </header>
   <main class="artifact-shell">
-    <aside class="side-nav"><a href="#hero">用少量 JSON 组合出高质量、可读、可交互的 HTML Doc</a><a href="#metrics">核心指标</a><a href="#stage">Static Stage</a><a href="#prompt">Prompt Editor</a><a href="#motion-demo">Motion Stage</a><a href="#flow">生成流程</a><a href="#decision">组件选择</a><a href="#matrix">Decision Matrix</a><a href="#diff">Diff Review</a><a href="#timeline">执行时间线</a><a href="#architecture">生成链路</a><a href="#variants">Variant Grid</a><a href="#code">代码批注</a><a href="#sliders">Slider Lab</a><a href="#evidence">Evidence Board</a><a href="#kanban">Kanban</a><a href="#form">Form Editor</a><a href="#insights">洞察摘要</a></aside>
+    <aside class="side-nav"><a href="#hero">用 Markdown 栅栏块组合出高质量、可读、可交互的文档</a><a href="#metrics">metrics — 关键指标</a><a href="#chart-demo">chart — 数据趋势图</a><a href="#stage-demo">stage — 自由定位图</a><a href="#prompt">promptEditor — 模板编辑器</a><a href="#motion-demo">motionStage — 外卖下单支付流程</a><a href="#arch-demo">layeredArchitecture — 分层服务架构图</a><a href="#flow-demo">flow — 线性流程</a><a href="#decision-demo">decisionTree — 决策树</a><a href="#matrix-demo">matrix — 决策矩阵</a><a href="#diff-demo">diffReview — 代码变更审查</a><a href="#timeline-demo">timeline — 时间轴</a><a href="#code-demo">codeAnnotation — 代码批注</a><a href="#sliders-demo">sliderLab — 调节面板</a><a href="#variants-demo">variantGrid — 方案对比</a><a href="#evidence-demo">evidenceBoard — 证据板</a><a href="#crossref-demo">crossRef — GitHub Actions 部署流水线</a><a href="#relmap-demo">relationshipMap — RBAC 权限分配</a><a href="#tree-demo">structureTree — 嵌套结构</a><a href="#kanban-demo">kanban — 分组清单</a><a href="#form-demo">formEditor — 结构化表单</a><a href="#prompt2">promptEditor — 提示词模板（独立示例）</a></aside>
     <section class="artifact-grid">
       <article class="block" id="hero" style="--span:12;">
-    <div class="kicker">visual first</div>
-    <h1>用少量 JSON 组合出高质量、可读、可交互的 HTML Doc</h1>
+    <div class="kicker">html-doc · 全组件参考</div>
+    <h1>用 Markdown 栅栏块组合出高质量、可读、可交互的文档</h1>
     <div class="rule"></div>
-    <p class="body-copy">尽量把信息转换成流程、矩阵、对比、批注、编辑器和导出控件。</p>
-    <div class="tags" style="margin-top:var(--space-4)"><span class="tag">warm-flat</span><span class="tag">low-shadow</span><span class="tag">humanist-type</span><span class="tag">grid-first</span><span class="tag">visual-over-text</span></div>
+    <p class="body-copy">每个组件对应一种信息结构：流程、对比、架构、状态变化、代码、关系、证据、编辑器。</p>
+    <div class="tags" style="margin-top:var(--space-4)"><span class="tag">warm-flat</span><span class="tag">12-col-grid</span><span class="tag">interactive</span><span class="tag">export-ready</span></div>
   </article>
 <article class="block" id="metrics" style="--span:4;">
     <div class="block-header">
     <div>
       
-      <h2>核心指标</h2>
-      <p class="body-copy">数字、趋势和状态适合视觉化，减少长段说明。</p>
+      <h2>metrics — 关键指标</h2>
+      
     </div>
     
   </div><div class="metrics-grid">
     <div class="metric">
-      <div class="label">TOKENS</div>
-      <div class="metric-value">-38%</div>
-      <div class="text-muted">JSON 替代重复 HTML</div>
-      <svg class="sparkline" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0.0,4.0 16.7,7.2 33.3,7.2 50.0,13.6 66.7,16.8 83.3,20.0 100.0,20.0" fill="none" stroke="var(--accent-secondary)" stroke-width="1.5"/><line x1="0" y1="22" x2="100" y2="22" stroke="var(--border-base)" /></svg>
+      <div class="label"><span class="tt">Block<span class="tt-b">页面上的一个内容单元，对应一个 Markdown 栅栏块</span></span> 类型</div>
+      <div class="metric-value">23</div>
+      <div class="text-muted">覆盖所有信息形态</div>
+      <svg class="sparkline" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0.0,20.0 16.7,18.4 33.3,16.0 50.0,12.8 66.7,9.6 83.3,6.4 100.0,4.0" fill="none" stroke="var(--accent-secondary)" stroke-width="1.5"/><line x1="0" y1="22" x2="100" y2="22" stroke="var(--border-base)" /></svg>
     </div><div class="metric">
-      <div class="label">READ</div>
-      <div class="metric-value">2.4x</div>
-      <div class="text-muted">扫读速度提升</div>
-      <svg class="sparkline" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0.0,20.0 16.7,17.7 33.3,15.4 50.0,10.9 66.7,8.6 83.3,6.3 100.0,4.0" fill="none" stroke="var(--accent-secondary)" stroke-width="1.5"/><line x1="0" y1="22" x2="100" y2="22" stroke="var(--border-base)" /></svg>
+      <div class="label">文档体积</div>
+      <div class="metric-value">-62%</div>
+      <div class="text-muted">相比等效 HTML</div>
+      <svg class="sparkline" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0.0,4.0 16.7,7.2 33.3,10.4 50.0,13.6 66.7,16.8 83.3,20.0 100.0,20.0" fill="none" stroke="var(--accent-secondary)" stroke-width="1.5"/><line x1="0" y1="22" x2="100" y2="22" stroke="var(--border-base)" /></svg>
     </div><div class="metric">
-      <div class="label">UI</div>
-      <div class="metric-value">17</div>
-      <div class="text-muted">内置组件</div>
-      <svg class="sparkline" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0.0,20.0 16.7,20.0 33.3,18.9 50.0,16.6 66.7,14.3 83.3,9.7 100.0,4.0" fill="none" stroke="var(--accent-secondary)" stroke-width="1.5"/><line x1="0" y1="22" x2="100" y2="22" stroke="var(--border-base)" /></svg>
-    </div><div class="metric">
-      <div class="label">TEXT</div>
-      <div class="metric-value">LOW</div>
-      <div class="text-muted">正文轻量化</div>
-      <svg class="sparkline" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0.0,4.0 16.7,6.3 33.3,10.9 50.0,13.1 66.7,15.4 83.3,17.7 100.0,20.0" fill="none" stroke="var(--accent-secondary)" stroke-width="1.5"/><line x1="0" y1="22" x2="100" y2="22" stroke="var(--border-base)" /></svg>
+      <div class="label"><span class="tt">Span<span class="tt-b">Block 在 12 列网格中占据的列数，控制水平布局宽度</span></span> 系统</div>
+      <div class="metric-value">12 列</div>
+      <div class="text-muted">4/8, 6/6, 8/4 分列</div>
+      <svg class="sparkline" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0.0,20.0 16.7,20.0 33.3,16.0 50.0,12.0 66.7,12.0 83.3,4.0 100.0,4.0" fill="none" stroke="var(--accent-secondary)" stroke-width="1.5"/><line x1="0" y1="22" x2="100" y2="22" stroke="var(--border-base)" /></svg>
     </div>
   </div>
   </article>
-<article class="block" id="stage" style="--span:8;">
+<article class="block" id="chart-demo" style="--span:8;">
     <div class="block-header">
     <div>
       
-      <h2>Static Stage</h2>
-      <p class="body-copy">用定位元素表达架构、界面草图和关系图。</p>
+      <h2>chart — 数据趋势图</h2>
+      
     </div>
-    <button class="copy-mini" data-copy-block="stage">Copy</button>
-  </div><div class="stage-wrap" data-stage="stage" data-state="" style="--stage-ratio:960 / 520; --stage-bg:#FBF9F6">
-    <svg class="stage-lines" viewBox="0 0 960 520" preserveAspectRatio="none"><path class="stage-line " data-visible-states="" d="M 290 150 L 335 150 L 335 150 L 380 150" fill="none" stroke="var(--accent-primary)" stroke-width="1.4" stroke-dasharray="0"/><circle data-visible-states="" cx="380" cy="150" r="3.5" fill="var(--accent-primary)" /><path class="stage-line " data-visible-states="" d="M 610 150 L 655 150 L 655 150 L 700 150" fill="none" stroke="var(--accent-primary)" stroke-width="1.4" stroke-dasharray="0"/><circle data-visible-states="" cx="700" cy="150" r="3.5" fill="var(--accent-primary)" /></svg>
+    
+  </div><div class="chart-wrap"><svg class="chart-svg" viewBox="0 0 720 280" preserveAspectRatio="xMidYMid meet"><line x1="48" y1="242.0" x2="700" y2="242.0" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="246.0" text-anchor="end" fill="var(--text-faint)" font-size="11">0</text><line x1="48" y1="186.5" x2="700" y2="186.5" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="190.5" text-anchor="end" fill="var(--text-faint)" font-size="11">2k</text><line x1="48" y1="131.0" x2="700" y2="131.0" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="135.0" text-anchor="end" fill="var(--text-faint)" font-size="11">4k</text><line x1="48" y1="75.5" x2="700" y2="75.5" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="79.5" text-anchor="end" fill="var(--text-faint)" font-size="11">5k</text><line x1="48" y1="20.0" x2="700" y2="20.0" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="24.0" text-anchor="end" fill="var(--text-faint)" font-size="11">7k</text><line x1="48" y1="20" x2="48" y2="242" stroke="var(--border-base)" stroke-width="1"/><polyline points="48.0,108.8 178.4,89.8 308.8,80.3 439.2,64.4 569.6,45.4 700.0,26.3" fill="none" stroke="var(--accent-primary)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="48.0" cy="108.8" r="3.5" fill="var(--accent-primary)"/><circle cx="178.4" cy="89.8" r="3.5" fill="var(--accent-primary)"/><circle cx="308.8" cy="80.3" r="3.5" fill="var(--accent-primary)"/><circle cx="439.2" cy="64.4" r="3.5" fill="var(--accent-primary)"/><circle cx="569.6" cy="45.4" r="3.5" fill="var(--accent-primary)"/><circle cx="700.0" cy="26.3" r="3.5" fill="var(--accent-primary)"/><polyline points="48.0,175.4 178.4,153.2 308.8,134.2 439.2,118.3 569.6,96.1 700.0,77.1" fill="none" stroke="var(--accent-secondary)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="48.0" cy="175.4" r="3.5" fill="var(--accent-secondary)"/><circle cx="178.4" cy="153.2" r="3.5" fill="var(--accent-secondary)"/><circle cx="308.8" cy="134.2" r="3.5" fill="var(--accent-secondary)"/><circle cx="439.2" cy="118.3" r="3.5" fill="var(--accent-secondary)"/><circle cx="569.6" cy="96.1" r="3.5" fill="var(--accent-secondary)"/><circle cx="700.0" cy="77.1" r="3.5" fill="var(--accent-secondary)"/><text x="48.0" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">Jan</text><text x="178.4" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">Feb</text><text x="308.8" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">Mar</text><text x="439.2" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">Apr</text><text x="569.6" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">May</text><text x="700.0" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">Jun</text></svg><div class="chart-legend"><span class="chart-legend-item"><span class="chart-dot" style="background:var(--accent-primary)"></span>Web MAU</span><span class="chart-legend-item"><span class="chart-dot" style="background:var(--accent-secondary)"></span>Mobile MAU</span></div></div>
+  </article>
+<article class="block" id="stage-demo" style="--span:8;">
+    <div class="block-header">
+    <div>
+      
+      <h2>stage — 自由定位图</h2>
+      
+    </div>
+    <button class="copy-mini" data-copy-block="stage-demo">Copy</button>
+  </div><div class="stage-wrap" data-stage="stage-demo" data-state="" style="--stage-ratio:960 / 480; --stage-bg:#FBF9F6">
+    <svg class="stage-lines" viewBox="0 0 960 480" preserveAspectRatio="none"><path class="stage-line " data-visible-states="" d="M 270 160 L 320 160 L 320 162.5 L 370 162.5" fill="none" stroke="var(--accent-primary)" stroke-width="1.4" stroke-dasharray="0"/><circle data-visible-states="" cx="370" cy="162.5" r="3.5" fill="var(--accent-primary)" /><path class="stage-line " data-visible-states="" d="M 590 162.5 L 645 162.5 L 645 160 L 700 160" fill="none" stroke="var(--accent-primary)" stroke-width="1.4" stroke-dasharray="0"/><circle data-visible-states="" cx="700" cy="160" r="3.5" fill="var(--accent-primary)" /></svg>
     <div class="stage-layer">
-      <div class="stage-el" data-el="source_config" data-visible-states="" style="--x:8.3333%;--y:18.2692%;--w:21.8750%;--h:21.1538%;" ><div class="stage-panel"><div class="stage-panel-title">source_config</div><p>rules / inputs</p></div></div><div class="stage-el" data-el="runtime_state" data-visible-states="" style="--x:39.5833%;--y:17.3077%;--w:23.9583%;--h:23.0769%;" ><div class="stage-panel"><div class="stage-panel-title">runtime_state</div><p>current mode + status</p></div></div><div class="stage-el" data-el="event_log" data-visible-states="" style="--x:72.9167%;--y:19.2308%;--w:18.7500%;--h:19.2308%;" ><div class="stage-panel"><div class="stage-panel-title">event_log</div><p>immutable records</p></div></div><div class="stage-el" data-el="guard" data-visible-states="" style="--x:40.1042%;--y:52.8846%;--w:26.0417%;--h:14.2308%;" ><div class="stage-note">运行时只读取已确认配置和容量边界。</div></div>
+      <div class="stage-el" data-el="cfg" data-visible-states="" style="--x:7.2917%;--y:22.9167%;--w:20.8333%;--h:20.8333%;" ><div class="stage-panel"><div class="stage-panel-title">source_config</div><p>rules / inputs</p></div></div><div class="stage-el" data-el="rt" data-visible-states="" style="--x:38.5417%;--y:21.8750%;--w:22.9167%;--h:23.9583%;" ><div class="stage-panel"><div class="stage-panel-title">runtime_state</div><p>current mode + status</p></div></div><div class="stage-el" data-el="log" data-visible-states="" style="--x:72.9167%;--y:22.9167%;--w:18.7500%;--h:20.8333%;" ><div class="stage-panel"><div class="stage-panel-title">event_log</div><p>immutable records</p></div></div><div class="stage-el" data-el="note1" data-visible-states="" style="--x:38.5417%;--y:59.3750%;--w:25.0000%;--h:13.3333%;" ><div class="stage-note">运行时只读取已确认配置和容量边界。</div></div>
     </div>
     
   </div>
@@ -1344,170 +1367,229 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
     <div class="block-header">
     <div>
       
-      <h2>Prompt Editor</h2>
-      <p class="body-copy">变量高亮，结果可复制。</p>
+      <h2>promptEditor — 模板编辑器</h2>
+      
     </div>
     <button class="copy-mini" data-copy-block="prompt">Copy</button>
-  </div><div class="prompt-paper" contenteditable="true">Create a <mark>{{artifact_type}}</mark> for <mark>{{audience}}</mark>. Prefer diagrams, matrices and inline annotations over long prose.</div>
+  </div><div class="prompt-paper" contenteditable="true">Create a <mark>{{artifact_type}}</mark> for <mark>{{audience}}</mark>.
+Prefer diagrams and matrices over long prose.</div>
   </article>
 <article class="block" id="motion-demo" style="--span:12;">
     <div class="block-header">
     <div>
       
-      <h2>Motion Stage</h2>
-      <p class="body-copy">同一组对象在步骤之间移动、变色、显隐和改写数值，适合演示真实流程。</p>
+      <h2>motionStage — 外卖下单支付流程</h2>
+      <p class="body-copy">同一组持久对象在步骤间改变内容、状态和可见性，演示真实 UI 交互而非流程图。</p>
     </div>
     <button class="copy-mini" data-copy-block="motion-demo">Copy</button>
   </div><div class="motion-wrap" data-motion="motion-demo" data-index="0" data-autoplay="true">
-    <div class="motion-canvas" style="--motion-ratio:1180 / 520">
-      <div class="motion-object motion-phone" data-motion-object="phone" data-status="" data-emphasis="" style="--x:7.2034%;--y:15.3846%;--w:25.4237%;--h:67.3077%;--opacity:1;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface"><div class="motion-phone-screen">
-      <div class="label" data-motion-label>Publish</div>
-      <strong data-motion-title>Draft ready</strong>
-      <div class="motion-list"><div class="motion-list-item"><span>Caption</span><span class="motion-pill">ok</span></div><div class="motion-list-item"><span>Cover</span><span class="motion-pill">set</span></div><div class="motion-list-item"><span>Channels</span><span class="motion-pill">3</span></div></div>
-    </div></div></div><div class="motion-object motion-window" data-motion-object="queue" data-status="" data-emphasis="" style="--x:38.5593%;--y:21.1538%;--w:25.4237%;--h:42.3077%;--opacity:1;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface">
+    <div class="motion-canvas" style="--motion-ratio:1180 / 500">
+      <div class="motion-object motion-phone" data-motion-object="phone" data-status="" data-emphasis="" style="--x:4.6610%;--y:10.0000%;--w:21.1864%;--h:78.0000%;--opacity:1;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface"><div class="motion-phone-screen">
+      
+      <strong data-motion-title>午餐外卖</strong>
+      <div class="motion-list"><div class="motion-list-item"><span>宫保鸡丁</span><span class="motion-pill">×1</span></div><div class="motion-list-item"><span>米饭</span><span class="motion-pill">×2</span></div><div class="motion-list-item"><span>合计</span><span class="motion-pill">¥46</span></div></div>
+    </div></div></div><div class="motion-object motion-window" data-motion-object="map" data-status="" data-emphasis="" style="--x:33.0508%;--y:14.0000%;--w:28.8136%;--h:54.0000%;--opacity:0.15;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface">
       <div class="motion-window-bar"><span></span><span></span><span></span></div>
-      <div class="label" data-motion-label>Queue</div>
-      <strong data-motion-title>Waiting</strong>
-      <p class="text-sm" data-motion-body>3 channels selected</p>
-      <div class="motion-list"><div class="motion-list-item"><span>XHS</span><span class="motion-pill">ready</span></div><div class="motion-list-item"><span>Douyin</span><span class="motion-pill">ready</span></div><div class="motion-list-item"><span>Bilibili</span><span class="motion-pill">ready</span></div></div>
-    </div></div><div class="motion-object motion-metric" data-motion-object="metric" data-status="" data-emphasis="" style="--x:72.4576%;--y:25.0000%;--w:14.4068%;--h:23.0769%;--opacity:1;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface">
-      <div class="motion-value" data-motion-value>0</div>
-      <p class="text-sm" data-motion-label>published</p>
-    </div></div><div class="motion-object motion-note" data-motion-object="toast" data-status="" data-emphasis="" style="--x:64.4068%;--y:63.4615%;--w:23.7288%;--h:15.7692%;--opacity:0.35;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface">
+      
+      <strong data-motion-title>配送追踪</strong>
+      <p class="text-sm" data-motion-body>等待骑手接单...</p>
+      
+    </div></div><div class="motion-object motion-metric" data-motion-object="eta" data-status="" data-emphasis="" style="--x:69.4915%;--y:13.0000%;--w:16.9492%;--h:21.0000%;--opacity:0.3;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface">
+      <div class="motion-value" data-motion-value>—</div>
+      <p class="text-sm" data-motion-label>预计送达</p>
+    </div></div><div class="motion-object motion-badge" data-motion-object="status" data-status="" data-emphasis="" style="--x:33.0508%;--y:74.0000%;--w:16.9492%;--h:9.0000%;--opacity:1;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface" data-motion-title>选餐中</div></div><div class="motion-object motion-note" data-motion-object="notif" data-status="" data-emphasis="" style="--x:69.4915%;--y:38.0000%;--w:16.9492%;--h:20.0000%;--opacity:0;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface">
     
     <strong data-motion-title></strong>
-    <p class="text-sm" data-motion-body>发布完成后，读者能直接看到状态变化。</p>
+    <p class="text-sm" data-motion-body>骑手已接单，正在取餐</p>
     
-  </div></div><div class="motion-object motion-line" data-motion-object="line" data-status="" data-emphasis="" style="--x:32.6271%;--y:41.3462%;--w:5.9322%;--h:0.1923%;--opacity:0.4;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface"></div></div>
+  </div></div>
     </div>
     <div class="motion-footer">
       <div class="motion-caption" data-motion-caption>
-        <strong>1. 准备内容</strong>
-        <span>素材、标题和渠道都在同一个画面里呈现。</span>
+        <strong>浏览菜单</strong>
+        <span>菜单、价格、评价集中在一个屏幕里，地图和 ETA 待激活。</span>
       </div>
       <div class="motion-controls">
         <button data-motion-prev>‹</button>
-        <div class="motion-dots"><button class="motion-dot active" data-motion-dot="0" aria-label="Step 1"></button><button class="motion-dot " data-motion-dot="1" aria-label="Step 2"></button><button class="motion-dot " data-motion-dot="2" aria-label="Step 3"></button></div>
+        <div class="motion-dots"><button class="motion-dot active" data-motion-dot="0" aria-label="Step 1"></button><button class="motion-dot " data-motion-dot="1" aria-label="Step 2"></button><button class="motion-dot " data-motion-dot="2" aria-label="Step 3"></button><button class="motion-dot " data-motion-dot="3" aria-label="Step 4"></button></div>
         <button data-motion-next>›</button>
         <button data-motion-play>Pause</button>
       </div>
     </div>
   </div>
   </article>
-<article class="block" id="flow" style="--span:8;">
+<article class="block" id="arch-demo" style="--span:12;">
     <div class="block-header">
     <div>
       
-      <h2>生成流程</h2>
+      <h2>layeredArchitecture — 分层服务架构图</h2>
+      
+    </div>
+    <button class="copy-mini" data-copy-block="arch-demo">Copy</button>
+  </div>
+  <div class="layered-arch" style="--arch-height:500px">
+    <section class="arch-lane" style="--x:28px;--w:362.6666666666667px">
+      <div class="arch-lane-title">客户端<span>Web / Mobile</span></div>
+    </section><section class="arch-lane" style="--x:408.6666666666667px;--w:362.6666666666667px">
+      <div class="arch-lane-title">API 层<span>网关 / 认证 / 业务</span></div>
+    </section><section class="arch-lane" style="--x:789.3333333333334px;--w:362.6666666666667px">
+      <div class="arch-lane-title">数据层<span>持久化 / 缓存 / 队列</span></div>
+    </section>
+    <svg class="arch-edges" viewBox="0 0 1180 500" preserveAspectRatio="none">
+      <defs>
+        <marker id="arch-arrow-arch-demo" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--accent-primary)"></path>
+        </marker>
+      </defs>
+      <path class="arch-edge " d="M 373.6666666666667 161 L 399.6666666666667 161 L 399.6666666666667 161 L 425.6666666666667 161" marker-end="url(#arch-arrow-arch-demo)"></path><path class="arch-edge " d="M 373.6666666666667 269 L 399.6666666666667 269 L 399.6666666666667 161 L 425.6666666666667 161" marker-end="url(#arch-arrow-arch-demo)"></path><path class="arch-edge " d="M 590 200 L 590 230" marker-end="url(#arch-arrow-arch-demo)"></path><path class="arch-edge " d="M 590 308 L 590 338" marker-end="url(#arch-arrow-arch-demo)"></path><path class="arch-edge " d="M 754.3333333333334 377 L 780.3333333333334 377 L 780.3333333333334 161 L 806.3333333333334 161" marker-end="url(#arch-arrow-arch-demo)"></path><path class="arch-edge dashed" d="M 754.3333333333334 377 L 780.3333333333334 377 L 780.3333333333334 269 L 806.3333333333334 269" marker-end="url(#arch-arrow-arch-demo)"></path><path class="arch-edge dashed" d="M 754.3333333333334 377 L 780.3333333333334 377 L 780.3333333333334 377 L 806.3333333333334 377" marker-end="url(#arch-arrow-arch-demo)"></path>
+    </svg>
+    <span class="arch-step" style="--x:349.6666666666667px;--y:102px">1</span><span class="arch-edge-label" style="--x:377.6666666666667px;--y:102px">HTTPS</span><span class="arch-step" style="--x:349.6666666666667px;--y:102px">2</span><span class="arch-edge-label" style="--x:377.6666666666667px;--y:102px">HTTPS</span><span class="arch-step" style="--x:732.3333333333334px;--y:207px">3</span><span class="arch-edge-label" style="--x:760.3333333333334px;--y:207px">verify token</span><span class="arch-step" style="--x:732.3333333333334px;--y:315px">4</span><span class="arch-edge-label" style="--x:760.3333333333334px;--y:315px">authorized</span><span class="arch-step" style="--x:730.3333333333334px;--y:102px">5</span><span class="arch-edge-label" style="--x:758.3333333333334px;--y:102px">read / write</span><span class="arch-edge-label" style="--x:758.3333333333334px;--y:210px">cache get/set</span><span class="arch-edge-label" style="--x:758.3333333333334px;--y:318px">enqueue job</span>
+    <div class="arch-box api" style="--x:45px;--y:122px;--w:328.6666666666667px;--h:78px">
+      <div class="label">api</div>
+      <strong>Browser</strong>
+      <p>SPA · React</p>
+    </div><div class="arch-box api" style="--x:45px;--y:230px;--w:328.6666666666667px;--h:78px">
+      <div class="label">api</div>
+      <strong>Mobile App</strong>
+      <p>iOS / Android</p>
+    </div><div class="arch-box api" style="--x:425.6666666666667px;--y:122px;--w:328.6666666666667px;--h:78px">
+      <div class="label">api</div>
+      <strong>API Gateway</strong>
+      <p>限流 · 路由</p>
+    </div><div class="arch-box worker" style="--x:425.6666666666667px;--y:230px;--w:328.6666666666667px;--h:78px">
+      <div class="label">worker</div>
+      <strong>Auth Service</strong>
+      <p>JWT · OAuth2</p>
+    </div><div class="arch-box worker" style="--x:425.6666666666667px;--y:338px;--w:328.6666666666667px;--h:78px">
+      <div class="label">worker</div>
+      <strong>Business API</strong>
+      <p>核心逻辑</p>
+    </div><div class="arch-box data" style="--x:806.3333333333334px;--y:122px;--w:328.6666666666667px;--h:78px">
+      <div class="label">data</div>
+      <strong>PostgreSQL</strong>
+      <p>主库 · 只读副本</p>
+    </div><div class="arch-box data" style="--x:806.3333333333334px;--y:230px;--w:328.6666666666667px;--h:78px">
+      <div class="label">data</div>
+      <strong>Redis</strong>
+      <p>会话 · 热数据</p>
+    </div><div class="arch-box provider" style="--x:806.3333333333334px;--y:338px;--w:328.6666666666667px;--h:78px">
+      <div class="label">provider</div>
+      <strong>Message Queue</strong>
+      <p>异步任务</p>
+    </div>
+    
+  </div>
+  </article>
+<article class="block" id="flow-demo" style="--span:8;">
+    <div class="block-header">
+    <div>
+      
+      <h2>flow — 线性流程</h2>
       
     </div>
     
   </div><div class="flow"><div class="flow-track">
-    <div class="flow-node"><span class="dot"></span><strong>需求</strong><p class="text-sm">代码、数据、问题</p></div><div class="flow-node"><span class="dot"></span><strong>JSON</strong><p class="text-sm">意图和结构</p></div><div class="flow-node"><span class="dot"></span><strong>Renderer</strong><p class="text-sm">组件组合</p></div><div class="flow-node"><span class="dot"></span><strong>HTML</strong><p class="text-sm">可读可交互</p></div>
+    <div class="flow-node"><span class="dot"></span><strong>需求输入</strong><p class="text-sm">代码、数据、问题</p></div><div class="flow-node"><span class="dot"></span><strong>写文档</strong><p class="text-sm">选组件、填字段</p></div><div class="flow-node"><span class="dot"></span><strong>渲染</strong><p class="text-sm">node scripts/render-html-doc.mjs</p></div><div class="flow-node"><span class="dot"></span><strong>HTML 输出</strong><p class="text-sm">浏览器直接打开</p></div>
   </div></div>
   </article>
-<article class="block" id="decision" style="--span:4;">
+<article class="block" id="decision-demo" style="--span:4;">
     <div class="block-header">
     <div>
       
-      <h2>组件选择</h2>
+      <h2>decisionTree — 决策树</h2>
       
     </div>
     
   </div><div class="decision-tree">
-    <div class="decision-node" style="--indent:12px"><strong>需要解释过程</strong><p class="text-sm">使用 flow 或 timeline</p></div><div class="decision-node" style="--indent:28px"><strong>有代码变化</strong><p class="text-sm">使用 diffReview</p></div><div class="decision-node" style="--indent:28px"><strong>有多个方案</strong><p class="text-sm">使用 variantGrid 或 matrix</p></div><div class="decision-node" style="--indent:12px"><strong>需要用户调整</strong><p class="text-sm">使用 sliderLab、formEditor 或 promptEditor</p></div>
+    <div class="decision-node" data-level="0" style="--indent:0px">
+        <span class="dt-cond">需要对比多个选项</span>
+        <span class="dt-sep">→</span>
+        <span class="dt-res">matrix 或 variantGrid</span>
+      </div><div class="decision-node" data-level="1" style="--indent:20px">
+        <span class="dt-cond">≥ 4 行 + 3 列</span>
+        <span class="dt-sep">→</span>
+        <span class="dt-res">matrix（支持排序过滤）</span>
+      </div><div class="decision-node" data-level="1" style="--indent:20px">
+        <span class="dt-cond">≤ 3 个方案</span>
+        <span class="dt-sep">→</span>
+        <span class="dt-res">variantGrid（更直观）</span>
+      </div><div class="decision-node" data-level="0" style="--indent:0px">
+        <span class="dt-cond">需要演示状态变化</span>
+        <span class="dt-sep">→</span>
+        <span class="dt-res">motionStage</span>
+      </div><div class="decision-node" data-level="0" style="--indent:0px">
+        <span class="dt-cond">需要服务架构图</span>
+        <span class="dt-sep">→</span>
+        <span class="dt-res">layeredArchitecture</span>
+      </div>
   </div>
   </article>
-<article class="block" id="matrix" style="--span:12;">
+<article class="block" id="matrix-demo" style="--span:12;">
     <div class="block-header">
     <div>
       
-      <h2>Decision Matrix</h2>
-      <p class="body-copy">表格先显示对象、结论和风险，长证据放进展开详情。</p>
+      <h2>matrix — 决策矩阵</h2>
+      <p class="body-copy">先显示对象、结论和风险，长证据放进展开详情。</p>
     </div>
-    <button class="copy-mini" data-copy-block="matrix">Copy</button>
-  </div><div class="matrix-tools" data-matrix-tools="matrix">
-    <input data-matrix-search="matrix" type="search" placeholder="Search table" />
-    <label>Risk<select data-matrix-filter="matrix" data-filter-key="risk">
+    <button class="copy-mini" data-copy-block="matrix-demo">Copy</button>
+  </div><div class="matrix-tools" data-matrix-tools="matrix-demo">
+    <input data-matrix-search="matrix-demo" type="search" placeholder="Search table" />
+    <label>风险<select data-matrix-filter="matrix-demo" data-filter-key="risk">
       <option value="">All</option>
       <option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option>
     </select></label>
   </div><div class="matrix-wrap">
-    <table class="matrix" data-matrix="matrix" data-sortable="true">
-      <thead><tr><th style="min-width:190px" data-sort-index="0">对象</th><th style="min-width:260px" data-sort-index="1">一句话结论</th><th style="width:96px" data-sort-index="2">风险</th><th style="min-width:250px" data-sort-index="3">关键证据</th><th style="width:120px" data-sort-index="4">置信度</th><th style="min-width:150px" data-sort-index="5">下一步</th></tr></thead>
-      <tbody><tr class="matrix-group"><td colspan="6">需要确认</td></tr><tr class="matrix-row" data-row-id="matrix-1" data-search="&#96;matrix&#96; 表格 **默认展示判断**，证据按需展开。 Medium Markdown 宽表容易丢列上下文。 固定表头和首列后，读者滚动时仍能确认对象和维度。 足够稳定 freeze search tags" data-filters="{&quot;risk&quot;:&quot;Medium&quot;}"><td data-sort-value="&#96;matrix&#96; 表格" style="min-width:190px"><button class="matrix-toggle" data-detail-toggle="matrix-1" aria-label="Toggle row detail">+</button><code>matrix</code> 表格</td><td data-sort-value="**默认展示判断**，证据按需展开。" style="min-width:260px"><strong>默认展示判断</strong>，证据按需展开。</td><td data-sort-value="Medium" style="width:96px"><span class="cell-badge tone-warning">Medium</span></td><td data-sort-value="Markdown 宽表容易丢列上下文。 固定表头和首列后，读者滚动时仍能确认对象和维度。" style="min-width:250px"><div class="cell-summary">Markdown 宽表容易丢列上下文。</div><div class="cell-detail">固定表头和首列后，读者滚动时仍能确认对象和维度。</div></td><td data-sort-value="86" style="width:120px"><span class="cell-progress"><span style="--progress:86%"></span></span> 足够稳定</td><td data-sort-value="freeze search tags" style="min-width:150px"><span class="cell-tags"><span class="cell-badge">freeze</span><span class="cell-badge">search</span><span class="cell-badge">tags</span></span></td></tr><tr class="matrix-detail-row" data-detail-row="matrix-1" hidden><td colspan="6">适合方案比较、风险表、PR review、排期表、需求矩阵。</td></tr><tr class="matrix-row stripe" data-row-id="matrix-2" data-search="&#96;motionStage&#96; 动画 只在状态变化能直观看懂时使用。 Low 对象位置、显隐、状态和数值发生变化。 字幕只做补充，主信息应该出现在画面变化里。 可复用 demo" data-filters="{&quot;risk&quot;:&quot;Low&quot;}"><td data-sort-value="&#96;motionStage&#96; 动画" style="min-width:190px"><code>motionStage</code> 动画</td><td data-sort-value="只在状态变化能直观看懂时使用。" style="min-width:260px">只在状态变化能直观看懂时使用。</td><td data-sort-value="Low" style="width:96px"><span class="cell-badge tone-success">Low</span></td><td data-sort-value="对象位置、显隐、状态和数值发生变化。 字幕只做补充，主信息应该出现在画面变化里。" style="min-width:250px"><div class="cell-summary">对象位置、显隐、状态和数值发生变化。</div><div class="cell-detail">字幕只做补充，主信息应该出现在画面变化里。</div></td><td data-sort-value="78" style="width:120px"><span class="score" style="--score:78%"></span> 可复用</td><td data-sort-value="demo" style="min-width:150px"><span class="cell-badge tone-accent">demo</span></td></tr><tr class="matrix-group"><td colspan="6">可以后置</td></tr><tr class="matrix-row" data-row-id="matrix-4" data-search="长正文 拆成卡片、矩阵、批注或展开材料。 High 连续段落会让读者反复重建结构。 如果内容需要比较、优先级、关系或状态，就改用视觉组件。 明确 split" data-filters="{&quot;risk&quot;:&quot;High&quot;}"><td data-sort-value="长正文" style="min-width:190px">长正文</td><td data-sort-value="拆成卡片、矩阵、批注或展开材料。" style="min-width:260px">拆成卡片、矩阵、批注或展开材料。</td><td data-sort-value="High" style="width:96px"><span class="cell-badge tone-danger">High</span></td><td data-sort-value="连续段落会让读者反复重建结构。 如果内容需要比较、优先级、关系或状态，就改用视觉组件。" style="min-width:250px"><div class="cell-summary">连续段落会让读者反复重建结构。</div><div class="cell-detail">如果内容需要比较、优先级、关系或状态，就改用视觉组件。</div></td><td data-sort-value="92" style="width:120px"><span class="cell-progress"><span style="--progress:92%"></span></span> 明确</td><td data-sort-value="split" style="min-width:150px"><span class="cell-badge tone-info">split</span></td></tr></tbody>
+    <table class="matrix" data-matrix="matrix-demo" data-sortable="true">
+      <thead><tr><th style="min-width:190px" data-sort-index="0">对象</th><th style="min-width:260px" data-sort-index="1">一句话结论</th><th style="width:96px" data-sort-index="2">风险</th><th style="min-width:250px" data-sort-index="3">关键证据</th><th style="min-width:150px" data-sort-index="4">下一步</th></tr></thead>
+      <tbody><tr class="matrix-group"><td colspan="5">视觉组件</td></tr><tr class="matrix-row" data-row-id="matrix-demo-1" data-search="&#96;matrix&#96; 宽表 **首列固定 + 可搜索**，适合 4 行 3 列以上的对比 Low 表头和首列在横向滚动时保持可见 支持搜索、多维过滤、排序、展开详情、进度条、badge 和 sparkline。 ship" data-filters="{&quot;risk&quot;:&quot;Low&quot;}"><td data-sort-value="&#96;matrix&#96; 宽表" style="min-width:190px"><code>matrix</code> 宽表</td><td data-sort-value="**首列固定 + 可搜索**，适合 4 行 3 列以上的对比" style="min-width:260px"><strong>首列固定 + 可搜索</strong>，适合 4 行 3 列以上的对比</td><td data-sort-value="Low" style="width:96px"><span class="cell-badge tone-success">Low</span></td><td data-sort-value="表头和首列在横向滚动时保持可见 支持搜索、多维过滤、排序、展开详情、进度条、badge 和 sparkline。" style="min-width:250px"><div class="cell-summary">表头和首列在横向滚动时保持可见</div><div class="cell-detail">支持搜索、多维过滤、排序、展开详情、进度条、badge 和 sparkline。</div></td><td data-sort-value="ship" style="min-width:150px"><span class="cell-badge tone-accent">ship</span></td></tr><tr class="matrix-row stripe" data-row-id="matrix-demo-2" data-search="&#96;motionStage&#96; 动画 对象位置、可见性、状态、内容变化时使用 Medium 字幕只做补充，主信息出现在画面变化里 避免只改 caption 而画面不动——那种效果不如 timeline。 真实 UI 对象 每步有变化" data-filters="{&quot;risk&quot;:&quot;Medium&quot;}"><td data-sort-value="&#96;motionStage&#96; 动画" style="min-width:190px"><code>motionStage</code> 动画</td><td data-sort-value="对象位置、可见性、状态、内容变化时使用" style="min-width:260px">对象位置、可见性、状态、内容变化时使用</td><td data-sort-value="Medium" style="width:96px"><span class="cell-badge tone-warning">Medium</span></td><td data-sort-value="字幕只做补充，主信息出现在画面变化里 避免只改 caption 而画面不动——那种效果不如 timeline。" style="min-width:250px"><div class="cell-summary">字幕只做补充，主信息出现在画面变化里</div><div class="cell-detail">避免只改 caption 而画面不动——那种效果不如 timeline。</div></td><td data-sort-value="真实 UI 对象 每步有变化" style="min-width:150px"><span class="cell-tags"><span class="cell-badge">真实 UI 对象</span><span class="cell-badge">每步有变化</span></span></td></tr><tr class="matrix-group"><td colspan="5">内容建议</td></tr><tr class="matrix-row" data-row-id="matrix-demo-4" data-search="长正文段落 **拆成组件**：矩阵、批注、流程或展开材料 High 连续段落让读者重建结构，视觉组件直接呈现 如果内容有对比、顺序、关系或状态，改用对应组件。 refactor" data-filters="{&quot;risk&quot;:&quot;High&quot;}"><td data-sort-value="长正文段落" style="min-width:190px"><button class="matrix-toggle" data-detail-toggle="matrix-demo-4" aria-label="Toggle row detail">+</button>长正文段落</td><td data-sort-value="**拆成组件**：矩阵、批注、流程或展开材料" style="min-width:260px"><strong>拆成组件</strong>：矩阵、批注、流程或展开材料</td><td data-sort-value="High" style="width:96px"><span class="cell-badge tone-danger">High</span></td><td data-sort-value="连续段落让读者重建结构，视觉组件直接呈现 如果内容有对比、顺序、关系或状态，改用对应组件。" style="min-width:250px"><div class="cell-summary">连续段落让读者重建结构，视觉组件直接呈现</div><div class="cell-detail">如果内容有对比、顺序、关系或状态，改用对应组件。</div></td><td data-sort-value="refactor" style="min-width:150px"><span class="cell-badge tone-info">refactor</span></td></tr><tr class="matrix-detail-row" data-detail-row="matrix-demo-4" hidden><td colspan="5">经验法则：3 行以上的段落通常可以变成 flow、timeline 或 matrix 的一行。</td></tr></tbody>
     </table>
   </div>
   </article>
-<article class="block" id="diff" style="--span:8;">
+<article class="block" id="diff-demo" style="--span:8;">
     <div class="block-header">
     <div>
       
-      <h2>Diff Review</h2>
+      <h2>diffReview — 代码变更审查</h2>
       
     </div>
-    <button class="copy-mini" data-copy-block="diff">Copy</button>
+    <button class="copy-mini" data-copy-block="diff-demo">Copy</button>
   </div><div><div class="diff-wrap"><div class="vu-diff-block">
-    <div class="diff-line diff-remove"><span class="diff-num"></span><span>- &lt;div class=&quot;card shadow-lg rounded-xl p-8&quot;&gt;</span></div><div class="diff-line diff-add"><span class="diff-num"></span><span>+ &lt;section data-block=&quot;metric&quot; class=&quot;tile&quot;&gt;</span></div><div class="diff-line diff-add"><span class="diff-num"></span><span>+   &lt;Metric value={data.value} spark={data.trend} /&gt;</span></div><div class="diff-line diff-context"><span class="diff-num"></span><span>  &lt;/section&gt;</span></div>
-  </div><div class="annotation-pane"><p><mark>P1</mark> 组件替代样式堆叠<br>保留语义数据，避免重复生成视觉细节。</p><p><mark>P2</mark> 降低 DOM 嵌套<br>单个 block 直接承载布局，不再卡片套卡片。</p></div></div></div>
+    <div class="diff-line diff-context"><span class="diff-num"></span><span>  livenessProbe:</span></div><div class="diff-line diff-remove"><span class="diff-num"></span><span>-   initialDelaySeconds: 5</span></div><div class="diff-line diff-add"><span class="diff-num"></span><span>+   initialDelaySeconds: 15</span></div><div class="diff-line diff-remove"><span class="diff-num"></span><span>-   timeoutSeconds: 5</span></div><div class="diff-line diff-add"><span class="diff-num"></span><span>+   timeoutSeconds: 10</span></div><div class="diff-line diff-context"><span class="diff-num"></span><span>  readinessProbe:</span></div><div class="diff-line diff-remove"><span class="diff-num"></span><span>-   initialDelaySeconds: 3</span></div><div class="diff-line diff-add"><span class="diff-num"></span><span>+   initialDelaySeconds: 12</span></div>
+  </div><div class="annotation-pane"><p><mark>P1</mark> 修复冷启动误回滚<br>Java 服务 p50 启动 8-12s，原 5s 超时必然失败。</p><p><mark>P2</mark> readiness 同步调整<br>避免未就绪时接收流量。</p></div></div></div>
   </article>
-<article class="block" id="timeline" style="--span:4;">
+<article class="block" id="timeline-demo" style="--span:4;">
     <div class="block-header">
     <div>
       
-      <h2>执行时间线</h2>
+      <h2>timeline — 时间轴</h2>
       
     </div>
     
   </div><div class="timeline-line">
-    <div class="timeline-item "><div class="label">00:00</div><strong>读取上下文</strong><p class="text-sm">抽取实体和目标</p></div><div class="timeline-item "><div class="label">00:12</div><strong>选择组件</strong><p class="text-sm">映射到 JSON blocks</p></div><div class="timeline-item "><div class="label">00:28</div><strong>输出 HTML</strong><p class="text-sm">浏览器直接打开</p></div>
+    <div class="timeline-item "><div class="label">09:15</div><strong>PR 合并</strong><p class="text-sm">feat: 优化发布逻辑</p></div><div class="timeline-item active"><div class="label">09:31</div><strong>测试通过</strong><p class="text-sm">450 个用例</p></div><div class="timeline-item active"><div class="label">09:52</div><strong>发布完成</strong><p class="text-sm">全量切换</p></div>
   </div>
   </article>
-<article class="block" id="architecture" style="--span:8;">
+<article class="block" id="code-demo" style="--span:6;">
     <div class="block-header">
     <div>
       
-      <h2>生成链路</h2>
+      <h2>codeAnnotation — 代码批注</h2>
       
     </div>
-    
-  </div><div class="flow"><div class="flow-track">
-    <div class="flow-node"><span class="dot"></span><strong>User Context</strong><p class="text-sm">需求、代码、数据</p></div><div class="flow-node"><span class="dot"></span><strong>HTML Doc JSON</strong><p class="text-sm">紧凑结构</p></div><div class="flow-node"><span class="dot"></span><strong>Renderer</strong><p class="text-sm">主题和组件</p></div><div class="flow-node"><span class="dot"></span><strong>HTML</strong><p class="text-sm">浏览器阅读</p></div><div class="flow-node"><span class="dot"></span><strong>Copy / CSV / Diff</strong><p class="text-sm">回流到工作流</p></div>
-  </div></div>
-  </article>
-<article class="block" id="variants" style="--span:4;">
-    <div class="block-header">
-    <div>
-      
-      <h2>Variant Grid</h2>
-      
-    </div>
-    <button class="copy-mini" data-copy-block="variants">Copy</button>
-  </div><div class="variant-grid">
-    <div class="variant"><div class="label">A</div><h3>报告型</h3><p class="text-sm">洞察、证据、结论</p><div class="score" style="--score:88%; margin-top:var(--space-2)"></div></div><div class="variant"><div class="label">B</div><h3>评审型</h3><p class="text-sm">diff、风险、路径</p><div class="score" style="--score:92%; margin-top:var(--space-2)"></div></div><div class="variant"><div class="label">C</div><h3>编辑型</h3><p class="text-sm">表单、滑块、导出</p><div class="score" style="--score:84%; margin-top:var(--space-2)"></div></div>
-  </div>
-  </article>
-<article class="block" id="code" style="--span:6;">
-    <div class="block-header">
-    <div>
-      
-      <h2>代码批注</h2>
-      
-    </div>
-    <button class="copy-mini" data-copy-block="code">Copy</button>
+    <button class="copy-mini" data-copy-block="code-demo">Copy</button>
   </div><div class="code-wrap">
     <pre>function renderBlock(block) {
   const component = registry[block.type]
   return component(block)
 }</pre>
-    <div class="annotation-pane"><p><mark>registry</mark> 组件注册表是 Skill 的稳定核心。</p><p><mark>block.type</mark> AI 负责选择意图，视觉系统交给渲染器。</p></div>
+    <div class="annotation-pane"><p><mark>registry</mark> 组件注册表是 Skill 的稳定核心，新组件直接注册即可。</p><p><mark>block.type</mark> Agent 负责选择意图，视觉系统由渲染器统一管理。</p></div>
   </div>
   </article>
-<article class="block" id="sliders" style="--span:6;">
+<article class="block" id="sliders-demo" style="--span:6;">
     <div class="block-header">
     <div>
       
-      <h2>Slider Lab</h2>
+      <h2>sliderLab — 调节面板</h2>
       
     </div>
     
@@ -1515,155 +1597,420 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
     <div class="slider-row"><span class="label">信息密度</span><input type="range" min="0" max="100" value="72" data-slider="0"><span class="mono" data-value="0">72</span></div><div class="slider-row"><span class="label">暖色强度</span><input type="range" min="0" max="100" value="34" data-slider="1"><span class="mono" data-value="1">34</span></div><div class="slider-row"><span class="label">优先可视化</span><input class="switch" type="checkbox" checked><span></span></div>
   </div>
   </article>
-<article class="block" id="evidence" style="--span:8;">
+<article class="block" id="variants-demo" style="--span:4;">
     <div class="block-header">
     <div>
       
-      <h2>Evidence Board</h2>
+      <h2>variantGrid — 方案对比</h2>
+      
+    </div>
+    <button class="copy-mini" data-copy-block="variants-demo">Copy</button>
+  </div><div class="variant-grid">
+    <div class="variant"><div class="label">A</div><h3>报告型</h3><p class="text-sm">洞察、证据、结论</p><div class="score" style="--score:88%; margin-top:var(--space-2)"></div></div><div class="variant"><div class="label">B</div><h3>审查型</h3><p class="text-sm">diff、风险、路径</p><div class="score" style="--score:92%; margin-top:var(--space-2)"></div></div><div class="variant"><div class="label">C</div><h3>编辑型</h3><p class="text-sm">表单、滑块、导出</p><div class="score" style="--score:84%; margin-top:var(--space-2)"></div></div>
+  </div>
+  </article>
+<article class="block" id="evidence-demo" style="--span:8;">
+    <div class="block-header">
+    <div>
+      
+      <h2>evidenceBoard — 证据板</h2>
       
     </div>
     
   </div><div class="masonry">
-    <div class="note"><div class="label">USER</div><strong>不喜欢容器过度嵌套</strong><p class="text-sm">整体采用铺地砖式 grid，组件之间共用 1px 分割线。</p></div><div class="note"><div class="label">DESIGN</div><strong>人文感字体</strong><p class="text-sm">标题使用 Optima / Avenir Next，中文回退到苹方和霞鹜文楷。</p></div><div class="note"><div class="label">RULE</div><strong>文字尽量少</strong><p class="text-sm">正文保持轻量；需要细节时交给矩阵、批注或展开材料。</p></div><div class="note"><div class="label">HTML</div><strong>充分利用水平空间</strong><p class="text-sm">12 栏 span 机制，支持 4/8、6/6、8/4 分列。</p></div>
+    <div class="note"><div class="label">USER</div><strong>不喜欢容器过度嵌套</strong><p class="text-sm">整体采用铺地砖式 grid，组件之间共用 1px 分割线。</p></div><div class="note"><div class="label">DESIGN</div><strong>人文感字体</strong><p class="text-sm">标题使用 Optima / Avenir Next，中文回退苹方。</p></div><div class="note"><div class="label">RULE</div><strong>文字尽量少</strong><p class="text-sm">正文保持轻量；细节交给矩阵、批注或展开材料。</p></div><div class="note"><div class="label">HTML</div><strong>充分利用水平空间</strong><p class="text-sm">12 列 span 机制，支持 4/8、6/6、8/4 分列。</p></div>
   </div>
   </article>
-<article class="block" id="kanban" style="--span:12;">
+<article class="block" id="crossref-demo" style="--span:12;">
     <div class="block-header">
     <div>
       
-      <h2>Kanban</h2>
-      <p class="body-copy">横向分组清单，适合风险桶、任务桶、审查桶和反馈桶。</p>
+      <h2>crossRef — GitHub Actions 部署流水线</h2>
+      
     </div>
-    <button class="copy-mini" data-copy-block="kanban">Copy</button>
-  </div><div class="kanban" data-kanban="kanban">
-    <section class="kanban-col tone-danger">
+    
+  </div><div class="crossref" data-crossref="crossref-demo">
+    <svg class="crossref-arrows"><defs><marker id="cr-arrow-crossref-demo" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="var(--accent-tertiary)"/></marker></defs></svg>
+    <div class="crossref-layout">
+      <div class="crossref-primary"><div class="crossref-file-label">.github/workflows/deploy.yml</div><div class="crossref-section"><div class="crossref-section-title">触发器 &amp; 环境变量</div><pre>on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  APP_ENV: production
+  # 从 <mark class="crossref-hl" data-cr-from="envfile">config/.env.production</mark> 注入
+  REGISTRY: ${{ secrets.ECR_REGISTRY }}
+  IMAGE_TAG: ${{ github.sha }}
+  APP_PORT:  ${{ vars.APP_PORT }}</pre></div><div class="crossref-section"><div class="crossref-section-title">build-and-push job</div><pre>build:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+    - name: Build image
+      run: |
+        docker build \
+          -f <mark class="crossref-hl" data-cr-from="dockerfile">docker/Dockerfile</mark> \
+          --build-arg APP_ENV=$APP_ENV \
+          -t $REGISTRY/app:$IMAGE_TAG .
+    - name: Scan for vulnerabilities
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: $REGISTRY/app:$IMAGE_TAG
+    - name: Push to ECR
+      run: docker push $REGISTRY/app:$IMAGE_TAG</pre></div><div class="crossref-section"><div class="crossref-section-title">helm-deploy job</div><pre>deploy:
+  needs: [build]
+  runs-on: ubuntu-latest
+  steps:
+    - name: Helm upgrade
+      run: |
+        helm upgrade --install app ./helm \
+          -f <mark class="crossref-hl" data-cr-from="helmvalues">helm/values.yaml</mark> \
+          --set image.tag=$IMAGE_TAG \
+          --set env=$APP_ENV \
+          --atomic --timeout 5m
+    - name: Verify k8s rollout
+      run: |
+        kubectl apply -f <mark class="crossref-hl" data-cr-from="k8sdeploy">k8s/deployment.yaml</mark>
+        kubectl rollout status \
+          deployment/app --timeout=3m</pre></div><div class="crossref-section"><div class="crossref-section-title">post-deploy checks</div><pre>verify:
+  needs: [deploy]
+  steps:
+    - name: Smoke test
+      run: |
+        curl -sf https://$APP_HOST/healthz \
+          || (kubectl rollout undo deployment/app &amp;&amp; exit 1)
+    - name: Notify Slack
+      if: always()
+      run: |
+        STATUS=${{ job.status }}
+        curl -X POST ${{ secrets.SLACK_WEBHOOK }} \
+          -d &quot;{\&quot;text\&quot;:\&quot;deploy $IMAGE_TAG: $STATUS\&quot;}&quot;</pre></div></div>
+      <div class="crossref-refs"><div class="crossref-ref" data-cr-target="envfile"><div class="crossref-ref-label">config/.env.production</div><pre># Production environment
+APP_PORT=8080
+APP_HOST=app.example.com
+DB_POOL_MAX=20
+DB_POOL_IDLE=5
+LOG_LEVEL=warn
+CACHE_TTL=300
+FEATURE_CANARY=true
+FEATURE_NEW_CHECKOUT=false</pre></div><div class="crossref-ref" data-cr-target="dockerfile"><div class="crossref-ref-label">docker/Dockerfile</div><pre>FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+EXPOSE 8080
+CMD [&quot;node&quot;, &quot;dist/server.js&quot;]</pre></div><div class="crossref-ref" data-cr-target="helmvalues"><div class="crossref-ref-label">helm/values.yaml</div><pre>replicaCount: 3
+image:
+  repository: 123456.dkr.ecr.us-east-1.amazonaws.com/app
+  tag: latest
+  pullPolicy: IfNotPresent
+resources:
+  requests: { cpu: 250m, memory: 256Mi }
+  limits:   { cpu: 500m, memory: 512Mi }
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+ingress:
+  enabled: true
+  host: app.example.com</pre></div><div class="crossref-ref" data-cr-target="k8sdeploy"><div class="crossref-ref-label">k8s/deployment.yaml</div><pre>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    spec:
+      containers:
+        - name: app
+          livenessProbe:
+            httpGet: { path: /healthz, port: 8080 }
+            initialDelaySeconds: 15
+          readinessProbe:
+            httpGet: { path: /ready, port: 8080 }</pre></div></div>
+    </div>
+  </div>
+  </article>
+<article class="block" id="relmap-demo" style="--span:12;">
+    <div class="block-header">
+    <div>
+      
+      <h2>relationshipMap — RBAC 权限分配</h2>
+      <p class="body-copy">哪些角色可以访问哪些 API 权限组。连线密集的角色拥有更广泛的访问权限，便于权限审计时快速发现过度授权。</p>
+    </div>
+    
+  </div><div>
+    <div class="vu-rel-grid" data-rel-map="relmap-demo">
+      <ul class="vu-rel-list">
+        <li class="vu-rel-item" data-rel-source="super-admin">
+          <div class="vu-rel-title">超级管理员</div>
+          <div class="vu-rel-meta">SRE Team</div>
+        </li><li class="vu-rel-item" data-rel-source="devops">
+          <div class="vu-rel-title">运维工程师</div>
+          <div class="vu-rel-meta">Ops Team</div>
+        </li><li class="vu-rel-item" data-rel-source="developer">
+          <div class="vu-rel-title">开发工程师</div>
+          <div class="vu-rel-meta">Eng Team</div>
+        </li><li class="vu-rel-item" data-rel-source="analyst">
+          <div class="vu-rel-title">数据分析师</div>
+          <div class="vu-rel-meta">Data Team</div>
+        </li><li class="vu-rel-item" data-rel-source="readonly">
+          <div class="vu-rel-title">只读用户</div>
+          <div class="vu-rel-meta">Stakeholder</div>
+        </li>
+      </ul>
+      <div class="vu-rel-lines">
+        <svg viewBox="0 0 100 456" preserveAspectRatio="none">
+          <path class="vu-rel-link" data-rel-from="super-admin" data-rel-to="infra-ops" d="M 0 35 C 50 35, 50 35, 100 35" /><path class="vu-rel-link" data-rel-from="super-admin" data-rel-to="deploy-api" d="M 0 35 C 50 35, 50 111, 100 111" /><path class="vu-rel-link" data-rel-from="super-admin" data-rel-to="code-api" d="M 0 35 C 50 35, 50 187, 100 187" /><path class="vu-rel-link" data-rel-from="super-admin" data-rel-to="data-query" d="M 0 35 C 50 35, 50 263, 100 263" /><path class="vu-rel-link" data-rel-from="super-admin" data-rel-to="audit-logs" d="M 0 35 C 50 35, 50 339, 100 339" /><path class="vu-rel-link" data-rel-from="super-admin" data-rel-to="user-mgmt" d="M 0 35 C 50 35, 50 415, 100 415" /><path class="vu-rel-link" data-rel-from="devops" data-rel-to="infra-ops" d="M 0 111 C 50 111, 50 35, 100 35" /><path class="vu-rel-link" data-rel-from="devops" data-rel-to="deploy-api" d="M 0 111 C 50 111, 50 111, 100 111" /><path class="vu-rel-link" data-rel-from="devops" data-rel-to="audit-logs" d="M 0 111 C 50 111, 50 339, 100 339" /><path class="vu-rel-link" data-rel-from="developer" data-rel-to="code-api" d="M 0 187 C 50 187, 50 187, 100 187" /><path class="vu-rel-link" data-rel-from="developer" data-rel-to="deploy-api" d="M 0 187 C 50 187, 50 111, 100 111" /><path class="vu-rel-link" data-rel-from="developer" data-rel-to="data-query" d="M 0 187 C 50 187, 50 263, 100 263" /><path class="vu-rel-link" data-rel-from="analyst" data-rel-to="data-query" d="M 0 263 C 50 263, 50 263, 100 263" /><path class="vu-rel-link" data-rel-from="analyst" data-rel-to="audit-logs" d="M 0 263 C 50 263, 50 339, 100 339" /><path class="vu-rel-link" data-rel-from="readonly" data-rel-to="data-query" d="M 0 339 C 50 339, 50 263, 100 263" />
+        </svg>
+      </div>
+      <ul class="vu-rel-list">
+        <li class="vu-rel-item" data-rel-target="infra-ops">
+          <div class="vu-rel-title">基础设施操作</div>
+          <div class="vu-rel-meta">服务器 / 网络 / 证书</div>
+        </li><li class="vu-rel-item" data-rel-target="deploy-api">
+          <div class="vu-rel-title">部署接口</div>
+          <div class="vu-rel-meta">发布 / 回滚 / 扩缩容</div>
+        </li><li class="vu-rel-item" data-rel-target="code-api">
+          <div class="vu-rel-title">代码 &amp; CI</div>
+          <div class="vu-rel-meta">构建 / 制品 / 测试报告</div>
+        </li><li class="vu-rel-item" data-rel-target="data-query">
+          <div class="vu-rel-title">数据查询</div>
+          <div class="vu-rel-meta">报表 / 指标 / 慢查询</div>
+        </li><li class="vu-rel-item" data-rel-target="audit-logs">
+          <div class="vu-rel-title">审计日志</div>
+          <div class="vu-rel-meta">操作记录 / 变更历史</div>
+        </li><li class="vu-rel-item" data-rel-target="user-mgmt">
+          <div class="vu-rel-title">用户管理</div>
+          <div class="vu-rel-meta">账号 / 角色 / 权限配置</div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  </article>
+<article class="block" id="tree-demo" style="--span:6;">
+    <div class="block-header">
+    <div>
+      
+      <h2>structureTree — 嵌套结构</h2>
+      
+    </div>
+    
+  </div><div class="vu-tree">
+    <div class="vu-tree-node" data-tree-node>
+    <span class="vu-tree-toggle open" style="">▶</span>
+    <span class="vu-tree-key">document</span>
+    <span class="vu-tree-type">.md 文件</span>
+  </div><div class="vu-tree-children" style=""><div class="vu-tree-node" data-tree-node>
+    <span class="vu-tree-toggle open" style="">▶</span>
+    <span class="vu-tree-key">frontmatter</span>
+    <span class="vu-tree-type">YAML</span>
+  </div><div class="vu-tree-children" style=""><div class="vu-tree-node" >
+    <span class="vu-tree-toggle " style="visibility:hidden;">▶</span>
+    <span class="vu-tree-key">title</span>:<span class="vu-tree-value">&quot;文档标题&quot;</span>
+    <span class="vu-tree-type">String</span>
+  </div><div class="vu-tree-node" >
+    <span class="vu-tree-toggle " style="visibility:hidden;">▶</span>
+    <span class="vu-tree-key">subtitle</span>:<span class="vu-tree-value">&quot;副标题&quot;</span>
+    <span class="vu-tree-type">String</span>
+  </div><div class="vu-tree-node" >
+    <span class="vu-tree-toggle " style="visibility:hidden;">▶</span>
+    <span class="vu-tree-key">glossary</span>:<span class="vu-tree-value">{ 术语: 释义 }</span>
+    <span class="vu-tree-type">Object</span>
+  </div></div><div class="vu-tree-node" data-tree-node>
+    <span class="vu-tree-toggle open" style="">▶</span>
+    <span class="vu-tree-key">~~~hero</span>
+    <span class="vu-tree-type">Block</span>
+  </div><div class="vu-tree-children" style=""><div class="vu-tree-node" >
+    <span class="vu-tree-toggle " style="visibility:hidden;">▶</span>
+    <span class="vu-tree-key">title</span>:<span class="vu-tree-value">&quot;...&quot;</span>
+    <span class="vu-tree-type">String</span>
+  </div><div class="vu-tree-node" >
+    <span class="vu-tree-toggle " style="visibility:hidden;">▶</span>
+    <span class="vu-tree-key">span</span>:<span class="vu-tree-value">12</span>
+    <span class="vu-tree-type">Number</span>
+  </div></div><div class="vu-tree-node" data-tree-node>
+    <span class="vu-tree-toggle open" style="">▶</span>
+    <span class="vu-tree-key">~~~matrix</span>
+    <span class="vu-tree-type">Block</span>
+  </div><div class="vu-tree-children" style=""><div class="vu-tree-node" >
+    <span class="vu-tree-toggle " style="visibility:hidden;">▶</span>
+    <span class="vu-tree-key">columns</span>:<span class="vu-tree-value">[...]</span>
+    <span class="vu-tree-type">Array</span>
+  </div><div class="vu-tree-node" >
+    <span class="vu-tree-toggle " style="visibility:hidden;">▶</span>
+    <span class="vu-tree-key">rows</span>:<span class="vu-tree-value">[...]</span>
+    <span class="vu-tree-type">Array</span>
+  </div></div></div>
+  </div>
+  </article>
+<article class="block" id="emphasis-demo" style="--span:6;">
+    <div class="block-header">
+    <div>
+      
+      
+      
+    </div>
+    
+  </div><div data-emphasis-panel="emphasis-demo">
+    <div class="vu-emphasis-grid">
+      <div class="vu-text-block">motionStage 渲染器在每个 step 中对 <span class="vu-hl " data-info-id="objects">objects</span> 应用增量 <span class="vu-hl active" data-info-id="states">states</span>，触发 CSS 过渡动画。每个 object 的 <span class="vu-hl " data-info-id="position">position</span>、opacity、status 和 <span class="vu-hl " data-info-id="emphasis">emphasis</span> 都可以在任意步骤中独立更新，无需重新描述整个场景。</div>
+      <div class="vu-info-panel">
+        <div class="vu-info-item " data-info-item="objects">
+          <div class="vu-info-label">持久化对象</div>
+          <div class="vu-info-value">定义一次，贯穿所有步骤</div>
+          <div class="vu-info-label" style="margin-top:8px;">类型</div><div class="vu-info-value" style="font-size:13px;color:#6B6965;">panel / card / phone / window / metric / badge / note / line</div>
+        </div><div class="vu-info-item active" data-info-item="states">
+          <div class="vu-info-label">步骤状态</div>
+          <div class="vu-info-value">每步只写变化的字段</div>
+          <div class="vu-info-label" style="margin-top:8px;">可用字段</div><div class="vu-info-value" style="font-size:13px;color:#6B6965;">x, y, opacity, status, emphasis, title, body, value</div>
+        </div><div class="vu-info-item " data-info-item="position">
+          <div class="vu-info-label">位置变换</div>
+          <div class="vu-info-value">CSS left / top 过渡</div>
+          <div class="vu-info-label" style="margin-top:8px;">动画</div><div class="vu-info-value" style="font-size:13px;color:#6B6965;">cubic-bezier(.2,.82,.2,1)，0.54s</div>
+        </div><div class="vu-info-item " data-info-item="emphasis">
+          <div class="vu-info-label">强调状态</div>
+          <div class="vu-info-value">改变边框色和背景色</div>
+          <div class="vu-info-label" style="margin-top:8px;">取值</div><div class="vu-info-value" style="font-size:13px;color:#6B6965;">focus / success / warning</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </article>
+<article class="block" id="kanban-demo" style="--span:12;">
+    <div class="block-header">
+    <div>
+      
+      <h2>kanban — 分组清单</h2>
+      
+    </div>
+    <button class="copy-mini" data-copy-block="kanban-demo">Copy</button>
+  </div><div class="kanban" data-kanban="kanban-demo">
+    <section class="kanban-col tone-info">
     <header class="kanban-head">
-      <div class="kanban-title"><span class="kanban-icon">!</span><span>客户信任风险</span></div>
-      <div class="kanban-count"><span data-kanban-done>1</span> / <span>4</span></div>
+      <div class="kanban-title"><span class="kanban-icon">✦</span><span>设计规则</span></div>
+      <div class="kanban-count"><span data-kanban-done>3</span> / <span>3</span></div>
     </header>
     <ul class="kanban-list">
       <li class="kanban-card ">
     <label class="kanban-check">
-      <input type="checkbox" >
+      <input type="checkbox" checked>
       <span class="kanban-box"></span>
-      <span class="kanban-text">未经搜索就确认品牌事实</span>
-    </label>
-  </li><li class="kanban-card ">
-    <label class="kanban-check">
-      <input type="checkbox" >
-      <span class="kanban-box"></span>
-      <span class="kanban-text">连续追问多个 intake 字段</span>
+      <span class="kanban-text">内容写在栅栏块里，渲染器管样式</span>
     </label>
   </li><li class="kanban-card ">
     <label class="kanban-check">
       <input type="checkbox" checked>
       <span class="kanban-box"></span>
-      <span class="kanban-text">对进度事件输出内部 <code>stage</code> 名</span>
+      <span class="kanban-text">信息形状决定组件选择</span>
     </label>
   </li><li class="kanban-card ">
     <label class="kanban-check">
-      <input type="checkbox" >
+      <input type="checkbox" checked>
       <span class="kanban-box"></span>
-      <span class="kanban-text">承诺还没有 finalizer 生成的链接</span>
+      <span class="kanban-text">可见文字只写主题，不写渲染注释</span>
     </label>
   </li>
     </ul>
   </section><section class="kanban-col tone-warning">
     <header class="kanban-head">
-      <div class="kanban-title"><span class="kanban-icon">$</span><span>成本与重复风险</span></div>
-      <div class="kanban-count"><span data-kanban-done>0</span> / <span>4</span></div>
+      <div class="kanban-title"><span class="kanban-icon">✎</span><span>写作规则</span></div>
+      <div class="kanban-count"><span data-kanban-done>0</span> / <span>3</span></div>
     </header>
     <ul class="kanban-list">
       <li class="kanban-card ">
     <label class="kanban-check">
       <input type="checkbox" >
       <span class="kanban-box"></span>
-      <span class="kanban-text">未得到 yes/no 就启动 async run</span>
+      <span class="kanban-text"><code>body</code> 字段：只在标题无法独立说明时填写</span>
     </label>
   </li><li class="kanban-card ">
     <label class="kanban-check">
       <input type="checkbox" >
       <span class="kanban-box"></span>
-      <span class="kanban-text">有旧 job 仍然重跑</span>
+      <span class="kanban-text">平铺文字 → 优先转成结构组件</span>
     </label>
   </li><li class="kanban-card ">
     <label class="kanban-check">
       <input type="checkbox" >
       <span class="kanban-box"></span>
-      <span class="kanban-text">身份确认和参数确认混成一轮</span>
-    </label>
-  </li><li class="kanban-card tone-accent">
-    <label class="kanban-check">
-      <input type="checkbox" >
-      <span class="kanban-box"></span>
-      <span class="kanban-text">mock 路径被误报成生产通过</span>
+      <span class="kanban-text">表格列顺序：对象、结论、风险、证据、下一步</span>
     </label>
   </li>
     </ul>
-  </section><section class="kanban-col tone-info">
+  </section><section class="kanban-col tone-success">
     <header class="kanban-head">
-      <div class="kanban-title"><span class="kanban-icon">#</span><span>资源一致性风险</span></div>
-      <div class="kanban-count"><span data-kanban-done>0</span> / <span>4</span></div>
+      <div class="kanban-title"><span class="kanban-icon">✓</span><span>已验证</span></div>
+      <div class="kanban-count"><span data-kanban-done>4</span> / <span>4</span></div>
     </header>
     <ul class="kanban-list">
       <li class="kanban-card ">
     <label class="kanban-check">
-      <input type="checkbox" >
+      <input type="checkbox" checked>
       <span class="kanban-box"></span>
-      <span class="kanban-text"><code>product_id</code> 放进 payload 而不是 top-level</span>
+      <span class="kanban-text">12 列网格分列布局</span>
     </label>
   </li><li class="kanban-card ">
     <label class="kanban-check">
-      <input type="checkbox" >
+      <input type="checkbox" checked>
       <span class="kanban-box"></span>
-      <span class="kanban-text"><code>job_type</code> 没核实就当研究 job</span>
+      <span class="kanban-text">Tooltip / Glossary 内联注释</span>
     </label>
   </li><li class="kanban-card ">
     <label class="kanban-check">
-      <input type="checkbox" >
+      <input type="checkbox" checked>
       <span class="kanban-box"></span>
-      <span class="kanban-text">导出结果缺少上游任务 id</span>
+      <span class="kanban-text">Matrix 搜索 + 过滤 + 排序</span>
     </label>
   </li><li class="kanban-card ">
     <label class="kanban-check">
-      <input type="checkbox" >
+      <input type="checkbox" checked>
       <span class="kanban-box"></span>
-      <span class="kanban-text">旧发布能力被当成当前能力</span>
+      <span class="kanban-text">MotionStage 真实 UI 演示</span>
     </label>
   </li>
     </ul>
   </section>
   </div>
   </article>
-<article class="block editor-panel" id="form" style="--span:6;">
+<article class="block editor-panel" id="form-demo" style="--span:6;">
     <div class="block-header">
     <div>
       
-      <h2>Form Editor</h2>
+      <h2>formEditor — 结构化表单</h2>
       
     </div>
-    <button class="copy-mini" data-copy-block="form">Copy</button>
+    <button class="copy-mini" data-copy-block="form-demo">Copy</button>
   </div><div class="form-grid">
     <label class="field"><span class="label">处理模式</span><select><option selected>auto</option><option >manual</option><option >precheck</option></select></label><label class="field"><span class="label">密度</span><input value="compact"></label><label class="field"><span class="label">规则</span><textarea>正文变长时优先转成视觉组件。</textarea></label>
   </div>
   </article>
-<article class="block" id="insights" style="--span:6;">
+<article class="block editor-panel" id="prompt2" style="--span:6;">
     <div class="block-header">
     <div>
       
-      <h2>洞察摘要</h2>
+      <h2>promptEditor — 提示词模板（独立示例）</h2>
       
     </div>
-    
-  </div><div class="masonry">
-    <div class="note"><div class="label">01</div><strong>HTML 的价值来自组织能力</strong><p class="text-sm">分列、对比、流程、标注和交互，比长文更重要。</p></div><div class="note"><div class="label">02</div><strong>JSON 才是可审查源文件</strong><p class="text-sm">HTML 可以生成，JSON 保持清晰。</p></div>
-  </div>
+    <button class="copy-mini" data-copy-block="prompt2">Copy</button>
+  </div><div class="prompt-paper" contenteditable="true">分析 <mark>{{repo}}</mark> 的 PR #<mark>{{number}}</mark>，输出风险矩阵、diff 审查和发布检查清单。</div>
   </article>
     </section>
   </main>
   <div class="toast" id="toast">已复制</div>
   <script>
-const artifactSpec = {"meta":{"lang":"zh-CN","title":"html-doc","subtitle":"Warm Nomad Component Showcase"},"actions":[{"label":"Copy JSON","copy":"component showcase"},{"label":"Export Layout","primary":true,"copy":"Render this JSON with scripts/render-html-doc.mjs"}],"content":[{"id":"hero","type":"hero","span":12,"kicker":"visual first","title":"用少量 JSON 组合出高质量、可读、可交互的 HTML Doc","body":"尽量把信息转换成流程、矩阵、对比、批注、编辑器和导出控件。","tags":["warm-flat","low-shadow","humanist-type","grid-first","visual-over-text"]},{"id":"metrics","type":"metrics","span":4,"title":"核心指标","body":"数字、趋势和状态适合视觉化，减少长段说明。","items":[{"label":"TOKENS","value":"-38%","note":"JSON 替代重复 HTML","spark":[8,7,7,5,4,3,3]},{"label":"READ","value":"2.4x","note":"扫读速度提升","spark":[2,3,4,6,7,8,9]},{"label":"UI","value":"17","note":"内置组件","spark":[3,3,4,6,8,12,17]},{"label":"TEXT","value":"LOW","note":"正文轻量化","spark":[9,8,6,5,4,3,2]}]},{"id":"stage","type":"stage","span":8,"title":"Static Stage","body":"用定位元素表达架构、界面草图和关系图。","stage":{"width":960,"height":520,"background":"grid"},"elements":[{"id":"source_config","type":"panel","x":80,"y":95,"w":210,"h":110,"title":"source_config","content":"rules / inputs"},{"id":"runtime_state","type":"panel","x":380,"y":90,"w":230,"h":120,"title":"runtime_state","content":"current mode + status"},{"id":"event_log","type":"panel","x":700,"y":100,"w":180,"h":100,"title":"event_log","content":"immutable records"},{"id":"guard","type":"annotation","x":385,"y":275,"w":250,"h":74,"content":"运行时只读取已确认配置和容量边界。"},{"id":"line_1","type":"connection","from":"source_config","to":"runtime_state"},{"id":"line_2","type":"connection","from":"runtime_state","to":"event_log"}]},{"id":"prompt","type":"promptEditor","span":4,"title":"Prompt Editor","body":"变量高亮，结果可复制。","prompt":"Create a {{artifact_type}} for {{audience}}. Prefer diagrams, matrices and inline annotations over long prose."},{"id":"motion-demo","type":"motionStage","span":12,"title":"Motion Stage","body":"同一组对象在步骤之间移动、变色、显隐和改写数值，适合演示真实流程。","interval":1600,"stage":{"width":1180,"height":520},"objects":[{"id":"phone","type":"phone","x":85,"y":80,"w":300,"h":350,"label":"Publish","title":"Draft ready","props":{"items":[{"label":"Caption","value":"ok"},{"label":"Cover","value":"set"},{"label":"Channels","value":"3"}]}},{"id":"queue","type":"window","x":455,"y":110,"w":300,"h":220,"label":"Queue","title":"Waiting","body":"3 channels selected","props":{"items":[{"label":"XHS","value":"ready"},{"label":"Douyin","value":"ready"},{"label":"Bilibili","value":"ready"}]}},{"id":"metric","type":"metric","x":855,"y":130,"w":170,"h":120,"value":"0","label":"published"},{"id":"toast","type":"note","x":760,"y":330,"w":280,"h":82,"body":"发布完成后，读者能直接看到状态变化。","opacity":0.35},{"id":"line","type":"line","x":385,"y":215,"w":70,"h":1,"opacity":0.4}],"steps":[{"title":"1. 准备内容","body":"素材、标题和渠道都在同一个画面里呈现。","states":{"phone":{"emphasis":"focus"},"queue":{"opacity":0.45,"status":"muted"},"metric":{"value":"0","opacity":0.35},"toast":{"opacity":0.25},"line":{"opacity":0.25}}},{"title":"2. 提交发布","body":"队列窗口成为焦点，展示任务被拆分到多个渠道。","states":{"phone":{"x":65,"y":95,"opacity":0.75},"queue":{"x":430,"y":95,"opacity":1,"emphasis":"focus","title":"Publishing","body":"dispatching 3 channel jobs"},"metric":{"value":"0","opacity":0.45},"toast":{"opacity":0.25},"line":{"x":365,"y":215,"w":65,"opacity":0.7}}},{"title":"3. 状态回写","body":"同一画面里更新数值和结果提示，减少额外解释。","states":{"phone":{"x":65,"y":95,"opacity":0.65},"queue":{"x":390,"y":115,"emphasis":"success","title":"Complete","body":"all channels accepted"},"metric":{"x":820,"y":120,"value":"3","opacity":1,"emphasis":"success"},"toast":{"opacity":1,"emphasis":"success"},"line":{"x":690,"y":215,"w":125,"opacity":0.65}}}]},{"id":"flow","type":"flow","span":8,"title":"生成流程","nodes":[{"label":"需求","note":"代码、数据、问题"},{"label":"JSON","note":"意图和结构"},{"label":"Renderer","note":"组件组合"},{"label":"HTML","note":"可读可交互"}]},{"id":"decision","type":"decisionTree","span":4,"title":"组件选择","items":[{"level":0,"condition":"需要解释过程","result":"使用 flow 或 timeline"},{"level":1,"condition":"有代码变化","result":"使用 diffReview"},{"level":1,"condition":"有多个方案","result":"使用 variantGrid 或 matrix"},{"level":0,"condition":"需要用户调整","result":"使用 sliderLab、formEditor 或 promptEditor"}]},{"id":"matrix","type":"matrix","span":12,"title":"Decision Matrix","body":"表格先显示对象、结论和风险，长证据放进展开详情。","search":true,"sortable":true,"filters":[{"key":"risk","label":"Risk","options":["High","Medium","Low"]}],"columns":[{"key":"object","label":"对象","minWidth":"190px"},{"key":"summary","label":"一句话结论","minWidth":"260px"},{"key":"risk","label":"风险","width":"96px"},{"key":"evidence","label":"关键证据","minWidth":"250px"},{"key":"confidence","label":"置信度","width":"120px"},{"key":"next","label":"下一步","minWidth":"150px"}],"rows":[{"group":"需要确认"},{"object":"`matrix` 表格","summary":"**默认展示判断**，证据按需展开。","risk":{"badge":"Medium","tone":"warning"},"evidence":{"summary":"Markdown 宽表容易丢列上下文。","detail":"固定表头和首列后，读者滚动时仍能确认对象和维度。"},"confidence":{"progress":86,"label":"足够稳定"},"next":["freeze","search","tags"],"details":"适合方案比较、风险表、PR review、排期表、需求矩阵。"},{"object":"`motionStage` 动画","summary":"只在状态变化能直观看懂时使用。","risk":{"badge":"Low","tone":"success"},"evidence":{"summary":"对象位置、显隐、状态和数值发生变化。","detail":"字幕只做补充，主信息应该出现在画面变化里。"},"confidence":{"score":78,"label":"可复用"},"next":{"badge":"demo","tone":"accent"}},{"group":"可以后置"},{"object":"长正文","summary":"拆成卡片、矩阵、批注或展开材料。","risk":{"badge":"High","tone":"danger"},"evidence":{"summary":"连续段落会让读者反复重建结构。","detail":"如果内容需要比较、优先级、关系或状态，就改用视觉组件。"},"confidence":{"progress":92,"label":"明确"},"next":{"badge":"split","tone":"info"}}]},{"id":"diff","type":"diffReview","span":8,"title":"Diff Review","lines":[{"type":"remove","text":"- <div class=\"card shadow-lg rounded-xl p-8\">"},{"type":"add","text":"+ <section data-block=\"metric\" class=\"tile\">"},{"type":"add","text":"+   <Metric value={data.value} spark={data.trend} />"},{"type":"neutral","text":"  <\/section>"}],"findings":[{"severity":"P1","title":"组件替代样式堆叠","body":"保留语义数据，避免重复生成视觉细节。"},{"severity":"P2","title":"降低 DOM 嵌套","body":"单个 block 直接承载布局，不再卡片套卡片。"}]},{"id":"timeline","type":"timeline","span":4,"title":"执行时间线","items":[{"time":"00:00","title":"读取上下文","body":"抽取实体和目标"},{"time":"00:12","title":"选择组件","body":"映射到 JSON blocks"},{"time":"00:28","title":"输出 HTML","body":"浏览器直接打开"}]},{"id":"architecture","type":"flow","span":8,"title":"生成链路","nodes":[{"label":"User Context","note":"需求、代码、数据"},{"label":"HTML Doc JSON","note":"紧凑结构"},{"label":"Renderer","note":"主题和组件"},{"label":"HTML","note":"浏览器阅读"},{"label":"Copy / CSV / Diff","note":"回流到工作流"}]},{"id":"variants","type":"variantGrid","span":4,"title":"Variant Grid","items":[{"label":"A","title":"报告型","body":"洞察、证据、结论","score":88},{"label":"B","title":"评审型","body":"diff、风险、路径","score":92},{"label":"C","title":"编辑型","body":"表单、滑块、导出","score":84}]},{"id":"code","type":"codeAnnotation","span":6,"title":"代码批注","code":"function renderBlock(block) {\n  const component = registry[block.type]\n  return component(block)\n}","annotations":[{"ref":"registry","body":"组件注册表是 Skill 的稳定核心。"},{"ref":"block.type","body":"AI 负责选择意图，视觉系统交给渲染器。"}]},{"id":"sliders","type":"sliderLab","span":6,"title":"Slider Lab","controls":[{"type":"range","label":"信息密度","min":0,"max":100,"value":72},{"type":"range","label":"暖色强度","min":0,"max":100,"value":34},{"type":"toggle","label":"优先可视化","value":true}]},{"id":"evidence","type":"evidenceBoard","span":8,"title":"Evidence Board","items":[{"label":"USER","title":"不喜欢容器过度嵌套","body":"整体采用铺地砖式 grid，组件之间共用 1px 分割线。"},{"label":"DESIGN","title":"人文感字体","body":"标题使用 Optima / Avenir Next，中文回退到苹方和霞鹜文楷。"},{"label":"RULE","title":"文字尽量少","body":"正文保持轻量；需要细节时交给矩阵、批注或展开材料。"},{"label":"HTML","title":"充分利用水平空间","body":"12 栏 span 机制，支持 4/8、6/6、8/4 分列。"}]},{"id":"kanban","type":"kanban","span":12,"title":"Kanban","body":"横向分组清单，适合风险桶、任务桶、审查桶和反馈桶。","columns":[{"title":"客户信任风险","icon":"!","tone":"danger","items":["未经搜索就确认品牌事实","连续追问多个 intake 字段",{"title":"对进度事件输出内部 `stage` 名","done":true},"承诺还没有 finalizer 生成的链接"]},{"title":"成本与重复风险","icon":"$","tone":"warning","items":["未得到 yes/no 就启动 async run","有旧 job 仍然重跑","身份确认和参数确认混成一轮",{"title":"mock 路径被误报成生产通过","tone":"accent"}]},{"title":"资源一致性风险","icon":"#","tone":"info","items":["`product_id` 放进 payload 而不是 top-level","`job_type` 没核实就当研究 job","导出结果缺少上游任务 id","旧发布能力被当成当前能力"]}]},{"id":"form","type":"formEditor","span":6,"title":"Form Editor","fields":[{"name":"mode","label":"处理模式","type":"select","value":"auto","options":["auto","manual","precheck"]},{"name":"density","label":"密度","value":"compact"},{"name":"rule","label":"规则","type":"textarea","value":"正文变长时优先转成视觉组件。"}]},{"id":"insights","type":"evidenceBoard","span":6,"title":"洞察摘要","items":[{"label":"01","title":"HTML 的价值来自组织能力","body":"分列、对比、流程、标注和交互，比长文更重要。"},{"label":"02","title":"JSON 才是可审查源文件","body":"HTML 可以生成，JSON 保持清晰。"}]}]};
+const artifactSpec = {"meta":{"title":"html-doc","subtitle":"Component Showcase — 全组件参考","lang":"zh-CN","glossary":{"Block":"页面上的一个内容单元，对应一个 Markdown 栅栏块","Span":"Block 在 12 列网格中占据的列数，控制水平布局宽度"}},"content":[{"id":"hero","span":12,"kicker":"html-doc · 全组件参考","title":"用 Markdown 栅栏块组合出高质量、可读、可交互的文档","body":"每个组件对应一种信息结构：流程、对比、架构、状态变化、代码、关系、证据、编辑器。","tags":["warm-flat","12-col-grid","interactive","export-ready"],"type":"hero"},{"id":"metrics","span":4,"title":"metrics — 关键指标","items":[{"label":"[[Block]] 类型","value":"23","note":"覆盖所有信息形态","spark":[3,5,8,12,16,20,23]},{"label":"文档体积","value":"-62%","note":"相比等效 HTML","spark":[9,8,7,6,5,4,4]},{"label":"[[Span]] 系统","value":"12 列","note":"4/8, 6/6, 8/4 分列","spark":[4,4,6,8,8,12,12]}],"type":"metrics"},{"id":"chart-demo","span":8,"title":"chart — 数据趋势图","variant":"line","data":{"labels":["Jan","Feb","Mar","Apr","May","Jun"],"series":[{"label":"Web MAU","values":[4200,4800,5100,5600,6200,6800]},{"label":"Mobile MAU","values":[2100,2800,3400,3900,4600,5200]}]},"type":"chart"},{"id":"stage-demo","span":8,"title":"stage — 自由定位图","stage":{"width":960,"height":480},"elements":[{"id":"cfg","type":"panel","x":70,"y":110,"w":200,"h":100,"title":"source_config","content":"rules / inputs"},{"id":"rt","type":"panel","x":370,"y":105,"w":220,"h":115,"title":"runtime_state","content":"current mode + status"},{"id":"log","type":"panel","x":700,"y":110,"w":180,"h":100,"title":"event_log","content":"immutable records"},{"id":"note1","type":"annotation","x":370,"y":285,"w":240,"h":64,"content":"运行时只读取已确认配置和容量边界。"},{"id":"l1","type":"connection","from":"cfg","to":"rt"},{"id":"l2","type":"connection","from":"rt","to":"log"}],"type":"stage"},{"id":"prompt","span":4,"title":"promptEditor — 模板编辑器","prompt":"Create a {{artifact_type}} for {{audience}}.\nPrefer diagrams and matrices over long prose.","type":"promptEditor"},{"id":"motion-demo","span":12,"title":"motionStage — 外卖下单支付流程","body":"同一组持久对象在步骤间改变内容、状态和可见性，演示真实 UI 交互而非流程图。","stage":{"width":1180,"height":500},"objects":[{"id":"phone","type":"phone","x":55,"y":50,"w":250,"h":390,"title":"午餐外卖","items":[{"label":"宫保鸡丁","value":"×1"},{"label":"米饭","value":"×2"},{"label":"合计","value":"¥46"}]},{"id":"map","type":"window","x":390,"y":70,"w":340,"h":270,"title":"配送追踪","body":"等待骑手接单...","opacity":0.15},{"id":"eta","type":"metric","x":820,"y":65,"w":200,"h":105,"label":"预计送达","value":"—","opacity":0.3},{"id":"status","type":"badge","x":390,"y":370,"w":200,"h":45,"title":"选餐中"},{"id":"notif","type":"note","x":820,"y":190,"w":200,"h":100,"body":"骑手已接单，正在取餐","opacity":0}],"steps":[{"title":"浏览菜单","body":"菜单、价格、评价集中在一个屏幕里，地图和 ETA 待激活。","states":{"phone":{"status":"active"},"map":{"opacity":0.15},"eta":{"opacity":0.3},"status":{"title":"选餐中"},"notif":{"opacity":0}}},{"title":"确认订单","body":"红包自动抵扣，实付 ¥41，进入待支付状态。","states":{"phone":{"title":"确认订单","status":"active"},"status":{"title":"待支付","emphasis":"focus"},"map":{"opacity":0.15},"eta":{"opacity":0.3}}},{"title":"扫码支付","body":"支付二维码 30 秒有效，超时自动刷新。","states":{"phone":{"title":"扫码支付","body":"¥41 · 请在 30 秒内完成"},"status":{"title":"支付中","emphasis":"focus"}}},{"title":"支付成功 · 骑手接单","body":"配送追踪实时同步，预计 28 分钟送达。","states":{"phone":{"title":"已下单 ✓","body":"骑手正在赶来","emphasis":"success"},"map":{"opacity":1,"title":"配送追踪","body":"距您 1.2km · 行驶中","status":"active"},"eta":{"opacity":1,"value":"28 min"},"status":{"title":"配送中","emphasis":"success"},"notif":{"opacity":1}}}],"type":"motionStage"},{"id":"arch-demo","title":"layeredArchitecture — 分层服务架构图","stage":{"width":1180,"height":500},"lanes":[{"id":"client","title":"客户端","subtitle":"Web / Mobile"},{"id":"api","title":"API 层","subtitle":"网关 / 认证 / 业务"},{"id":"data","title":"数据层","subtitle":"持久化 / 缓存 / 队列"}],"nodes":[{"id":"browser","lane":"client","row":0,"kind":"api","title":"Browser","body":"SPA · React"},{"id":"mobile","lane":"client","row":1,"kind":"api","title":"Mobile App","body":"iOS / Android"},{"id":"gateway","lane":"api","row":0,"kind":"api","title":"API Gateway","body":"限流 · 路由"},{"id":"auth","lane":"api","row":1,"kind":"worker","title":"Auth Service","body":"JWT · OAuth2"},{"id":"service","lane":"api","row":2,"kind":"worker","title":"Business API","body":"核心逻辑"},{"id":"db","lane":"data","row":0,"kind":"data","title":"PostgreSQL","body":"主库 · 只读副本"},{"id":"cache","lane":"data","row":1,"kind":"data","title":"Redis","body":"会话 · 热数据"},{"id":"queue","lane":"data","row":2,"kind":"provider","title":"Message Queue","body":"异步任务"}],"edges":[{"from":"browser","to":"gateway","step":1,"label":"HTTPS"},{"from":"mobile","to":"gateway","step":2,"label":"HTTPS"},{"from":"gateway","to":"auth","step":3,"label":"verify token"},{"from":"auth","to":"service","step":4,"label":"authorized"},{"from":"service","to":"db","step":5,"label":"read / write"},{"from":"service","to":"cache","style":"dashed","label":"cache get/set"},{"from":"service","to":"queue","style":"dashed","label":"enqueue job"}],"type":"layeredArchitecture"},{"id":"flow-demo","span":8,"title":"flow — 线性流程","nodes":[{"label":"需求输入","note":"代码、数据、问题"},{"label":"写文档","note":"选组件、填字段"},{"label":"渲染","note":"node scripts/render-html-doc.mjs"},{"label":"HTML 输出","note":"浏览器直接打开"}],"type":"flow"},{"id":"decision-demo","span":4,"title":"decisionTree — 决策树","items":[{"level":0,"condition":"需要对比多个选项","result":"matrix 或 variantGrid"},{"level":1,"condition":"≥ 4 行 + 3 列","result":"matrix（支持排序过滤）"},{"level":1,"condition":"≤ 3 个方案","result":"variantGrid（更直观）"},{"level":0,"condition":"需要演示状态变化","result":"motionStage"},{"level":0,"condition":"需要服务架构图","result":"layeredArchitecture"}],"type":"decisionTree"},{"id":"matrix-demo","span":12,"title":"matrix — 决策矩阵","body":"先显示对象、结论和风险，长证据放进展开详情。","search":true,"sortable":true,"filters":[{"key":"risk","label":"风险","options":["High","Medium","Low"]}],"columns":[{"key":"object","label":"对象","minWidth":"190px"},{"key":"summary","label":"一句话结论","minWidth":"260px"},{"key":"risk","label":"风险","width":"96px"},{"key":"evidence","label":"关键证据","minWidth":"250px"},{"key":"next","label":"下一步","minWidth":"150px"}],"rows":[{"group":"视觉组件"},{"object":"`matrix` 宽表","summary":"**首列固定 + 可搜索**，适合 4 行 3 列以上的对比","risk":{"badge":"Low","tone":"success"},"evidence":{"summary":"表头和首列在横向滚动时保持可见","detail":"支持搜索、多维过滤、排序、展开详情、进度条、badge 和 sparkline。"},"next":{"badge":"ship","tone":"accent"}},{"object":"`motionStage` 动画","summary":"对象位置、可见性、状态、内容变化时使用","risk":{"badge":"Medium","tone":"warning"},"evidence":{"summary":"字幕只做补充，主信息出现在画面变化里","detail":"避免只改 caption 而画面不动——那种效果不如 timeline。"},"next":["真实 UI 对象","每步有变化"]},{"group":"内容建议"},{"object":"长正文段落","summary":"**拆成组件**：矩阵、批注、流程或展开材料","risk":{"badge":"High","tone":"danger"},"evidence":{"summary":"连续段落让读者重建结构，视觉组件直接呈现","detail":"如果内容有对比、顺序、关系或状态，改用对应组件。"},"next":{"badge":"refactor","tone":"info"},"details":"经验法则：3 行以上的段落通常可以变成 flow、timeline 或 matrix 的一行。"}],"type":"matrix"},{"id":"diff-demo","span":8,"title":"diffReview — 代码变更审查","lines":[{"type":"context","text":"  livenessProbe:"},{"type":"remove","text":"-   initialDelaySeconds: 5"},{"type":"add","text":"+   initialDelaySeconds: 15"},{"type":"remove","text":"-   timeoutSeconds: 5"},{"type":"add","text":"+   timeoutSeconds: 10"},{"type":"context","text":"  readinessProbe:"},{"type":"remove","text":"-   initialDelaySeconds: 3"},{"type":"add","text":"+   initialDelaySeconds: 12"}],"findings":[{"severity":"P1","title":"修复冷启动误回滚","body":"Java 服务 p50 启动 8-12s，原 5s 超时必然失败。"},{"severity":"P2","title":"readiness 同步调整","body":"避免未就绪时接收流量。"}],"type":"diffReview"},{"id":"timeline-demo","span":4,"title":"timeline — 时间轴","items":[{"time":"09:15","title":"PR 合并","body":"feat: 优化发布逻辑"},{"time":"09:31","title":"测试通过","body":"450 个用例","status":"active"},{"time":"09:52","title":"发布完成","body":"全量切换","status":"active"}],"type":"timeline"},{"id":"code-demo","span":6,"title":"codeAnnotation — 代码批注","code":"function renderBlock(block) {\n  const component = registry[block.type]\n  return component(block)\n}","annotations":[{"ref":"registry","body":"组件注册表是 Skill 的稳定核心，新组件直接注册即可。"},{"ref":"block.type","body":"Agent 负责选择意图，视觉系统由渲染器统一管理。"}],"type":"codeAnnotation"},{"id":"sliders-demo","span":6,"title":"sliderLab — 调节面板","controls":[{"type":"range","label":"信息密度","min":0,"max":100,"value":72},{"type":"range","label":"暖色强度","min":0,"max":100,"value":34},{"type":"toggle","label":"优先可视化","value":true}],"type":"sliderLab"},{"id":"variants-demo","span":4,"title":"variantGrid — 方案对比","items":[{"label":"A","title":"报告型","body":"洞察、证据、结论","score":88},{"label":"B","title":"审查型","body":"diff、风险、路径","score":92},{"label":"C","title":"编辑型","body":"表单、滑块、导出","score":84}],"type":"variantGrid"},{"id":"evidence-demo","span":8,"title":"evidenceBoard — 证据板","items":[{"label":"USER","title":"不喜欢容器过度嵌套","body":"整体采用铺地砖式 grid，组件之间共用 1px 分割线。"},{"label":"DESIGN","title":"人文感字体","body":"标题使用 Optima / Avenir Next，中文回退苹方。"},{"label":"RULE","title":"文字尽量少","body":"正文保持轻量；细节交给矩阵、批注或展开材料。"},{"label":"HTML","title":"充分利用水平空间","body":"12 列 span 机制，支持 4/8、6/6、8/4 分列。"}],"type":"evidenceBoard"},{"id":"crossref-demo","span":12,"title":"crossRef — GitHub Actions 部署流水线","primary":{"label":".github/workflows/deploy.yml","sections":[{"title":"触发器 & 环境变量","content":"on:\n  push:\n    branches: [main]\n  workflow_dispatch:\n\nenv:\n  APP_ENV: production\n  # 从 config/.env.production 注入\n  REGISTRY: ${{ secrets.ECR_REGISTRY }}\n  IMAGE_TAG: ${{ github.sha }}\n  APP_PORT:  ${{ vars.APP_PORT }}"},{"title":"build-and-push job","content":"build:\n  runs-on: ubuntu-latest\n  steps:\n    - uses: actions/checkout@v4\n    - name: Build image\n      run: |\n        docker build \\\n          -f docker/Dockerfile \\\n          --build-arg APP_ENV=$APP_ENV \\\n          -t $REGISTRY/app:$IMAGE_TAG .\n    - name: Scan for vulnerabilities\n      uses: aquasecurity/trivy-action@master\n      with:\n        image-ref: $REGISTRY/app:$IMAGE_TAG\n    - name: Push to ECR\n      run: docker push $REGISTRY/app:$IMAGE_TAG"},{"title":"helm-deploy job","content":"deploy:\n  needs: [build]\n  runs-on: ubuntu-latest\n  steps:\n    - name: Helm upgrade\n      run: |\n        helm upgrade --install app ./helm \\\n          -f helm/values.yaml \\\n          --set image.tag=$IMAGE_TAG \\\n          --set env=$APP_ENV \\\n          --atomic --timeout 5m\n    - name: Verify k8s rollout\n      run: |\n        kubectl apply -f k8s/deployment.yaml\n        kubectl rollout status \\\n          deployment/app --timeout=3m"},{"title":"post-deploy checks","content":"verify:\n  needs: [deploy]\n  steps:\n    - name: Smoke test\n      run: |\n        curl -sf https://$APP_HOST/healthz \\\n          || (kubectl rollout undo deployment/app && exit 1)\n    - name: Notify Slack\n      if: always()\n      run: |\n        STATUS=${{ job.status }}\n        curl -X POST ${{ secrets.SLACK_WEBHOOK }} \\\n          -d \"{\\\"text\\\":\\\"deploy $IMAGE_TAG: $STATUS\\\"}\""}]},"references":[{"id":"envfile","label":"config/.env.production","preview":"# Production environment\nAPP_PORT=8080\nAPP_HOST=app.example.com\nDB_POOL_MAX=20\nDB_POOL_IDLE=5\nLOG_LEVEL=warn\nCACHE_TTL=300\nFEATURE_CANARY=true\nFEATURE_NEW_CHECKOUT=false"},{"id":"dockerfile","label":"docker/Dockerfile","preview":"FROM node:20-alpine AS builder\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci --only=production\nCOPY . .\nRUN npm run build\n\nFROM node:20-alpine\nWORKDIR /app\nCOPY --from=builder /app/dist ./dist\nCOPY --from=builder /app/node_modules ./node_modules\nEXPOSE 8080\nCMD [\"node\", \"dist/server.js\"]"},{"id":"helmvalues","label":"helm/values.yaml","preview":"replicaCount: 3\nimage:\n  repository: 123456.dkr.ecr.us-east-1.amazonaws.com/app\n  tag: latest\n  pullPolicy: IfNotPresent\nresources:\n  requests: { cpu: 250m, memory: 256Mi }\n  limits:   { cpu: 500m, memory: 512Mi }\nautoscaling:\n  enabled: true\n  minReplicas: 3\n  maxReplicas: 10\n  targetCPUUtilizationPercentage: 70\ningress:\n  enabled: true\n  host: app.example.com"},{"id":"k8sdeploy","label":"k8s/deployment.yaml","preview":"apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: app\nspec:\n  strategy:\n    type: RollingUpdate\n    rollingUpdate:\n      maxSurge: 1\n      maxUnavailable: 0\n  template:\n    spec:\n      containers:\n        - name: app\n          livenessProbe:\n            httpGet: { path: /healthz, port: 8080 }\n            initialDelaySeconds: 15\n          readinessProbe:\n            httpGet: { path: /ready, port: 8080 }"}],"links":[{"text":"config/.env.production","to":"envfile"},{"text":"docker/Dockerfile","to":"dockerfile"},{"text":"helm/values.yaml","to":"helmvalues"},{"text":"k8s/deployment.yaml","to":"k8sdeploy"}],"type":"crossRef"},{"id":"relmap-demo","span":12,"title":"relationshipMap — RBAC 权限分配","body":"哪些角色可以访问哪些 API 权限组。连线密集的角色拥有更广泛的访问权限，便于权限审计时快速发现过度授权。","sources":[{"id":"super-admin","title":"超级管理员","meta":"SRE Team"},{"id":"devops","title":"运维工程师","meta":"Ops Team"},{"id":"developer","title":"开发工程师","meta":"Eng Team"},{"id":"analyst","title":"数据分析师","meta":"Data Team"},{"id":"readonly","title":"只读用户","meta":"Stakeholder"}],"targets":[{"id":"infra-ops","title":"基础设施操作","meta":"服务器 / 网络 / 证书"},{"id":"deploy-api","title":"部署接口","meta":"发布 / 回滚 / 扩缩容"},{"id":"code-api","title":"代码 & CI","meta":"构建 / 制品 / 测试报告"},{"id":"data-query","title":"数据查询","meta":"报表 / 指标 / 慢查询"},{"id":"audit-logs","title":"审计日志","meta":"操作记录 / 变更历史"},{"id":"user-mgmt","title":"用户管理","meta":"账号 / 角色 / 权限配置"}],"edges":[{"from":"super-admin","to":"infra-ops"},{"from":"super-admin","to":"deploy-api"},{"from":"super-admin","to":"code-api"},{"from":"super-admin","to":"data-query"},{"from":"super-admin","to":"audit-logs"},{"from":"super-admin","to":"user-mgmt"},{"from":"devops","to":"infra-ops"},{"from":"devops","to":"deploy-api"},{"from":"devops","to":"audit-logs"},{"from":"developer","to":"code-api"},{"from":"developer","to":"deploy-api"},{"from":"developer","to":"data-query"},{"from":"analyst","to":"data-query"},{"from":"analyst","to":"audit-logs"},{"from":"readonly","to":"data-query"}],"type":"relationshipMap"},{"id":"tree-demo","span":6,"title":"structureTree — 嵌套结构","nodes":[{"key":"document","type":".md 文件","children":[{"key":"frontmatter","type":"YAML","children":[{"key":"title","value":"\"文档标题\"","type":"String"},{"key":"subtitle","value":"\"副标题\"","type":"String"},{"key":"glossary","value":"{ 术语: 释义 }","type":"Object"}]},{"key":"~~~hero","type":"Block","children":[{"key":"title","value":"\"...\"","type":"String"},{"key":"span","value":"12","type":"Number"}]},{"key":"~~~matrix","type":"Block","children":[{"key":"columns","value":"[...]","type":"Array"},{"key":"rows","value":"[...]","type":"Array"}]}]}],"type":"structureTree"},{"id":"emphasis-demo","span":6,"text":"motionStage 渲染器在每个 step 中对 objects 应用增量 states，触发 CSS 过渡动画。每个 object 的 position、opacity、status 和 emphasis 都可以在任意步骤中独立更新，无需重新描述整个场景。","active":"states","items":[{"id":"objects","text":"objects","label":"持久化对象","value":"定义一次，贯穿所有步骤","metaLabel":"类型","meta":"panel / card / phone / window / metric / badge / note / line"},{"id":"states","text":"states","label":"步骤状态","value":"每步只写变化的字段","metaLabel":"可用字段","meta":"x, y, opacity, status, emphasis, title, body, value"},{"id":"position","text":"position","label":"位置变换","value":"CSS left / top 过渡","metaLabel":"动画","meta":"cubic-bezier(.2,.82,.2,1)，0.54s"},{"id":"emphasis","text":"emphasis","label":"强调状态","value":"改变边框色和背景色","metaLabel":"取值","meta":"focus / success / warning"}],"type":"emphasisPanel"},{"id":"kanban-demo","span":12,"title":"kanban — 分组清单","columns":[{"title":"设计规则","icon":"✦","tone":"info","items":[{"title":"内容写在栅栏块里，渲染器管样式","done":true},{"title":"信息形状决定组件选择","done":true},{"title":"可见文字只写主题，不写渲染注释","done":true}]},{"title":"写作规则","icon":"✎","tone":"warning","items":[{"title":"`body` 字段：只在标题无法独立说明时填写","done":false},"平铺文字 → 优先转成结构组件",{"title":"表格列顺序：对象、结论、风险、证据、下一步","done":false}]},{"title":"已验证","icon":"✓","tone":"success","items":[{"title":"12 列网格分列布局","done":true},{"title":"Tooltip / Glossary 内联注释","done":true},{"title":"Matrix 搜索 + 过滤 + 排序","done":true},{"title":"MotionStage 真实 UI 演示","done":true}]}],"type":"kanban"},{"id":"form-demo","span":6,"title":"formEditor — 结构化表单","fields":[{"name":"mode","label":"处理模式","type":"select","value":"auto","options":["auto","manual","precheck"]},{"name":"density","label":"密度","value":"compact"},{"name":"rule","label":"规则","type":"textarea","value":"正文变长时优先转成视觉组件。"}],"type":"formEditor"},{"id":"prompt2","span":6,"title":"promptEditor — 提示词模板（独立示例）","prompt":"分析 {{repo}} 的 PR #{{number}}，输出风险矩阵、diff 审查和发布检查清单。","type":"promptEditor"}],"actions":[{"label":"View Source","primary":true,"copy":"node scripts/render-html-doc.mjs examples/component-showcase.md dist/component-showcase.html"}]};
 const toast = document.getElementById("toast");
 function showToast(text) {
   toast.textContent = text || "已复制";

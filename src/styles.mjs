@@ -25,12 +25,12 @@ export function baseCss() {
   --font-ui: "Avenir Next", Avenir, "IBM Plex Sans", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
   --font-human: Optima, "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
   --font-mono: "SFMono-Regular", Menlo, Consolas, monospace;
-  --fs-xs: 11px;
-  --fs-sm: 13px;
-  --fs-base: 14px;
-  --fs-md: 15px;
+  --fs-xs: 12px;
+  --fs-sm: 14px;
+  --fs-base: 15px;
+  --fs-md: 16px;
   --fs-lg: 18px;
-  --fs-hero: 28px;
+  --fs-hero: 30px;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;

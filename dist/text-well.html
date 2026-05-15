@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>html-doc Skill 文件结构</title>
+  <title>Text-Well</title>
   <style>
 :root {
   --bg-canvas: #F9F8F6;
@@ -23,12 +23,12 @@
   --font-ui: "Avenir Next", Avenir, "IBM Plex Sans", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
   --font-human: Optima, "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
   --font-mono: "SFMono-Regular", Menlo, Consolas, monospace;
-  --fs-xs: 11px;
-  --fs-sm: 13px;
-  --fs-base: 14px;
-  --fs-md: 15px;
+  --fs-xs: 12px;
+  --fs-sm: 14px;
+  --fs-base: 15px;
+  --fs-md: 16px;
   --fs-lg: 18px;
-  --fs-hero: 28px;
+  --fs-hero: 30px;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -116,11 +116,15 @@ button:hover { border-color: var(--text-main); }
   width: 100%;
   justify-self: stretch;
   margin: var(--space-6) 0 var(--space-8);
+  border-left: 1px solid var(--border-base);
 }
 .block {
   grid-column: span var(--span, 12);
   min-height: var(--min-h, auto);
   background: var(--bg-canvas);
+  border-top: 1px solid var(--border-base);
+  border-right: 1px solid var(--border-base);
+  border-bottom: 1px solid var(--border-base);
   padding: var(--space-4);
   overflow: hidden;
 }
@@ -409,9 +413,23 @@ strong { color: var(--text-main); font-weight: 650; }
   font-size: var(--fs-xs);
   line-height: 1.45;
 }
-.decision-tree { display: grid; gap: var(--space-2); }
-.decision-node { border-left: 1px solid var(--border-strong); padding-left: var(--indent, 12px); margin-left: var(--indent, 0); }
-.decision-node strong { font-weight: 600; }
+.decision-tree { display: grid; gap: 3px; }
+.decision-node {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 6px;
+  padding: 7px var(--space-3);
+  padding-left: calc(var(--space-3) + var(--indent, 0px));
+  border-left: 2px solid var(--dt-color, var(--border-strong));
+  background: rgba(255,255,255,.45);
+}
+.decision-node[data-level="0"] { --dt-color: var(--accent-primary); }
+.decision-node[data-level="1"] { --dt-color: var(--accent-secondary); }
+.decision-node[data-level="2"] { --dt-color: var(--accent-tertiary); }
+.dt-cond { font-weight: 650; font-size: var(--fs-sm); color: var(--text-main); }
+.dt-sep { font-size: var(--fs-xs); color: var(--text-faint); flex: 0 0 auto; }
+.dt-res { font-size: var(--fs-sm); color: var(--text-muted); }
 .code-wrap { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(180px, .6fr); gap: 1px; background: var(--border-base); border: 1px solid var(--border-base); }
 .diff-wrap { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(220px, .65fr); gap: 20px; align-items: start; }
 pre, .annotation-pane { margin: 0; background: var(--bg-soft); padding: var(--space-3); overflow: auto; }
@@ -1253,18 +1271,53 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
 .crossref-section { padding: var(--space-3); border-bottom: 1px solid var(--border-base); }
 .crossref-section:last-child { border-bottom: 0; }
 .crossref-section-title { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .05em; color: var(--text-faint); margin-bottom: var(--space-2); }
-.crossref-section pre { font: 12px/1.6 var(--font-mono); color: var(--text-main); white-space: pre-wrap; word-break: break-all; margin: 0; background: transparent; padding: 0; overflow: hidden; }
+.crossref-section pre { font: 12px/1.6 var(--font-mono); color: var(--text-main); white-space: pre-wrap; word-break: break-all; margin: 0; background: transparent; padding: 0; max-height: 260px; overflow: auto; }
 .crossref-hl { background: rgba(212, 163, 91, 0.25); border-bottom: 1px solid var(--accent-tertiary); padding: 0 1px; cursor: default; }
 .crossref-refs { display: grid; gap: var(--space-4); }
 .crossref-ref { border: 1px solid var(--accent-tertiary); }
 .crossref-ref-label { font: 500 var(--fs-sm)/1.4 var(--font-mono); color: var(--accent-tertiary); padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--border-base); background: rgba(212, 163, 91, 0.06); }
-.crossref-ref pre { font: 12px/1.6 var(--font-mono); padding: var(--space-3); color: var(--text-main); white-space: pre-wrap; word-break: break-all; margin: 0; background: transparent; max-height: 200px; overflow: hidden; }
+.crossref-ref pre { font: 12px/1.6 var(--font-mono); padding: var(--space-3); color: var(--text-main); white-space: pre-wrap; word-break: break-all; margin: 0; background: transparent; max-height: 220px; overflow: auto; }
 .crossref-arrows { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 10; }
 .chart-wrap { width: 100%; }
 .chart-svg { width: 100%; height: auto; display: block; }
 .chart-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: var(--space-2); }
 .chart-legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-sm); color: var(--text-muted); }
 .chart-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
+/* splitPanel */
+.split-panel {
+  display: grid;
+  /* Extend to block edges, counteracting .block padding on left/right/bottom */
+  margin-left: calc(-1 * var(--space-4));
+  margin-right: calc(-1 * var(--space-4));
+  margin-bottom: calc(-1 * var(--space-4));
+  margin-top: var(--space-3);
+}
+.split-panel.sp-lr { grid-template-columns: var(--sp-cols, 1fr 1fr); }
+.split-panel.sp-columns { grid-template-columns: repeat(var(--sp-col-count, 3), 1fr); }
+.sp-cell { padding: var(--space-4) 20px; min-width: 0; overflow-wrap: break-word; }
+.split-panel.sp-lr .sp-cell + .sp-cell,
+.split-panel.sp-columns .sp-cell + .sp-cell { border-left: 1px solid var(--border-base); }
+.split-panel.sp-tb .sp-cell + .sp-cell { border-top: 1px solid var(--border-base); }
+.sp-cell.sp-primary { background: var(--bg-soft); }
+.sp-kicker { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .08em; color: var(--text-faint); margin-bottom: var(--space-2); }
+.sp-title { font-size: 1.35rem; font-weight: 720; color: var(--text-main); line-height: 1.25; margin-bottom: var(--space-2); }
+.sp-cell.sp-primary .sp-title { font-size: 2rem; }
+.split-panel.sp-tb .sp-cell.sp-top .sp-title { font-size: 1.75rem; }
+.sp-body { font-size: var(--fs-sm); color: var(--text-muted); line-height: 1.65; }
+.sp-meta { font-size: var(--fs-xs); color: var(--text-faint); margin-top: var(--space-2); }
+.sp-list { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.sp-list li { font-size: var(--fs-sm); color: var(--text-muted); padding-left: var(--space-3); position: relative; line-height: 1.5; }
+.sp-list li::before { content: "—"; position: absolute; left: 0; color: var(--accent-primary); font-weight: 700; }
+/* icon — supports both emoji text and Lucide SVG */
+.sp-icon { margin-bottom: var(--space-2); line-height: 1; display: flex; }
+.sp-icon svg { width: 24px; height: 24px; stroke: var(--accent-primary); stroke-width: 1.5; }
+.split-panel.sp-tb .sp-cell.sp-top { background: var(--bg-soft); }
+/* quote */
+.sp-quote-wrap { padding: var(--space-6) var(--space-8); text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
+.sp-quote-text { font-size: 1.55rem; font-weight: 650; color: var(--text-main); line-height: 1.5; font-style: italic; max-width: 680px; position: relative; padding: 0 var(--space-5); }
+.sp-quote-text::before { content: "\201C"; position: absolute; left: 0; top: -0.15em; font-size: 3.5em; color: var(--accent-primary); opacity: 0.2; font-style: normal; line-height: 1; pointer-events: none; }
+.sp-quote-attr { font-size: var(--fs-sm); color: var(--text-faint); }
+
 @media (max-width: 900px) {
   .artifact-shell { grid-template-columns: 1fr; }
   .side-nav { display: none; }
@@ -1277,95 +1330,145 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
 </head>
 <body>
   <header class="toolbar">
-    <div class="toolbar-title"><strong>html-doc Skill 文件结构</strong><span>crossRef 示例</span></div>
+    <div class="toolbar-title"><strong>Text-Well</strong><span>全流程 AI 创作工作台</span></div>
     <div class="toolbar-actions">
       
     </div>
   </header>
   <main class="artifact-shell">
-    <aside class="side-nav"><a href="#hero">crossRef — 文件交叉引用图</a><a href="#skill-bundle">Skill 文件关系</a></aside>
+    <aside class="side-nav"><a href="#hero-0">Text-Well</a><a href="#splitPanel-2">四步工作流</a><a href="#check-detail">AI 检查 — 7 种模式</a><a href="#review-detail">AI 评审 — 你的私人陪审团</a><a href="#translate-detail">AI 翻译 — 信达雅</a><a href="#finish-tools">包装工具</a></aside>
     <section class="artifact-grid">
-      <article class="block" id="hero" style="--span:12;">
-    <div class="kicker">组件演示</div>
-    <h1>crossRef — 文件交叉引用图</h1>
+      <article class="block" id="hero-0" style="--span:12;">
+    <div class="kicker">产品介绍</div>
+    <h1>Text-Well</h1>
     <div class="rule"></div>
-    <p class="body-copy">展示主文档如何引用其他文件，高亮词到目标之间自动绘制箭头。</p>
-    
+    <p class="body-copy">基于你的初稿，一步步把一个还不错的想法，变成一篇真正出色的文章。</p>
+    <div class="tags" style="margin-top:var(--space-4)"><span class="tag">AI 写作</span><span class="tag">内容创作</span><span class="tag">评审</span><span class="tag">翻译</span></div>
   </article>
-<article class="block" id="skill-bundle" style="--span:12;">
+<article class="block" id="splitPanel-1" style="--span:12;">
     <div class="block-header">
     <div>
       
-      <h2>Skill 文件关系</h2>
+      
       
     </div>
     
-  </div><div class="crossref" data-crossref="skill-bundle">
-    <svg class="crossref-arrows"><defs><marker id="cr-arrow-skill-bundle" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="var(--accent-tertiary)"/></marker></defs></svg>
-    <div class="crossref-layout">
-      <div class="crossref-primary"><div class="crossref-file-label">html-doc/SKILL.md</div><div class="crossref-section"><div class="crossref-section-title">YAML Frontmatter</div><pre>---
-name: html-doc
-description: Create readable HTML documents
-  from simple JSON when Markdown is too flat.
-metadata:
-  short-description: HTML docs for human review
----</pre></div><div class="crossref-section"><div class="crossref-section-title">Markdown</div><pre># HTML Doc
-
-Create readable HTML documents by writing
-simple JSON and rendering it with the bundled script.
-
-## Workflow
-
-1. Identify the information shape.
-2. Create a JSON file. Open <mark class="crossref-hl" data-cr-from="schema">references/schema.md</mark>
-   when exact fields or examples are needed.
-3. Render it:
-
-   node scripts/render-html-doc.mjs \
-     <mark class="crossref-hl" data-cr-from="showcase">examples/component-showcase.json</mark> \
-     dist/component-showcase.html
-
-4. Open the HTML and verify layout.</pre></div></div>
-      <div class="crossref-refs"><div class="crossref-ref" data-cr-target="schema"><div class="crossref-ref-label">html-doc/references/schema.md</div><pre># HTML Doc JSON
-
-The agent writes JSON.
-The renderer creates the final HTML.
-
-## Top Level
-
-{
-  &quot;meta&quot;: { &quot;title&quot;: &quot;...&quot;, &quot;glossary&quot;: {} },
-  &quot;content&quot;: [...]
-}
-
-## Component Choice
-
-| Need           | Use              |
-| -------------- | ---------------- |
-| key numbers    | metrics          |
-| data series    | chart            |
-| wide comparison| matrix           |
-| file cross-ref | crossRef         |</pre></div><div class="crossref-ref" data-cr-target="showcase"><div class="crossref-ref-label">html-doc/examples/component-showcase.json</div><pre>{
-  &quot;meta&quot;: {
-    &quot;title&quot;: &quot;Component Showcase&quot;,
-    &quot;subtitle&quot;: &quot;All available components&quot;
-  },
-  &quot;content&quot;: [
-    { &quot;type&quot;: &quot;hero&quot;, ... },
-    { &quot;type&quot;: &quot;metrics&quot;, ... },
-    { &quot;type&quot;: &quot;chart&quot;, ... },
-    { &quot;type&quot;: &quot;matrix&quot;, ... },
-    { &quot;type&quot;: &quot;crossRef&quot;, ... }
-  ]
-}</pre></div></div>
+  </div><div class="sp-quote-wrap">
+      <div class="sp-quote-text">最好的想法依然源自于人。我们不会帮你无中生有，而是把你还不错的想法，变成一篇真正出色的文章。</div>
+      <div class="sp-quote-attr">— Text-Well 设计原则</div>
     </div>
+  </article>
+<article class="block" id="splitPanel-2" style="--span:12;">
+    <div class="block-header">
+    <div>
+      
+      <h2>四步工作流</h2>
+      
+    </div>
+    
+  </div><div class="split-panel sp-columns" style="--sp-col-count:4">
+      <div class="sp-cell">
+        <div class="sp-icon"><i data-lucide="scan-search"></i></div>
+        <div class="sp-kicker">第一步</div>
+        <div class="sp-title">AI 检查</div>
+        <div class="sp-body">修正错别字和语法，统一风格术语，去除翻译腔。让文章先变得「正确」。</div>
+        
+        
+      </div><div class="sp-cell">
+        <div class="sp-icon"><i data-lucide="users"></i></div>
+        <div class="sp-kicker">第二步</div>
+        <div class="sp-title">AI 评审</div>
+        <div class="sp-body">邀请有独立世界观的 AI 评审团，模拟真实读者反馈，提前发现逻辑盲点。</div>
+        
+        
+      </div><div class="sp-cell">
+        <div class="sp-icon"><i data-lucide="sparkles"></i></div>
+        <div class="sp-kicker">第三步</div>
+        <div class="sp-title">包装呈现</div>
+        <div class="sp-body">从五个创意方向生成 10 个候选标题；分析文章意境，推荐高质量配图。</div>
+        
+        
+      </div><div class="sp-cell">
+        <div class="sp-icon"><i data-lucide="globe"></i></div>
+        <div class="sp-kicker">第四步</div>
+        <div class="sp-title">走向世界</div>
+        <div class="sp-body">信达雅翻译，原文译文对照视图，每行都可单独重译，确保精准传达。</div>
+        
+        
+      </div>
+    </div>
+  </article>
+<article class="block" id="check-detail" style="--span:12;">
+    <div class="block-header">
+    <div>
+      
+      <h2>AI 检查 — 7 种模式</h2>
+      
+    </div>
+    
+  </div><div class="split-panel sp-lr" style="--sp-cols:1fr 2fr">
+    <div class="sp-cell"><div class="sp-kicker">第一步</div><div class="sp-title">让文章先变得「正确」</div><div class="sp-body">从最基础的错别字修正，到学术写作的严谨标准，每种模式都有特定优化重点。完成这一步，文章就已经很正确了——但我们觉得这还不够。</div></div>
+    <div class="sp-cell sp-primary"><ul class="sp-list"><li><strong>基础检查</strong> — 只修正无可争议的错误，不改动任何风格</li><li><strong>去除 AI 味儿</strong> — 消除陈词滥调，打破单调句式结构</li><li><strong>正式写作</strong> — 提升至专业商务标准，中和情绪化语言</li><li><strong>清晰表达</strong> — 拆分复杂长句，降低读者认知负荷</li><li><strong>一致性检查</strong> — 统一全文术语、格式和标点规范</li><li><strong>地道表达</strong> — 修正不符合母语习惯的词语搭配</li><li><strong>学术写作</strong> — 移除主观表达，软化绝对化论断</li></ul></div>
   </div>
+  </article>
+<article class="block" id="review-detail" style="--span:12;">
+    <div class="block-header">
+    <div>
+      
+      <h2>AI 评审 — 你的私人陪审团</h2>
+      
+    </div>
+    
+  </div><div class="split-panel sp-lr" style="--sp-cols:2fr 1fr">
+    <div class="sp-cell sp-primary"><div class="sp-kicker">第二步</div><div class="sp-title">3—5 位有独立世界观的评审人</div><div class="sp-body">系统根据文章内容智能创建评审角色，每位都有完整人设和独特批评风格。他们的观点有时相互冲突，避免千篇一律的「专家」式评价。评审完成后，左侧工具栏按评审人分组显示完整意见，与编辑器实时联动。</div></div>
+    <div class="sp-cell"><div class="sp-kicker">每位评审人都有</div><ul class="sp-list"><li>含个人故事的生动人设</li><li>指导判断的核心世界观</li><li>独特的批评方式和语言习惯</li><li>0—100 分的整体评分</li><li>可直接替换的优化建议</li></ul></div>
+  </div>
+  </article>
+<article class="block" id="translate-detail" style="--span:12;">
+    <div class="block-header">
+    <div>
+      
+      <h2>AI 翻译 — 信达雅</h2>
+      
+    </div>
+    
+  </div><div class="split-panel sp-tb">
+      <div class="sp-cell sp-top"><div class="sp-kicker">第四步</div><div class="sp-title">原文译文对照，每行都可单独重译</div><div class="sp-body">翻译完成后提供逐行对照视图。对任何翻译不满意的行，点击重新翻译按钮即可单独处理——你对每一行都有完全的控制权。格式标记（Markdown、HTML、代码块）在翻译过程中完全保留。</div></div>
+      <div class="sp-cell sp-bottom"><ul class="sp-list"><li><strong>信（准确性）</strong> — 准确传达原文意思，专业术语精确翻译</li><li><strong>达（表达力）</strong> — 表达自然流畅，使用目标语言的地道方式</li><li><strong>雅（文采）</strong> — 维持原文的语气、风格和语调，有人味儿</li></ul></div>
+    </div>
+  </article>
+<article class="block" id="finish-tools" style="--span:12;">
+    <div class="block-header">
+    <div>
+      
+      <h2>包装工具</h2>
+      
+    </div>
+    
+  </div><div class="split-panel sp-columns" style="--sp-col-count:2">
+      <div class="sp-cell">
+        <div class="sp-icon"><i data-lucide="lightbulb"></i></div>
+        <div class="sp-kicker">AI 标题生成</div>
+        <div class="sp-title">10 个候选标题</div>
+        <div class="sp-body">深度分析文章核心主题、叙事弧光和情感内核，从五个创意方向生成选项。</div>
+        <ul class="sp-list"><li>故事 / 历程型</li><li>痛点 / 解法型</li><li>成果 / 数据对比型</li><li>对话 / 提问型</li><li>金句 / 态度型</li></ul>
+        <div class="sp-meta">每个标题配详细创作理由说明</div>
+      </div><div class="sp-cell">
+        <div class="sp-icon"><i data-lucide="image"></i></div>
+        <div class="sp-kicker">AI 智能配图</div>
+        <div class="sp-title">2 种配图方式</div>
+        <div class="sp-body">分析文章意境，找到契合内容的高质量视觉表达，而非千篇一律的商业图库照片。</div>
+        <ul class="sp-list"><li>关键词搜索 — 三步融合策略，Unsplash 图库</li><li>AI 创意生图 — 9 种专业视觉风格可选</li></ul>
+        <div class="sp-meta">所有生成图片均不含文字，避免与文章冲突</div>
+      </div>
+    </div>
   </article>
     </section>
   </main>
   <div class="toast" id="toast">已复制</div>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script>
-const artifactSpec = {"meta":{"title":"html-doc Skill 文件结构","subtitle":"crossRef 示例"},"content":[{"id":"hero","type":"hero","kicker":"组件演示","title":"crossRef — 文件交叉引用图","body":"展示主文档如何引用其他文件，高亮词到目标之间自动绘制箭头。"},{"id":"skill-bundle","type":"crossRef","title":"Skill 文件关系","primary":{"label":"html-doc/SKILL.md","sections":[{"title":"YAML Frontmatter","content":"---\nname: html-doc\ndescription: Create readable HTML documents\n  from simple JSON when Markdown is too flat.\nmetadata:\n  short-description: HTML docs for human review\n---"},{"title":"Markdown","content":"# HTML Doc\n\nCreate readable HTML documents by writing\nsimple JSON and rendering it with the bundled script.\n\n## Workflow\n\n1. Identify the information shape.\n2. Create a JSON file. Open references/schema.md\n   when exact fields or examples are needed.\n3. Render it:\n\n   node scripts/render-html-doc.mjs \\\n     examples/component-showcase.json \\\n     dist/component-showcase.html\n\n4. Open the HTML and verify layout."}]},"references":[{"id":"schema","label":"html-doc/references/schema.md","preview":"# HTML Doc JSON\n\nThe agent writes JSON.\nThe renderer creates the final HTML.\n\n## Top Level\n\n{\n  \"meta\": { \"title\": \"...\", \"glossary\": {} },\n  \"content\": [...]\n}\n\n## Component Choice\n\n| Need           | Use              |\n| -------------- | ---------------- |\n| key numbers    | metrics          |\n| data series    | chart            |\n| wide comparison| matrix           |\n| file cross-ref | crossRef         |"},{"id":"showcase","label":"html-doc/examples/component-showcase.json","preview":"{\n  \"meta\": {\n    \"title\": \"Component Showcase\",\n    \"subtitle\": \"All available components\"\n  },\n  \"content\": [\n    { \"type\": \"hero\", ... },\n    { \"type\": \"metrics\", ... },\n    { \"type\": \"chart\", ... },\n    { \"type\": \"matrix\", ... },\n    { \"type\": \"crossRef\", ... }\n  ]\n}"}],"links":[{"text":"references/schema.md","to":"schema"},{"text":"examples/component-showcase.json","to":"showcase"}]}]};
+const artifactSpec = {"meta":{"title":"Text-Well","subtitle":"全流程 AI 创作工作台","lang":"zh-CN"},"content":[{"kicker":"产品介绍","title":"Text-Well","body":"基于你的初稿，一步步把一个还不错的想法，变成一篇真正出色的文章。","tags":["AI 写作","内容创作","评审","翻译"],"type":"hero","id":"hero-0"},{"variant":"quote","quote":"最好的想法依然源自于人。我们不会帮你无中生有，而是把你还不错的想法，变成一篇真正出色的文章。","attribution":"Text-Well 设计原则","type":"splitPanel","id":"splitPanel-1"},{"variant":"4col","title":"四步工作流","items":[{"icon":"scan-search","kicker":"第一步","title":"AI 检查","body":"修正错别字和语法，统一风格术语，去除翻译腔。让文章先变得「正确」。"},{"icon":"users","kicker":"第二步","title":"AI 评审","body":"邀请有独立世界观的 AI 评审团，模拟真实读者反馈，提前发现逻辑盲点。"},{"icon":"sparkles","kicker":"第三步","title":"包装呈现","body":"从五个创意方向生成 10 个候选标题；分析文章意境，推荐高质量配图。"},{"icon":"globe","kicker":"第四步","title":"走向世界","body":"信达雅翻译，原文译文对照视图，每行都可单独重译，确保精准传达。"}],"type":"splitPanel","id":"splitPanel-2"},{"id":"check-detail","variant":"lr","ratio":"1:2","title":"AI 检查 — 7 种模式","left":{"kicker":"第一步","title":"让文章先变得「正确」","body":"从最基础的错别字修正，到学术写作的严谨标准，每种模式都有特定优化重点。完成这一步，文章就已经很正确了——但我们觉得这还不够。"},"right":{"list":["**基础检查** — 只修正无可争议的错误，不改动任何风格","**去除 AI 味儿** — 消除陈词滥调，打破单调句式结构","**正式写作** — 提升至专业商务标准，中和情绪化语言","**清晰表达** — 拆分复杂长句，降低读者认知负荷","**一致性检查** — 统一全文术语、格式和标点规范","**地道表达** — 修正不符合母语习惯的词语搭配","**学术写作** — 移除主观表达，软化绝对化论断"]},"type":"splitPanel"},{"id":"review-detail","variant":"lr","ratio":"2:1","title":"AI 评审 — 你的私人陪审团","left":{"kicker":"第二步","title":"3—5 位有独立世界观的评审人","body":"系统根据文章内容智能创建评审角色，每位都有完整人设和独特批评风格。他们的观点有时相互冲突，避免千篇一律的「专家」式评价。评审完成后，左侧工具栏按评审人分组显示完整意见，与编辑器实时联动。"},"right":{"kicker":"每位评审人都有","list":["含个人故事的生动人设","指导判断的核心世界观","独特的批评方式和语言习惯","0—100 分的整体评分","可直接替换的优化建议"]},"type":"splitPanel"},{"id":"translate-detail","variant":"tb","title":"AI 翻译 — 信达雅","top":{"kicker":"第四步","title":"原文译文对照，每行都可单独重译","body":"翻译完成后提供逐行对照视图。对任何翻译不满意的行，点击重新翻译按钮即可单独处理——你对每一行都有完全的控制权。格式标记（Markdown、HTML、代码块）在翻译过程中完全保留。"},"bottom":{"list":["**信（准确性）** — 准确传达原文意思，专业术语精确翻译","**达（表达力）** — 表达自然流畅，使用目标语言的地道方式","**雅（文采）** — 维持原文的语气、风格和语调，有人味儿"]},"type":"splitPanel"},{"id":"finish-tools","variant":"2col","title":"包装工具","items":[{"icon":"lightbulb","kicker":"AI 标题生成","title":"10 个候选标题","body":"深度分析文章核心主题、叙事弧光和情感内核，从五个创意方向生成选项。","list":["故事 / 历程型","痛点 / 解法型","成果 / 数据对比型","对话 / 提问型","金句 / 态度型"],"meta":"每个标题配详细创作理由说明"},{"icon":"image","kicker":"AI 智能配图","title":"2 种配图方式","body":"分析文章意境，找到契合内容的高质量视觉表达，而非千篇一律的商业图库照片。","list":["关键词搜索 — 三步融合策略，Unsplash 图库","AI 创意生图 — 9 种专业视觉风格可选"],"meta":"所有生成图片均不含文字，避免与文章冲突"}],"type":"splitPanel"}]};
 const toast = document.getElementById("toast");
 function showToast(text) {
   toast.textContent = text || "已复制";
@@ -1699,6 +1802,8 @@ document.querySelectorAll("[data-emphasis-panel]").forEach((panel) => {
       panel.querySelector('[data-info-item="' + hl.dataset.infoId + '"]')?.classList.add("active");
     });
   });
-});</script>
+});
+if (typeof lucide !== "undefined") lucide.createIcons();
+</script>
 </body>
 </html>

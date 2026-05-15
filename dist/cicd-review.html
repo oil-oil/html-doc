@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>API 性能季报</title>
+  <title>CI/CD 发布管道架构审查</title>
   <style>
 :root {
   --bg-canvas: #F9F8F6;
@@ -116,11 +116,15 @@ button:hover { border-color: var(--text-main); }
   width: 100%;
   justify-self: stretch;
   margin: var(--space-6) 0 var(--space-8);
+  border-left: 1px solid var(--border-base);
 }
 .block {
   grid-column: span var(--span, 12);
   min-height: var(--min-h, auto);
   background: var(--bg-canvas);
+  border-top: 1px solid var(--border-base);
+  border-right: 1px solid var(--border-base);
+  border-bottom: 1px solid var(--border-base);
   padding: var(--space-4);
   overflow: hidden;
 }
@@ -409,9 +413,23 @@ strong { color: var(--text-main); font-weight: 650; }
   font-size: var(--fs-xs);
   line-height: 1.45;
 }
-.decision-tree { display: grid; gap: var(--space-2); }
-.decision-node { border-left: 1px solid var(--border-strong); padding-left: var(--indent, 12px); margin-left: var(--indent, 0); }
-.decision-node strong { font-weight: 600; }
+.decision-tree { display: grid; gap: 3px; }
+.decision-node {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 6px;
+  padding: 7px var(--space-3);
+  padding-left: calc(var(--space-3) + var(--indent, 0px));
+  border-left: 2px solid var(--dt-color, var(--border-strong));
+  background: rgba(255,255,255,.45);
+}
+.decision-node[data-level="0"] { --dt-color: var(--accent-primary); }
+.decision-node[data-level="1"] { --dt-color: var(--accent-secondary); }
+.decision-node[data-level="2"] { --dt-color: var(--accent-tertiary); }
+.dt-cond { font-weight: 650; font-size: var(--fs-sm); color: var(--text-main); }
+.dt-sep { font-size: var(--fs-xs); color: var(--text-faint); flex: 0 0 auto; }
+.dt-res { font-size: var(--fs-sm); color: var(--text-muted); }
 .code-wrap { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(180px, .6fr); gap: 1px; background: var(--border-base); border: 1px solid var(--border-base); }
 .diff-wrap { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(220px, .65fr); gap: 20px; align-items: start; }
 pre, .annotation-pane { margin: 0; background: var(--bg-soft); padding: var(--space-3); overflow: auto; }
@@ -1253,12 +1271,12 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
 .crossref-section { padding: var(--space-3); border-bottom: 1px solid var(--border-base); }
 .crossref-section:last-child { border-bottom: 0; }
 .crossref-section-title { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .05em; color: var(--text-faint); margin-bottom: var(--space-2); }
-.crossref-section pre { font: 12px/1.6 var(--font-mono); color: var(--text-main); white-space: pre-wrap; word-break: break-all; margin: 0; background: transparent; padding: 0; overflow: hidden; }
+.crossref-section pre { font: 12px/1.6 var(--font-mono); color: var(--text-main); white-space: pre-wrap; word-break: break-all; margin: 0; background: transparent; padding: 0; max-height: 260px; overflow: auto; }
 .crossref-hl { background: rgba(212, 163, 91, 0.25); border-bottom: 1px solid var(--accent-tertiary); padding: 0 1px; cursor: default; }
 .crossref-refs { display: grid; gap: var(--space-4); }
 .crossref-ref { border: 1px solid var(--accent-tertiary); }
 .crossref-ref-label { font: 500 var(--fs-sm)/1.4 var(--font-mono); color: var(--accent-tertiary); padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--border-base); background: rgba(212, 163, 91, 0.06); }
-.crossref-ref pre { font: 12px/1.6 var(--font-mono); padding: var(--space-3); color: var(--text-main); white-space: pre-wrap; word-break: break-all; margin: 0; background: transparent; max-height: 200px; overflow: hidden; }
+.crossref-ref pre { font: 12px/1.6 var(--font-mono); padding: var(--space-3); color: var(--text-main); white-space: pre-wrap; word-break: break-all; margin: 0; background: transparent; max-height: 220px; overflow: auto; }
 .crossref-arrows { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 10; }
 .chart-wrap { width: 100%; }
 .chart-svg { width: 100%; height: auto; display: block; }
@@ -1277,22 +1295,22 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
 </head>
 <body>
   <header class="toolbar">
-    <div class="toolbar-title"><strong>API 性能季报</strong><span>2025 Q2</span></div>
+    <div class="toolbar-title"><strong>CI/CD 发布管道架构审查</strong><span>v2.3 → v2.4 升级评估</span></div>
     <div class="toolbar-actions">
-      <button class="primary" data-copy="API 整体达标，P99 从 480ms 降至 312ms（-35%）。可用性 99.94%，消耗[[错误预算]] 26min，余量充足。建议下季度重点关注 /search 端点的缓存命中率。" data-action="0">复制摘要</button>
+      
     </div>
   </header>
   <main class="artifact-shell">
-    <aside class="side-nav"><a href="#overview">API 性能季报 · 2025 Q2</a><a href="#p99-trend"><span class="tt">P99<span class="tt-b">第 99 百分位延迟：99% 的请求在此时间内完成，代表长尾体验</span></span> 延迟趋势（ms）</a><a href="#error-budget">月度错误率（%）</a><a href="#endpoints">端点详情</a><a href="#incidents">Q2 事件记录</a><a href="#next-actions">Q3 行动项</a></aside>
+    <aside class="side-nav"><a href="#hero-0">CI/CD 发布管道 v2.4</a><a href="#chart-2">发布成功率趋势</a><a href="#pipeline-arch">发布管道架构</a><a href="#canary-flow"><span class="tt">Canary<span class="tt-b">金丝雀发布，先将新版本推送到少量实例上观察稳定性再扩量</span></span> 发布流程</a><a href="#timeline-5">v2.4 发布事件轴</a><a href="#risk-matrix">风险评估矩阵</a><a href="#decisionTree-7">发布决策树</a><a href="#diffReview-8">关键配置变更 — livenessProbe 超时</a><a href="#kanban-9">发布前检查清单</a></aside>
     <section class="artifact-grid">
-      <article class="block" id="overview" style="--span:12;">
-    <div class="kicker">季度报告</div>
-    <h1>API 性能季报 · 2025 Q2</h1>
+      <article class="block" id="hero-0" style="--span:12;">
+    <div class="kicker">架构审查</div>
+    <h1>CI/CD 发布管道 v2.4</h1>
     <div class="rule"></div>
-    <p class="body-copy">覆盖全部 12 个生产端点，基于 2.4 亿次真实请求。</p>
-    <div class="tags" style="margin-top:var(--space-4)"><span class="tag">达标</span><span class="tag">P99 改善</span><span class="tag">可用性 99.94%</span></div>
+    <p class="body-copy">从代码提交到生产部署的完整链路评估，重点审查灰度策略与回滚路径。</p>
+    <div class="tags" style="margin-top:var(--space-4)"><span class="tag">CI/CD</span><span class="tag">架构</span><span class="tag">灰度发布</span><span class="tag">可观测性</span></div>
   </article>
-<article class="block" id="key-metrics" style="--span:12;">
+<article class="block" id="metrics-1" style="--span:4;">
     <div class="block-header">
     <div>
       
@@ -1302,93 +1320,244 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
     
   </div><div class="metrics-grid">
     <div class="metric">
-      <div class="label">P99 延迟</div>
-      <div class="metric-value">312ms</div>
-      <div class="text-muted">↓35% vs Q1</div>
-      <svg class="sparkline" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0.0,4.0 16.7,5.9 33.3,8.8 50.0,11.6 66.7,14.5 83.3,17.3 100.0,20.0" fill="none" stroke="var(--accent-secondary)" stroke-width="1.5"/><line x1="0" y1="22" x2="100" y2="22" stroke="var(--border-base)" /></svg>
+      <div class="label">部署频率</div>
+      <div class="metric-value">14/天</div>
+      <div class="text-muted">过去 30 天均值</div>
+      <svg class="sparkline" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0.0,20.0 16.7,14.0 33.3,10.0 50.0,12.0 66.7,6.0 83.3,8.0 100.0,4.0" fill="none" stroke="var(--accent-secondary)" stroke-width="1.5"/><line x1="0" y1="22" x2="100" y2="22" stroke="var(--border-base)" /></svg>
     </div><div class="metric">
-      <div class="label">可用性</div>
-      <div class="metric-value">99.94%</div>
-      <div class="text-muted"><span class="tt">SLA<span class="tt-b">服务质量协议：与客户约定的可用性和响应时间标准</span></span> 目标 99.9%</div>
-      <svg class="sparkline" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0.0,20.0 16.7,19.7 33.3,19.5 50.0,19.8 66.7,19.4 83.3,19.5 100.0,19.5" fill="none" stroke="var(--accent-secondary)" stroke-width="1.5"/><line x1="0" y1="22" x2="100" y2="22" stroke="var(--border-base)" /></svg>
+      <div class="label"><span class="tt">MTTR<span class="tt-b">Mean Time To Recovery — 平均故障恢复时间</span></span></div>
+      <div class="metric-value">4.2 min</div>
+      <div class="text-muted">目标 &lt; 5 min</div>
+      <svg class="sparkline" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0.0,4.0 16.7,10.4 33.3,16.8 50.0,20.0 66.7,13.6 83.3,20.0 100.0,20.0" fill="none" stroke="var(--accent-secondary)" stroke-width="1.5"/><line x1="0" y1="22" x2="100" y2="22" stroke="var(--border-base)" /></svg>
     </div><div class="metric">
-      <div class="label">错误率</div>
-      <div class="metric-value">0.08%</div>
-      <div class="text-muted">低于警戒线 0.1%</div>
-      <svg class="sparkline" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0.0,19.0 16.7,19.4 33.3,19.7 50.0,19.8 66.7,20.0 83.3,20.0 100.0,20.0" fill="none" stroke="var(--accent-secondary)" stroke-width="1.5"/><line x1="0" y1="22" x2="100" y2="22" stroke="var(--border-base)" /></svg>
-    </div><div class="metric">
-      <div class="label"><span class="tt">错误预算<span class="tt-b">SLA 允许的最大故障时间，例如 99.9% 可用性对应每月约 43 分钟</span></span> 消耗</div>
-      <div class="metric-value">26 min</div>
-      <div class="text-muted">余量 17 min（本月）</div>
-      
+      <div class="label">发布成功率</div>
+      <div class="metric-value">99.1%</div>
+      <div class="text-muted">含回滚计算</div>
+      <svg class="sparkline" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0.0,20.0 16.7,14.7 33.3,9.3 50.0,9.3 66.7,4.0 83.3,9.3 100.0,9.3" fill="none" stroke="var(--accent-secondary)" stroke-width="1.5"/><line x1="0" y1="22" x2="100" y2="22" stroke="var(--border-base)" /></svg>
     </div>
   </div>
   </article>
-<article class="block" id="p99-trend" style="--span:8;">
+<article class="block" id="chart-2" style="--span:8;">
     <div class="block-header">
     <div>
       
-      <h2><span class="tt">P99<span class="tt-b">第 99 百分位延迟：99% 的请求在此时间内完成，代表长尾体验</span></span> 延迟趋势（ms）</h2>
+      <h2>发布成功率趋势</h2>
       
     </div>
     
-  </div><div class="chart-wrap"><svg class="chart-svg" viewBox="0 0 720 280" preserveAspectRatio="xMidYMid meet"><line x1="48" y1="242.0" x2="700" y2="242.0" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="246.0" text-anchor="end" fill="var(--text-faint)" font-size="11">0</text><line x1="48" y1="186.5" x2="700" y2="186.5" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="190.5" text-anchor="end" fill="var(--text-faint)" font-size="11">175</text><line x1="48" y1="131.0" x2="700" y2="131.0" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="135.0" text-anchor="end" fill="var(--text-faint)" font-size="11">350</text><line x1="48" y1="75.5" x2="700" y2="75.5" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="79.5" text-anchor="end" fill="var(--text-faint)" font-size="11">525</text><line x1="48" y1="20.0" x2="700" y2="20.0" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="24.0" text-anchor="end" fill="var(--text-faint)" font-size="11">700</text><line x1="48" y1="20" x2="48" y2="242" stroke="var(--border-base)" stroke-width="1"/><polygon points="48.0,77.1 178.4,86.6 308.8,99.3 439.2,112.0 569.6,124.7 700.0,137.3 700.0,242 48.0,242" fill="var(--accent-primary)" opacity="0.12"/><polyline points="48.0,77.1 178.4,86.6 308.8,99.3 439.2,112.0 569.6,124.7 700.0,137.3" fill="none" stroke="var(--accent-primary)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="48.0" cy="77.1" r="3.5" fill="var(--accent-primary)"/><circle cx="178.4" cy="86.6" r="3.5" fill="var(--accent-primary)"/><circle cx="308.8" cy="99.3" r="3.5" fill="var(--accent-primary)"/><circle cx="439.2" cy="112.0" r="3.5" fill="var(--accent-primary)"/><circle cx="569.6" cy="124.7" r="3.5" fill="var(--accent-primary)"/><circle cx="700.0" cy="137.3" r="3.5" fill="var(--accent-primary)"/><polygon points="48.0,26.3 178.4,35.9 308.8,48.5 439.2,61.2 569.6,77.1 700.0,89.8 700.0,242 48.0,242" fill="var(--accent-secondary)" opacity="0.12"/><polyline points="48.0,26.3 178.4,35.9 308.8,48.5 439.2,61.2 569.6,77.1 700.0,89.8" fill="none" stroke="var(--accent-secondary)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="48.0" cy="26.3" r="3.5" fill="var(--accent-secondary)"/><circle cx="178.4" cy="35.9" r="3.5" fill="var(--accent-secondary)"/><circle cx="308.8" cy="48.5" r="3.5" fill="var(--accent-secondary)"/><circle cx="439.2" cy="61.2" r="3.5" fill="var(--accent-secondary)"/><circle cx="569.6" cy="77.1" r="3.5" fill="var(--accent-secondary)"/><circle cx="700.0" cy="89.8" r="3.5" fill="var(--accent-secondary)"/><polygon points="48.0,175.4 178.4,178.6 308.8,180.2 439.2,181.7 569.6,183.3 700.0,185.5 700.0,242 48.0,242" fill="var(--accent-tertiary)" opacity="0.12"/><polyline points="48.0,175.4 178.4,178.6 308.8,180.2 439.2,181.7 569.6,183.3 700.0,185.5" fill="none" stroke="var(--accent-tertiary)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="48.0" cy="175.4" r="3.5" fill="var(--accent-tertiary)"/><circle cx="178.4" cy="178.6" r="3.5" fill="var(--accent-tertiary)"/><circle cx="308.8" cy="180.2" r="3.5" fill="var(--accent-tertiary)"/><circle cx="439.2" cy="181.7" r="3.5" fill="var(--accent-tertiary)"/><circle cx="569.6" cy="183.3" r="3.5" fill="var(--accent-tertiary)"/><circle cx="700.0" cy="185.5" r="3.5" fill="var(--accent-tertiary)"/><text x="48.0" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">1月</text><text x="178.4" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">2月</text><text x="308.8" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">3月</text><text x="439.2" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">4月</text><text x="569.6" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">5月</text><text x="700.0" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">6月</text></svg><div class="chart-legend"><span class="chart-legend-item"><span class="chart-dot" style="background:var(--accent-primary)"></span>/api/feed</span><span class="chart-legend-item"><span class="chart-dot" style="background:var(--accent-secondary)"></span>/api/search</span><span class="chart-legend-item"><span class="chart-dot" style="background:var(--accent-tertiary)"></span>/api/user</span></div></div>
+  </div><div class="chart-wrap"><svg class="chart-svg" viewBox="0 0 720 280" preserveAspectRatio="xMidYMid meet"><line x1="48" y1="242.0" x2="700" y2="242.0" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="246.0" text-anchor="end" fill="var(--text-faint)" font-size="11">0</text><line x1="48" y1="186.5" x2="700" y2="186.5" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="190.5" text-anchor="end" fill="var(--text-faint)" font-size="11">25</text><line x1="48" y1="131.0" x2="700" y2="131.0" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="135.0" text-anchor="end" fill="var(--text-faint)" font-size="11">50</text><line x1="48" y1="75.5" x2="700" y2="75.5" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="79.5" text-anchor="end" fill="var(--text-faint)" font-size="11">75</text><line x1="48" y1="20.0" x2="700" y2="20.0" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="24.0" text-anchor="end" fill="var(--text-faint)" font-size="11">100</text><line x1="48" y1="20" x2="48" y2="242" stroke="var(--border-base)" stroke-width="1"/><polygon points="48.0,28.4 211.0,24.9 374.0,23.3 537.0,22.0 700.0,21.3 700.0,242 48.0,242" fill="var(--accent-primary)" opacity="0.12"/><polyline points="48.0,28.4 211.0,24.9 374.0,23.3 537.0,22.0 700.0,21.3" fill="none" stroke="var(--accent-primary)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="48.0" cy="28.4" r="3.5" fill="var(--accent-primary)"/><circle cx="211.0" cy="24.9" r="3.5" fill="var(--accent-primary)"/><circle cx="374.0" cy="23.3" r="3.5" fill="var(--accent-primary)"/><circle cx="537.0" cy="22.0" r="3.5" fill="var(--accent-primary)"/><circle cx="700.0" cy="21.3" r="3.5" fill="var(--accent-primary)"/><polygon points="48.0,22.2 211.0,22.2 374.0,22.2 537.0,22.2 700.0,22.2 700.0,242 48.0,242" fill="var(--accent-secondary)" opacity="0.12"/><polyline points="48.0,22.2 211.0,22.2 374.0,22.2 537.0,22.2 700.0,22.2" fill="none" stroke="var(--accent-secondary)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="48.0" cy="22.2" r="3.5" fill="var(--accent-secondary)"/><circle cx="211.0" cy="22.2" r="3.5" fill="var(--accent-secondary)"/><circle cx="374.0" cy="22.2" r="3.5" fill="var(--accent-secondary)"/><circle cx="537.0" cy="22.2" r="3.5" fill="var(--accent-secondary)"/><circle cx="700.0" cy="22.2" r="3.5" fill="var(--accent-secondary)"/><text x="48.0" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">1月</text><text x="211.0" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">2月</text><text x="374.0" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">3月</text><text x="537.0" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">4月</text><text x="700.0" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">5月</text></svg><div class="chart-legend"><span class="chart-legend-item"><span class="chart-dot" style="background:var(--accent-primary)"></span>成功率 %</span><span class="chart-legend-item"><span class="chart-dot" style="background:var(--accent-secondary)"></span><span class="tt">SLO<span class="tt-b">Service Level Objective — 服务质量目标</span></span> 目标</span></div></div>
   </article>
-<article class="block" id="error-budget" style="--span:4;">
+<article class="block" id="pipeline-arch" style="--span:12;">
     <div class="block-header">
     <div>
       
-      <h2>月度错误率（%）</h2>
+      <h2>发布管道架构</h2>
       
+    </div>
+    <button class="copy-mini" data-copy-block="pipeline-arch">Copy</button>
+  </div>
+  <div class="layered-arch" style="--arch-height:560px">
+    <section class="arch-lane" style="--x:28px;--w:267.5px">
+      <div class="arch-lane-title">CI 层<span>构建 / 测试 / 打包</span></div>
+    </section><section class="arch-lane" style="--x:313.5px;--w:267.5px">
+      <div class="arch-lane-title">制品层<span>镜像仓库 / 版本管理</span></div>
+    </section><section class="arch-lane" style="--x:599px;--w:267.5px">
+      <div class="arch-lane-title">CD 层<span>灰度 / 发布 / 回滚</span></div>
+    </section><section class="arch-lane" style="--x:884.5px;--w:267.5px">
+      <div class="arch-lane-title">可观测层<span>指标 / 告警 / 日志</span></div>
+    </section>
+    <svg class="arch-edges" viewBox="0 0 1180 560" preserveAspectRatio="none">
+      <defs>
+        <marker id="arch-arrow-pipeline-arch" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--accent-primary)"></path>
+        </marker>
+      </defs>
+      <path class="arch-edge " d="M 161.75 200 L 161.75 230" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge " d="M 161.75 308 L 161.75 338" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge " d="M 278.5 377 L 304.5 377 L 304.5 161 L 330.5 161" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge " d="M 564 161 L 590 161 L 590 161 L 616 161" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge " d="M 732.75 200 L 732.75 230" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge " d="M 732.75 308 L 732.75 338" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge dashed" d="M 849.5 377 L 875.5 377 L 875.5 161 L 901.5 161" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge dashed" d="M 1018.25 200 L 1018.25 230" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge dashed" d="M 901.5 269 L 875.5 269 L 875.5 161 L 849.5 161" marker-end="url(#arch-arrow-pipeline-arch)"></path>
+    </svg>
+    <span class="arch-step" style="--x:256.5px;--y:207px">1</span><span class="arch-edge-label" style="--x:284.5px;--y:207px">trigger</span><span class="arch-step" style="--x:256.5px;--y:315px">2</span><span class="arch-edge-label" style="--x:284.5px;--y:315px">on success</span><span class="arch-step" style="--x:254.5px;--y:102px">3</span><span class="arch-edge-label" style="--x:282.5px;--y:102px">push image</span><span class="arch-step" style="--x:540px;--y:102px">4</span><span class="arch-edge-label" style="--x:568px;--y:102px">detect tag</span><span class="arch-step" style="--x:827.5px;--y:207px">5</span><span class="arch-edge-label" style="--x:855.5px;--y:207px">deploy</span><span class="arch-step" style="--x:827.5px;--y:315px">6</span><span class="arch-edge-label" style="--x:855.5px;--y:315px">traffic shift</span><span class="arch-edge-label" style="--x:853.5px;--y:102px">metrics</span><span class="arch-edge-label" style="--x:1141px;--y:207px">threshold</span><span class="arch-edge-label" style="--x:853.5px;--y:102px">rollback</span>
+    <div class="arch-box api" style="--x:45px;--y:122px;--w:233.5px;--h:78px">
+      <div class="label">api</div>
+      <strong>GitHub Actions</strong>
+      <p>PR merge 触发</p>
+    </div><div class="arch-box worker" style="--x:45px;--y:230px;--w:233.5px;--h:78px">
+      <div class="label">worker</div>
+      <strong>Build Worker</strong>
+      <p>Docker 多阶段构建</p>
+    </div><div class="arch-box worker" style="--x:45px;--y:338px;--w:233.5px;--h:78px">
+      <div class="label">worker</div>
+      <strong>Test Runner</strong>
+      <p>单测 + 集成测试</p>
+    </div><div class="arch-box data" style="--x:330.5px;--y:122px;--w:233.5px;--h:78px">
+      <div class="label">data</div>
+      <strong>ECR</strong>
+      <p>镜像存储与漏洞扫描</p>
+    </div><div class="arch-box api" style="--x:616px;--y:122px;--w:233.5px;--h:78px">
+      <div class="label">api</div>
+      <strong>Argo CD</strong>
+      <p>GitOps 控制器</p>
+    </div><div class="arch-box worker" style="--x:616px;--y:230px;--w:233.5px;--h:78px">
+      <div class="label">worker</div>
+      <strong>Canary Controller</strong>
+      <p>流量 5% → 50% → 100%</p>
+    </div><div class="arch-box worker" style="--x:616px;--y:338px;--w:233.5px;--h:78px">
+      <div class="label">worker</div>
+      <strong>Kubernetes</strong>
+      <p>滚动更新 + 健康检查</p>
+    </div><div class="arch-box data" style="--x:901.5px;--y:122px;--w:233.5px;--h:78px">
+      <div class="label">data</div>
+      <strong>Prometheus</strong>
+      <p>指标采集</p>
+    </div><div class="arch-box provider" style="--x:901.5px;--y:230px;--w:233.5px;--h:78px">
+      <div class="label">provider</div>
+      <strong>AlertManager</strong>
+      <p>告警路由</p>
     </div>
     
-  </div><div class="chart-wrap"><svg class="chart-svg" viewBox="0 0 720 280" preserveAspectRatio="xMidYMid meet"><line x1="48" y1="242.0" x2="700" y2="242.0" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="246.0" text-anchor="end" fill="var(--text-faint)" font-size="11">0</text><line x1="48" y1="186.5" x2="700" y2="186.5" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="190.5" text-anchor="end" fill="var(--text-faint)" font-size="11">0.05</text><line x1="48" y1="131.0" x2="700" y2="131.0" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="135.0" text-anchor="end" fill="var(--text-faint)" font-size="11">0.1</text><line x1="48" y1="75.5" x2="700" y2="75.5" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="79.5" text-anchor="end" fill="var(--text-faint)" font-size="11">0.15</text><line x1="48" y1="20.0" x2="700" y2="20.0" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="24.0" text-anchor="end" fill="var(--text-faint)" font-size="11">0.2</text><line x1="48" y1="20" x2="48" y2="242" stroke="var(--border-base)" stroke-width="1"/><rect x="63.2" y="86.6" width="77.2" height="155.4" fill="var(--accent-primary)" opacity="0.9"/><text x="102.3" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">1月</text><rect x="171.9" y="108.8" width="77.2" height="133.2" fill="var(--accent-primary)" opacity="0.9"/><text x="211.0" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">2月</text><rect x="280.5" y="131.0" width="77.2" height="111.0" fill="var(--accent-primary)" opacity="0.9"/><text x="319.7" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">3月</text><rect x="389.2" y="142.1" width="77.2" height="99.9" fill="var(--accent-primary)" opacity="0.9"/><text x="428.3" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">4月</text><rect x="497.9" y="153.2" width="77.2" height="88.8" fill="var(--accent-primary)" opacity="0.9"/><text x="537.0" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">5月</text><rect x="606.5" y="153.2" width="77.2" height="88.8" fill="var(--accent-primary)" opacity="0.9"/><text x="645.7" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">6月</text></svg></div>
-  </article>
-<article class="block" id="endpoints" style="--span:12;">
-    <div class="block-header">
-    <div>
-      
-      <h2>端点详情</h2>
-      
-    </div>
-    <button class="copy-mini" data-copy-block="endpoints">Copy</button>
-  </div><div class="matrix-tools" data-matrix-tools="endpoints">
-    <input data-matrix-search="endpoints" type="search" placeholder="Search table" />
-    <label>状态<select data-matrix-filter="endpoints" data-filter-key="状态">
-      <option value="">All</option>
-      <option value="达标">达标</option><option value="关注">关注</option><option value="超标">超标</option>
-    </select></label>
-  </div><div class="matrix-wrap">
-    <table class="matrix" data-matrix="endpoints" data-sortable="true">
-      <thead><tr><th style="min-width:180px" data-sort-index="0">端点</th><th style="width:80px" data-sort-index="1">状态</th><th style="width:100px" data-sort-index="2"><span class="tt">P99<span class="tt-b">第 99 百分位延迟：99% 的请求在此时间内完成，代表长尾体验</span></span></th><th style="width:80px" data-sort-index="3">环比</th><th style="width:90px" data-sort-index="4"><span class="tt">TTI<span class="tt-b">首次可交互时间：页面从加载到用户可操作所需的时间</span></span></th><th style="min-width:200px" data-sort-index="5">建议行动</th></tr></thead>
-      <tbody><tr class="matrix-group"><td colspan="6">核心路径</td></tr><tr class="matrix-row" data-row-id="endpoints-1" data-search="&#96;/api/feed&#96; 达标 330ms **↓37%** 1.2s 维持现状，关注 DB 查询计划" data-filters="{&quot;状态&quot;:&quot;达标&quot;}"><td data-sort-value="&#96;/api/feed&#96;" style="min-width:180px"><code>/api/feed</code></td><td data-sort-value="达标" style="width:80px"><span class="cell-badge tone-success">达标</span></td><td data-sort-value="330ms" style="width:100px">330ms</td><td data-sort-value="**↓37%**" style="width:80px"><strong>↓37%</strong></td><td data-sort-value="1.2s" style="width:90px">1.2s</td><td data-sort-value="维持现状，关注 DB 查询计划" style="min-width:200px">维持现状，关注 DB 查询计划</td></tr><tr class="matrix-row stripe" data-row-id="endpoints-2" data-search="&#96;/api/user&#96; 达标 178ms ↓15% 0.8s 良好，可作为基准参考" data-filters="{&quot;状态&quot;:&quot;达标&quot;}"><td data-sort-value="&#96;/api/user&#96;" style="min-width:180px"><code>/api/user</code></td><td data-sort-value="达标" style="width:80px"><span class="cell-badge tone-success">达标</span></td><td data-sort-value="178ms" style="width:100px">178ms</td><td data-sort-value="↓15%" style="width:80px">↓15%</td><td data-sort-value="0.8s" style="width:90px">0.8s</td><td data-sort-value="良好，可作为基准参考" style="min-width:200px">良好，可作为基准参考</td></tr><tr class="matrix-row" data-row-id="endpoints-3" data-search="&#96;/api/search&#96; 关注 480ms ↓29% 2.1s 缓存命中率仅 42%，建议提升至 70%" data-filters="{&quot;状态&quot;:&quot;关注&quot;}"><td data-sort-value="&#96;/api/search&#96;" style="min-width:180px"><button class="matrix-toggle" data-detail-toggle="endpoints-3" aria-label="Toggle row detail">+</button><code>/api/search</code></td><td data-sort-value="关注" style="width:80px"><span class="cell-badge tone-warning">关注</span></td><td data-sort-value="480ms" style="width:100px">480ms</td><td data-sort-value="↓29%" style="width:80px">↓29%</td><td data-sort-value="2.1s" style="width:90px">2.1s</td><td data-sort-value="缓存命中率仅 42%，建议提升至 70%" style="min-width:200px">缓存命中率仅 42%，建议提升至 70%</td></tr><tr class="matrix-detail-row" data-detail-row="endpoints-3" hidden><td colspan="6">主要瓶颈：全文检索走全表扫描，缺少向量索引。建议 Q3 迁移至 Elasticsearch 或添加 pgvector 索引。</td></tr><tr class="matrix-group"><td colspan="6">管理接口</td></tr><tr class="matrix-row stripe" data-row-id="endpoints-5" data-search="&#96;/admin/export&#96; 超标 8.4s ↑12% — **紧急**：改为异步任务队列" data-filters="{&quot;状态&quot;:&quot;超标&quot;}"><td data-sort-value="&#96;/admin/export&#96;" style="min-width:180px"><button class="matrix-toggle" data-detail-toggle="endpoints-5" aria-label="Toggle row detail">+</button><code>/admin/export</code></td><td data-sort-value="超标" style="width:80px"><span class="cell-badge tone-danger">超标</span></td><td data-sort-value="8.4s" style="width:100px">8.4s</td><td data-sort-value="↑12%" style="width:80px">↑12%</td><td data-sort-value="—" style="width:90px">—</td><td data-sort-value="**紧急**：改为异步任务队列" style="min-width:200px"><strong>紧急</strong>：改为异步任务队列</td></tr><tr class="matrix-detail-row" data-detail-row="endpoints-5" hidden><td colspan="6">同步导出阻塞 worker 线程，在高峰期触发级联超时。已在 Linear #4821 跟踪，目标 2025-07-15 上线。</td></tr><tr class="matrix-row" data-row-id="endpoints-6" data-search="&#96;/admin/report&#96; 关注 3.2s ↓8% — 添加分页，限制单次返回 500 行" data-filters="{&quot;状态&quot;:&quot;关注&quot;}"><td data-sort-value="&#96;/admin/report&#96;" style="min-width:180px"><code>/admin/report</code></td><td data-sort-value="关注" style="width:80px"><span class="cell-badge tone-warning">关注</span></td><td data-sort-value="3.2s" style="width:100px">3.2s</td><td data-sort-value="↓8%" style="width:80px">↓8%</td><td data-sort-value="—" style="width:90px">—</td><td data-sort-value="添加分页，限制单次返回 500 行" style="min-width:200px">添加分页，限制单次返回 500 行</td></tr></tbody>
-    </table>
   </div>
   </article>
-<article class="block" id="incidents" style="--span:12;">
+<article class="block" id="canary-flow" style="--span:12;">
     <div class="block-header">
     <div>
       
-      <h2>Q2 事件记录</h2>
+      <h2><span class="tt">Canary<span class="tt-b">金丝雀发布，先将新版本推送到少量实例上观察稳定性再扩量</span></span> 发布流程</h2>
+      
+    </div>
+    <button class="copy-mini" data-copy-block="canary-flow">Copy</button>
+  </div><div class="motion-wrap" data-motion="canary-flow" data-index="0" data-autoplay="true">
+    <div class="motion-canvas" style="--motion-ratio:1180 / 460">
+      <div class="motion-object motion-window" data-motion-object="lb" data-status="" data-emphasis="" style="--x:4.2373%;--y:36.9565%;--w:16.9492%;--h:26.0870%;--opacity:1;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface">
+      <div class="motion-window-bar"><span></span><span></span><span></span></div>
+      
+      <strong data-motion-title>Load Balancer</strong>
+      <p class="text-sm" data-motion-body>分流入口</p>
+      
+    </div></div><div class="motion-object motion-card" data-motion-object="v1" data-status="active" data-emphasis="" style="--x:28.8136%;--y:19.5652%;--w:18.6441%;--h:23.9130%;--opacity:1;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface">
+    
+    <strong data-motion-title>v2.3 (stable)</strong>
+    <p class="text-sm" data-motion-body>100% 流量</p>
+    
+  </div></div><div class="motion-object motion-card" data-motion-object="v2" data-status="" data-emphasis="" style="--x:28.8136%;--y:56.5217%;--w:18.6441%;--h:23.9130%;--opacity:0.35;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface">
+    
+    <strong data-motion-title>v2.4 (canary)</strong>
+    <p class="text-sm" data-motion-body>0% 流量</p>
+    
+  </div></div><div class="motion-object motion-metric" data-motion-object="prom" data-status="" data-emphasis="" style="--x:55.9322%;--y:19.5652%;--w:16.9492%;--h:21.7391%;--opacity:0.3;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface">
+      <div class="motion-value" data-motion-value>—</div>
+      <p class="text-sm" data-motion-label>错误率</p>
+    </div></div><div class="motion-object motion-note" data-motion-object="decision" data-status="" data-emphasis="" style="--x:55.9322%;--y:56.5217%;--w:16.9492%;--h:21.7391%;--opacity:0.3;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface">
+    
+    <strong data-motion-title></strong>
+    <p class="text-sm" data-motion-body>等待观测窗口</p>
+    
+  </div></div><div class="motion-object motion-badge" data-motion-object="status" data-status="" data-emphasis="" style="--x:81.3559%;--y:42.3913%;--w:13.5593%;--h:10.8696%;--opacity:0.2;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface" data-motion-title></div></div>
+    </div>
+    <div class="motion-footer">
+      <div class="motion-caption" data-motion-caption>
+        <strong>部署 v2.4 到 Canary 实例</strong>
+        <span>Argo CD 创建新 Pod，尚未接收流量，镜像拉取完成。</span>
+      </div>
+      <div class="motion-controls">
+        <button data-motion-prev>‹</button>
+        <div class="motion-dots"><button class="motion-dot active" data-motion-dot="0" aria-label="Step 1"></button><button class="motion-dot " data-motion-dot="1" aria-label="Step 2"></button><button class="motion-dot " data-motion-dot="2" aria-label="Step 3"></button><button class="motion-dot " data-motion-dot="3" aria-label="Step 4"></button></div>
+        <button data-motion-next>›</button>
+        <button data-motion-play>Pause</button>
+      </div>
+    </div>
+  </div>
+  </article>
+<article class="block" id="timeline-5" style="--span:12;">
+    <div class="block-header">
+    <div>
+      
+      <h2>v2.4 发布事件轴</h2>
       
     </div>
     
   </div><div class="timeline-line">
-    <div class="timeline-item active"><div class="label">4月3日</div><strong>DB 连接池耗尽</strong><p class="text-sm">高峰期并发超出连接上限，持续 18 分钟。消耗 <span class="tt">错误预算<span class="tt-b">SLA 允许的最大故障时间，例如 99.9% 可用性对应每月约 43 分钟</span></span> 18min。</p></div><div class="timeline-item pending"><div class="label">5月11日</div><strong>CDN 节点故障</strong><p class="text-sm">华南区 2 个节点下线，自动切流，用户无感知。</p></div><div class="timeline-item "><div class="label">6月19日</div><strong>Search 索引重建</strong><p class="text-sm">计划窗口内完成，<span class="tt">P99<span class="tt-b">第 99 百分位延迟：99% 的请求在此时间内完成，代表长尾体验</span></span> 临时升高至 620ms，持续 4 分钟。</p></div>
+    <div class="timeline-item "><div class="label">09:15</div><strong>PR #847 合并</strong><p class="text-sm">feat: 优化 Canary 流量切换逻辑</p></div><div class="timeline-item "><div class="label">09:18</div><strong>CI 构建启动</strong><p class="text-sm">Build #1203，Docker 多阶段构建</p></div><div class="timeline-item active"><div class="label">09:31</div><strong>全部测试通过</strong><p class="text-sm">单测 412 个，集成测试 38 个</p></div><div class="timeline-item "><div class="label">09:32</div><strong>镜像推送 ECR</strong><p class="text-sm">tag: v2.4.0-sha-3f9a2b，漏洞扫描 0 High</p></div><div class="timeline-item "><div class="label">09:35</div><strong>Argo CD 触发部署</strong><p class="text-sm">检测到新镜像，启动 Canary 流程</p></div><div class="timeline-item active"><div class="label">09:52</div><strong>全量发布完成</strong><p class="text-sm">耗时 17 min，<span class="tt">MTTR<span class="tt-b">Mean Time To Recovery — 平均故障恢复时间</span></span> 基准更新</p></div>
   </div>
   </article>
-<article class="block" id="next-actions" style="--span:12;">
+<article class="block" id="risk-matrix" style="--span:12;">
     <div class="block-header">
     <div>
       
-      <h2>Q3 行动项</h2>
+      <h2>风险评估矩阵</h2>
       
     </div>
-    <button class="copy-mini" data-copy-block="next-actions">Copy</button>
-  </div><div class="kanban" data-kanban="next-actions">
+    <button class="copy-mini" data-copy-block="risk-matrix">Copy</button>
+  </div><div class="matrix-tools" data-matrix-tools="risk-matrix">
+    <input data-matrix-search="risk-matrix" type="search" placeholder="Search table" />
+    <label>风险等级<select data-matrix-filter="risk-matrix" data-filter-key="risk">
+      <option value="">All</option>
+      <option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option>
+    </select></label>
+  </div><div class="matrix-wrap">
+    <table class="matrix" data-matrix="risk-matrix" data-sortable="true">
+      <thead><tr><th style="min-width:200px" data-sort-index="0">检查项</th><th style="min-width:220px" data-sort-index="1">结论</th><th style="width:96px" data-sort-index="2">风险</th><th style="min-width:240px" data-sort-index="3">依据</th><th style="min-width:160px" data-sort-index="4">下一步</th></tr></thead>
+      <tbody><tr class="matrix-group"><td colspan="5">发布关键路径</td></tr><tr class="matrix-row" data-row-id="risk-matrix-1" data-search="&#96;Canary Controller&#96; 逻辑 **流量切换已优化**，[[P99]] 延迟下降 18% Low A/B 测试 3 天，错误率 0.08% 对比 v2.3 的 0.21%，统计显著性 p&lt;0.01，样本量 420 万次请求 ship" data-filters="{&quot;risk&quot;:&quot;Low&quot;}"><td data-sort-value="&#96;Canary Controller&#96; 逻辑" style="min-width:200px"><code>Canary Controller</code> 逻辑</td><td data-sort-value="**流量切换已优化**，[[P99]] 延迟下降 18%" style="min-width:220px"><strong>流量切换已优化</strong>，<span class="tt">P99<span class="tt-b">第 99 百分位延迟，即 99% 的请求在此时间内完成</span></span> 延迟下降 18%</td><td data-sort-value="Low" style="width:96px"><span class="cell-badge tone-success">Low</span></td><td data-sort-value="A/B 测试 3 天，错误率 0.08% 对比 v2.3 的 0.21%，统计显著性 p&lt;0.01，样本量 420 万次请求" style="min-width:240px"><div class="cell-summary">A/B 测试 3 天，错误率 0.08%</div><div class="cell-detail">对比 v2.3 的 0.21%，统计显著性 p&lt;0.01，样本量 420 万次请求</div></td><td data-sort-value="ship" style="min-width:160px"><span class="cell-badge tone-accent">ship</span></td></tr><tr class="matrix-row stripe" data-row-id="risk-matrix-2" data-search="自动回滚链路 **手动演练通过，自动触发未验证** Medium AlertManager → Argo CD 链路仅有集成测试 上次真实回滚（2月）是手动操作，自动路径未经真实故障验证 chaos test 排期 Game Day" data-filters="{&quot;risk&quot;:&quot;Medium&quot;}"><td data-sort-value="自动回滚链路" style="min-width:200px"><button class="matrix-toggle" data-detail-toggle="risk-matrix-2" aria-label="Toggle row detail">+</button>自动回滚链路</td><td data-sort-value="**手动演练通过，自动触发未验证**" style="min-width:220px"><strong>手动演练通过，自动触发未验证</strong></td><td data-sort-value="Medium" style="width:96px"><span class="cell-badge tone-warning">Medium</span></td><td data-sort-value="AlertManager → Argo CD 链路仅有集成测试 上次真实回滚（2月）是手动操作，自动路径未经真实故障验证" style="min-width:240px"><div class="cell-summary">AlertManager → Argo CD 链路仅有集成测试</div><div class="cell-detail">上次真实回滚（2月）是手动操作，自动路径未经真实故障验证</div></td><td data-sort-value="chaos test 排期 Game Day" style="min-width:160px"><span class="cell-tags"><span class="cell-badge">chaos test</span><span class="cell-badge">排期 Game Day</span></span></td></tr><tr class="matrix-detail-row" data-detail-row="risk-matrix-2" hidden><td colspan="5">建议在下周 Game Day 中加入回滚触发场景，注入 HTTP 500 错误超过阈值，观察自动回滚是否在 2 分钟内完成。</td></tr><tr class="matrix-row" data-row-id="risk-matrix-3" data-search="&#96;livenessProbe&#96; 超时 **5s 超时在 Java 冷启动下不足，会触发误回滚** High 冷启动 p50 进度（目标 15s） 调整为 15s 验证" data-filters="{&quot;risk&quot;:&quot;High&quot;}"><td data-sort-value="&#96;livenessProbe&#96; 超时" style="min-width:200px"><button class="matrix-toggle" data-detail-toggle="risk-matrix-3" aria-label="Toggle row detail">+</button><code>livenessProbe</code> 超时</td><td data-sort-value="**5s 超时在 Java 冷启动下不足，会触发误回滚**" style="min-width:220px"><strong>5s 超时在 Java 冷启动下不足，会触发误回滚</strong></td><td data-sort-value="High" style="width:96px"><span class="cell-badge tone-danger">High</span></td><td data-sort-value="30" style="min-width:240px"><span class="cell-progress"><span style="--progress:30%"></span></span> 冷启动 p50 进度（目标 15s）</td><td data-sort-value="调整为 15s 验证" style="min-width:160px"><span class="cell-tags"><span class="cell-badge">调整为 15s</span><span class="cell-badge">验证</span></span></td></tr><tr class="matrix-detail-row" data-detail-row="risk-matrix-3" hidden><td colspan="5">Java 服务冷启动 p50 约 8-12s，p95 约 18s。当前 5s 超时在 cold start 场景下必然失败，会触发不必要的 Pod 重启和回滚。应改为 initialDelaySeconds: 15, timeoutSeconds: 10。</td></tr><tr class="matrix-group"><td colspan="5">可观测性</td></tr><tr class="matrix-row stripe" data-row-id="risk-matrix-5" data-search="[[P99]] 告警阈值 阈值已与 [[SLO]] 对齐，留有 20% 缓冲 Low 200ms 阈值 = SLO 的 80% 历史数据：99.3% 的时间内 P99 &lt; 160ms，告警噪音低 done" data-filters="{&quot;risk&quot;:&quot;Low&quot;}"><td data-sort-value="[[P99]] 告警阈值" style="min-width:200px"><span class="tt">P99<span class="tt-b">第 99 百分位延迟，即 99% 的请求在此时间内完成</span></span> 告警阈值</td><td data-sort-value="阈值已与 [[SLO]] 对齐，留有 20% 缓冲" style="min-width:220px">阈值已与 <span class="tt">SLO<span class="tt-b">Service Level Objective — 服务质量目标</span></span> 对齐，留有 20% 缓冲</td><td data-sort-value="Low" style="width:96px"><span class="cell-badge tone-success">Low</span></td><td data-sort-value="200ms 阈值 = SLO 的 80% 历史数据：99.3% 的时间内 P99 &lt; 160ms，告警噪音低" style="min-width:240px"><div class="cell-summary">200ms 阈值 = SLO 的 80%</div><div class="cell-detail">历史数据：99.3% 的时间内 P99 &lt; 160ms，告警噪音低</div></td><td data-sort-value="done" style="min-width:160px"><span class="cell-badge tone-success">done</span></td></tr><tr class="matrix-row" data-row-id="risk-matrix-6" data-search="日志采样率 高峰期 1% 采样导致排查困难 Medium 高峰期约 200 条/分钟 上次 P2 故障排查耗时 40 分钟，主因日志量不足，无法定位具体请求链路 动态采样方案调研" data-filters="{&quot;risk&quot;:&quot;Medium&quot;}"><td data-sort-value="日志采样率" style="min-width:200px">日志采样率</td><td data-sort-value="高峰期 1% 采样导致排查困难" style="min-width:220px">高峰期 1% 采样导致排查困难</td><td data-sort-value="Medium" style="width:96px"><span class="cell-badge tone-warning">Medium</span></td><td data-sort-value="高峰期约 200 条/分钟 上次 P2 故障排查耗时 40 分钟，主因日志量不足，无法定位具体请求链路" style="min-width:240px"><div class="cell-summary">高峰期约 200 条/分钟</div><div class="cell-detail">上次 P2 故障排查耗时 40 分钟，主因日志量不足，无法定位具体请求链路</div></td><td data-sort-value="动态采样方案调研" style="min-width:160px"><span class="cell-tags"><span class="cell-badge">动态采样方案调研</span></span></td></tr></tbody>
+    </table>
+  </div>
+  </article>
+<article class="block" id="decisionTree-7" style="--span:4;">
+    <div class="block-header">
+    <div>
+      
+      <h2>发布决策树</h2>
+      
+    </div>
+    
+  </div><div class="decision-tree">
+    <div class="decision-node" data-level="0" style="--indent:0px">
+        <span class="dt-cond">CI 全部通过？</span>
+        <span class="dt-sep">→</span>
+        <span class="dt-res">继续部署流程</span>
+      </div><div class="decision-node" data-level="1" style="--indent:20px">
+        <span class="dt-cond">Canary 错误率 &lt; 0.5%？</span>
+        <span class="dt-sep">→</span>
+        <span class="dt-res">扩大灰度比例</span>
+      </div><div class="decision-node" data-level="2" style="--indent:40px">
+        <span class="dt-cond"><span class="tt">P99<span class="tt-b">第 99 百分位延迟，即 99% 的请求在此时间内完成</span></span> &lt; 200ms？</span>
+        <span class="dt-sep">→</span>
+        <span class="dt-res">继续扩量到 100%</span>
+      </div><div class="decision-node" data-level="2" style="--indent:40px">
+        <span class="dt-cond">P99 ≥ 200ms</span>
+        <span class="dt-sep">→</span>
+        <span class="dt-res">暂停，升级告警</span>
+      </div><div class="decision-node" data-level="1" style="--indent:20px">
+        <span class="dt-cond">错误率 ≥ 0.5%</span>
+        <span class="dt-sep">→</span>
+        <span class="dt-res">立即触发自动回滚</span>
+      </div><div class="decision-node" data-level="0" style="--indent:0px">
+        <span class="dt-cond">CI 失败</span>
+        <span class="dt-sep">→</span>
+        <span class="dt-res">阻断，通知责任人</span>
+      </div>
+  </div>
+  </article>
+<article class="block" id="diffReview-8" style="--span:8;">
+    <div class="block-header">
+    <div>
+      
+      <h2>关键配置变更 — livenessProbe 超时</h2>
+      
+    </div>
+    <button class="copy-mini" data-copy-block="diffReview-8">Copy</button>
+  </div><div><div class="diff-wrap"><div class="vu-diff-block">
+    <div class="diff-line diff-context"><span class="diff-num">24</span><span>  livenessProbe:</span></div><div class="diff-line diff-remove"><span class="diff-num">25</span><span>-   initialDelaySeconds: 5</span></div><div class="diff-line diff-add"><span class="diff-num">25</span><span>+   initialDelaySeconds: 15</span></div><div class="diff-line diff-remove"><span class="diff-num">26</span><span>-   timeoutSeconds: 5</span></div><div class="diff-line diff-add"><span class="diff-num">26</span><span>+   timeoutSeconds: 10</span></div><div class="diff-line diff-context"><span class="diff-num">27</span><span>  readinessProbe:</span></div><div class="diff-line diff-remove"><span class="diff-num">28</span><span>-   initialDelaySeconds: 3</span></div><div class="diff-line diff-add"><span class="diff-num">28</span><span>+   initialDelaySeconds: 12</span></div><div class="diff-line diff-remove"><span class="diff-num">29</span><span>-   failureThreshold: 3</span></div><div class="diff-line diff-add"><span class="diff-num">29</span><span>+   failureThreshold: 5</span></div>
+  </div><div class="annotation-pane"><p><mark>P1</mark> 修复冷启动误回滚<br>Java 服务 p50 启动耗时 8-12s，原 5s 超时必然在冷启动时触发失败。</p><p><mark>P2</mark> readiness 同步调整<br>避免 Pod 未就绪时接收流量，<code>failureThreshold</code> 增大以减少抖动。</p></div></div></div>
+  </article>
+<article class="block" id="kanban-9" style="--span:4;">
+    <div class="block-header">
+    <div>
+      
+      <h2>发布前检查清单</h2>
+      
+    </div>
+    <button class="copy-mini" data-copy-block="kanban-9">Copy</button>
+  </div><div class="kanban" data-kanban="kanban-9">
     <section class="kanban-col tone-danger">
     <header class="kanban-head">
-      <div class="kanban-title"><span class="kanban-icon">!</span><span>紧急</span></div>
+      <div class="kanban-title"><span class="kanban-icon">!</span><span>阻塞项</span></div>
       <div class="kanban-count"><span data-kanban-done>0</span> / <span>2</span></div>
     </header>
     <ul class="kanban-list">
@@ -1396,65 +1565,71 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
     <label class="kanban-check">
       <input type="checkbox" >
       <span class="kanban-box"></span>
-      <span class="kanban-text"><code>/admin/export</code> 改异步队列，目标 <span class="tt">P99<span class="tt-b">第 99 百分位延迟：99% 的请求在此时间内完成，代表长尾体验</span></span> &lt; 200ms</span>
+      <span class="kanban-text"><code>livenessProbe</code> 超时调整并在 staging 验证</span>
     </label>
   </li><li class="kanban-card ">
     <label class="kanban-check">
       <input type="checkbox" >
       <span class="kanban-box"></span>
-      <span class="kanban-text"><span class="tt">错误预算<span class="tt-b">SLA 允许的最大故障时间，例如 99.9% 可用性对应每月约 43 分钟</span></span> 告警阈值降至 30min，提前预警</span>
+      <span class="kanban-text">自动回滚链路端到端测试</span>
     </label>
   </li>
     </ul>
   </section><section class="kanban-col tone-warning">
     <header class="kanban-head">
-      <div class="kanban-title"><span class="kanban-icon">→</span><span>本季度</span></div>
-      <div class="kanban-count"><span data-kanban-done>0</span> / <span>3</span></div>
+      <div class="kanban-title"><span class="kanban-icon">~</span><span>建议项</span></div>
+      <div class="kanban-count"><span data-kanban-done>1</span> / <span>3</span></div>
     </header>
     <ul class="kanban-list">
       <li class="kanban-card ">
     <label class="kanban-check">
       <input type="checkbox" >
       <span class="kanban-box"></span>
-      <span class="kanban-text">/api/search 缓存命中率提升至 70%</span>
+      <span class="kanban-text">日志动态采样方案调研</span>
     </label>
   </li><li class="kanban-card ">
     <label class="kanban-check">
       <input type="checkbox" >
       <span class="kanban-box"></span>
-      <span class="kanban-text">全链路 <span class="tt">TTI<span class="tt-b">首次可交互时间：页面从加载到用户可操作所需的时间</span></span> 监控接入 Grafana</span>
+      <span class="kanban-text">Game Day 回滚演练排期</span>
     </label>
   </li><li class="kanban-card ">
     <label class="kanban-check">
-      <input type="checkbox" >
+      <input type="checkbox" checked>
       <span class="kanban-box"></span>
-      <span class="kanban-text">数据库慢查询日志接入告警</span>
+      <span class="kanban-text">Runbook 更新超时参数说明</span>
     </label>
   </li>
     </ul>
   </section><section class="kanban-col tone-success">
     <header class="kanban-head">
       <div class="kanban-title"><span class="kanban-icon">✓</span><span>已完成</span></div>
-      <div class="kanban-count"><span data-kanban-done>3</span> / <span>3</span></div>
+      <div class="kanban-count"><span data-kanban-done>4</span> / <span>4</span></div>
     </header>
     <ul class="kanban-list">
       <li class="kanban-card ">
     <label class="kanban-check">
       <input type="checkbox" checked>
       <span class="kanban-box"></span>
-      <span class="kanban-text">feed 端点 DB 查询计划优化</span>
+      <span class="kanban-text">Canary Controller 逻辑审查</span>
     </label>
   </li><li class="kanban-card ">
     <label class="kanban-check">
       <input type="checkbox" checked>
       <span class="kanban-box"></span>
-      <span class="kanban-text">连接池上限从 100 提升至 200</span>
+      <span class="kanban-text"><span class="tt">P99<span class="tt-b">第 99 百分位延迟，即 99% 的请求在此时间内完成</span></span> 告警阈值与 <span class="tt">SLO<span class="tt-b">Service Level Objective — 服务质量目标</span></span> 对齐</span>
     </label>
   </li><li class="kanban-card ">
     <label class="kanban-check">
       <input type="checkbox" checked>
       <span class="kanban-box"></span>
-      <span class="kanban-text"><span class="tt">SLA<span class="tt-b">服务质量协议：与客户约定的可用性和响应时间标准</span></span> 达标率监控看板上线</span>
+      <span class="kanban-text">ECR 镜像漏洞扫描通过（0 High）</span>
+    </label>
+  </li><li class="kanban-card ">
+    <label class="kanban-check">
+      <input type="checkbox" checked>
+      <span class="kanban-box"></span>
+      <span class="kanban-text">回归测试全部通过（450 个）</span>
     </label>
   </li>
     </ul>
@@ -1465,7 +1640,7 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
   </main>
   <div class="toast" id="toast">已复制</div>
   <script>
-const artifactSpec = {"meta":{"title":"API 性能季报","subtitle":"2025 Q2","glossary":{"P99":"第 99 百分位延迟：99% 的请求在此时间内完成，代表长尾体验","SLA":"服务质量协议：与客户约定的可用性和响应时间标准","TTI":"首次可交互时间：页面从加载到用户可操作所需的时间","错误预算":"SLA 允许的最大故障时间，例如 99.9% 可用性对应每月约 43 分钟"}},"actions":[{"label":"复制摘要","primary":true,"copy":"API 整体达标，P99 从 480ms 降至 312ms（-35%）。可用性 99.94%，消耗[[错误预算]] 26min，余量充足。建议下季度重点关注 /search 端点的缓存命中率。"}],"content":[{"id":"overview","type":"hero","kicker":"季度报告","title":"API 性能季报 · 2025 Q2","body":"覆盖全部 12 个生产端点，基于 2.4 亿次真实请求。","tags":["达标","P99 改善","可用性 99.94%"]},{"id":"key-metrics","type":"metrics","span":12,"items":[{"label":"P99 延迟","value":"312ms","note":"↓35% vs Q1","spark":[480,460,430,400,370,340,312]},{"label":"可用性","value":"99.94%","note":"[[SLA]] 目标 99.9%","spark":[99.91,99.93,99.94,99.92,99.95,99.94,99.94]},{"label":"错误率","value":"0.08%","note":"低于警戒线 0.1%","spark":[0.14,0.12,0.1,0.09,0.08,0.08,0.08]},{"label":"[[错误预算]] 消耗","value":"26 min","note":"余量 17 min（本月）"}]},{"id":"p99-trend","type":"chart","title":"[[P99]] 延迟趋势（ms）","span":8,"variant":"area","data":{"labels":["1月","2月","3月","4月","5月","6月"],"series":[{"label":"/api/feed","values":[520,490,450,410,370,330]},{"label":"/api/search","values":[680,650,610,570,520,480]},{"label":"/api/user","values":[210,200,195,190,185,178]}]}},{"id":"error-budget","type":"chart","title":"月度错误率（%）","span":4,"variant":"bar","data":{"labels":["1月","2月","3月","4月","5月","6月"],"series":[{"values":[0.14,0.12,0.1,0.09,0.08,0.08]}]}},{"id":"endpoints","type":"matrix","title":"端点详情","span":12,"search":true,"sortable":true,"filters":[{"key":"状态","label":"状态","options":["达标","关注","超标"]}],"columns":[{"key":"endpoint","label":"端点","minWidth":"180px"},{"key":"状态","label":"状态","width":"80px"},{"key":"p99","label":"[[P99]]","width":"100px"},{"key":"delta","label":"环比","width":"80px"},{"key":"tti","label":"[[TTI]]","width":"90px"},{"key":"action","label":"建议行动","minWidth":"200px"}],"rows":[{"group":"核心路径"},{"endpoint":"`/api/feed`","状态":{"badge":"达标","tone":"success"},"p99":"330ms","delta":"**↓37%**","tti":"1.2s","action":"维持现状，关注 DB 查询计划"},{"endpoint":"`/api/user`","状态":{"badge":"达标","tone":"success"},"p99":"178ms","delta":"↓15%","tti":"0.8s","action":"良好，可作为基准参考"},{"endpoint":"`/api/search`","状态":{"badge":"关注","tone":"warning"},"p99":"480ms","delta":"↓29%","tti":"2.1s","action":"缓存命中率仅 42%，建议提升至 70%","details":"主要瓶颈：全文检索走全表扫描，缺少向量索引。建议 Q3 迁移至 Elasticsearch 或添加 pgvector 索引。"},{"group":"管理接口"},{"endpoint":"`/admin/export`","状态":{"badge":"超标","tone":"danger"},"p99":"8.4s","delta":"↑12%","tti":"—","action":"**紧急**：改为异步任务队列","details":"同步导出阻塞 worker 线程，在高峰期触发级联超时。已在 Linear #4821 跟踪，目标 2025-07-15 上线。"},{"endpoint":"`/admin/report`","状态":{"badge":"关注","tone":"warning"},"p99":"3.2s","delta":"↓8%","tti":"—","action":"添加分页，限制单次返回 500 行"}]},{"id":"incidents","type":"timeline","span":12,"title":"Q2 事件记录","items":[{"time":"4月3日","title":"DB 连接池耗尽","body":"高峰期并发超出连接上限，持续 18 分钟。消耗 [[错误预算]] 18min。","status":"active"},{"time":"5月11日","title":"CDN 节点故障","body":"华南区 2 个节点下线，自动切流，用户无感知。","status":"pending"},{"time":"6月19日","title":"Search 索引重建","body":"计划窗口内完成，[[P99]] 临时升高至 620ms，持续 4 分钟。"}]},{"id":"next-actions","type":"kanban","span":12,"title":"Q3 行动项","columns":[{"title":"紧急","tone":"danger","icon":"!","items":[{"title":"`/admin/export` 改异步队列，目标 [[P99]] < 200ms","done":false},{"title":"[[错误预算]] 告警阈值降至 30min，提前预警","done":false}]},{"title":"本季度","tone":"warning","icon":"→","items":["/api/search 缓存命中率提升至 70%",{"title":"全链路 [[TTI]] 监控接入 Grafana","done":false},"数据库慢查询日志接入告警"]},{"title":"已完成","tone":"success","icon":"✓","items":[{"title":"feed 端点 DB 查询计划优化","done":true},{"title":"连接池上限从 100 提升至 200","done":true},{"title":"[[SLA]] 达标率监控看板上线","done":true}]}]}]};
+const artifactSpec = {"meta":{"title":"CI/CD 发布管道架构审查","subtitle":"v2.3 → v2.4 升级评估","lang":"zh-CN","glossary":{"MTTR":"Mean Time To Recovery — 平均故障恢复时间","SLO":"Service Level Objective — 服务质量目标","Canary":"金丝雀发布，先将新版本推送到少量实例上观察稳定性再扩量","P99":"第 99 百分位延迟，即 99% 的请求在此时间内完成"}},"content":[{"kicker":"架构审查","title":"CI/CD 发布管道 v2.4","body":"从代码提交到生产部署的完整链路评估，重点审查灰度策略与回滚路径。","tags":["CI/CD","架构","灰度发布","可观测性"],"type":"hero","id":"hero-0"},{"span":4,"items":[{"label":"部署频率","value":"14/天","note":"过去 30 天均值","spark":[8,11,13,12,15,14,16]},{"label":"[[MTTR]]","value":"4.2 min","note":"目标 < 5 min","spark":[9,7,5,4,6,4,4]},{"label":"发布成功率","value":"99.1%","note":"含回滚计算","spark":[97,98,99,99,100,99,99]}],"type":"metrics","id":"metrics-1"},{"span":8,"title":"发布成功率趋势","variant":"area","data":{"labels":["1月","2月","3月","4月","5月"],"series":[{"label":"成功率 %","values":[96.2,97.8,98.5,99.1,99.4]},{"label":"[[SLO]] 目标","values":[99,99,99,99,99]}]},"type":"chart","id":"chart-2"},{"id":"pipeline-arch","title":"发布管道架构","stage":{"width":1180,"height":560},"lanes":[{"id":"ci","title":"CI 层","subtitle":"构建 / 测试 / 打包"},{"id":"registry","title":"制品层","subtitle":"镜像仓库 / 版本管理"},{"id":"cd","title":"CD 层","subtitle":"灰度 / 发布 / 回滚"},{"id":"obs","title":"可观测层","subtitle":"指标 / 告警 / 日志"}],"nodes":[{"id":"github","lane":"ci","row":0,"kind":"api","title":"GitHub Actions","body":"PR merge 触发"},{"id":"builder","lane":"ci","row":1,"kind":"worker","title":"Build Worker","body":"Docker 多阶段构建"},{"id":"tester","lane":"ci","row":2,"kind":"worker","title":"Test Runner","body":"单测 + 集成测试"},{"id":"ecr","lane":"registry","row":0,"kind":"data","title":"ECR","body":"镜像存储与漏洞扫描"},{"id":"argo","lane":"cd","row":0,"kind":"api","title":"Argo CD","body":"GitOps 控制器"},{"id":"canary","lane":"cd","row":1,"kind":"worker","title":"Canary Controller","body":"流量 5% → 50% → 100%"},{"id":"k8s","lane":"cd","row":2,"kind":"worker","title":"Kubernetes","body":"滚动更新 + 健康检查"},{"id":"prom","lane":"obs","row":0,"kind":"data","title":"Prometheus","body":"指标采集"},{"id":"alert","lane":"obs","row":1,"kind":"provider","title":"AlertManager","body":"告警路由"}],"edges":[{"from":"github","to":"builder","step":1,"label":"trigger"},{"from":"builder","to":"tester","step":2,"label":"on success"},{"from":"tester","to":"ecr","step":3,"label":"push image"},{"from":"ecr","to":"argo","step":4,"label":"detect tag"},{"from":"argo","to":"canary","step":5,"label":"deploy"},{"from":"canary","to":"k8s","step":6,"label":"traffic shift"},{"from":"k8s","to":"prom","style":"dashed","label":"metrics"},{"from":"prom","to":"alert","style":"dashed","label":"threshold"},{"from":"alert","to":"argo","style":"dashed","label":"rollback"}],"type":"layeredArchitecture"},{"id":"canary-flow","title":"[[Canary]] 发布流程","stage":{"width":1180,"height":460},"objects":[{"id":"lb","type":"window","x":50,"y":170,"w":200,"h":120,"title":"Load Balancer","body":"分流入口"},{"id":"v1","type":"card","x":340,"y":90,"w":220,"h":110,"title":"v2.3 (stable)","body":"100% 流量","status":"active"},{"id":"v2","type":"card","x":340,"y":260,"w":220,"h":110,"title":"v2.4 (canary)","body":"0% 流量","opacity":0.35},{"id":"prom","type":"metric","x":660,"y":90,"w":200,"h":100,"label":"错误率","value":"—","opacity":0.3},{"id":"decision","type":"note","x":660,"y":260,"w":200,"h":100,"body":"等待观测窗口","opacity":0.3},{"id":"status","type":"badge","x":960,"y":195,"w":160,"h":50,"value":"进行中","opacity":0.2}],"steps":[{"title":"部署 v2.4 到 Canary 实例","body":"Argo CD 创建新 Pod，尚未接收流量，镜像拉取完成。","states":{"v2":{"opacity":1,"body":"0% 流量 — 已就绪"}}},{"title":"切入 5% 流量","body":"Load Balancer 开始向 v2.4 分流，观察 [[P99]] 延迟与错误率。","states":{"v1":{"body":"95% 流量"},"v2":{"body":"5% 流量","status":"active"},"prom":{"opacity":1,"value":"0.12%"}}},{"title":"扩大至 50%","body":"指标正常，错误率低于阈值，继续扩大灰度比例。","states":{"v1":{"body":"50% 流量"},"v2":{"body":"50% 流量","emphasis":"success"},"prom":{"value":"0.08%"},"decision":{"opacity":1,"body":"错误率 < 0.5% ✓\n[[P99]] < 200ms ✓"}}},{"title":"全量切换完成","body":"v2.4 接管全部流量，v2.3 保留 15 分钟作为快速回滚备用。","states":{"v1":{"body":"0% — 备用","status":"muted"},"v2":{"body":"100% 流量","emphasis":"success"},"prom":{"value":"0.07%"},"decision":{"body":"发布成功 ✓"},"status":{"opacity":1,"value":"发布完成","emphasis":"success"}}}],"type":"motionStage"},{"title":"v2.4 发布事件轴","items":[{"time":"09:15","title":"PR #847 合并","body":"feat: 优化 Canary 流量切换逻辑"},{"time":"09:18","title":"CI 构建启动","body":"Build #1203，Docker 多阶段构建"},{"time":"09:31","title":"全部测试通过","body":"单测 412 个，集成测试 38 个","status":"active"},{"time":"09:32","title":"镜像推送 ECR","body":"tag: v2.4.0-sha-3f9a2b，漏洞扫描 0 High"},{"time":"09:35","title":"Argo CD 触发部署","body":"检测到新镜像，启动 Canary 流程"},{"time":"09:52","title":"全量发布完成","body":"耗时 17 min，[[MTTR]] 基准更新","status":"active"}],"type":"timeline","id":"timeline-5"},{"id":"risk-matrix","title":"风险评估矩阵","search":true,"sortable":true,"filters":[{"key":"risk","label":"风险等级","options":["High","Medium","Low"]}],"columns":[{"key":"item","label":"检查项","minWidth":"200px"},{"key":"conclusion","label":"结论","minWidth":"220px"},{"key":"risk","label":"风险","width":"96px"},{"key":"evidence","label":"依据","minWidth":"240px"},{"key":"action","label":"下一步","minWidth":"160px"}],"rows":[{"group":"发布关键路径"},{"item":"`Canary Controller` 逻辑","conclusion":"**流量切换已优化**，[[P99]] 延迟下降 18%","risk":{"badge":"Low","tone":"success"},"evidence":{"summary":"A/B 测试 3 天，错误率 0.08%","detail":"对比 v2.3 的 0.21%，统计显著性 p<0.01，样本量 420 万次请求"},"action":{"badge":"ship","tone":"accent"}},{"item":"自动回滚链路","conclusion":"**手动演练通过，自动触发未验证**","risk":{"badge":"Medium","tone":"warning"},"evidence":{"summary":"AlertManager → Argo CD 链路仅有集成测试","detail":"上次真实回滚（2月）是手动操作，自动路径未经真实故障验证"},"action":["chaos test","排期 Game Day"],"details":"建议在下周 Game Day 中加入回滚触发场景，注入 HTTP 500 错误超过阈值，观察自动回滚是否在 2 分钟内完成。"},{"item":"`livenessProbe` 超时","conclusion":"**5s 超时在 Java 冷启动下不足，会触发误回滚**","risk":{"badge":"High","tone":"danger"},"evidence":{"progress":30,"label":"冷启动 p50 进度（目标 15s）"},"action":["调整为 15s","验证"],"details":"Java 服务冷启动 p50 约 8-12s，p95 约 18s。当前 5s 超时在 cold start 场景下必然失败，会触发不必要的 Pod 重启和回滚。应改为 initialDelaySeconds: 15, timeoutSeconds: 10。"},{"group":"可观测性"},{"item":"[[P99]] 告警阈值","conclusion":"阈值已与 [[SLO]] 对齐，留有 20% 缓冲","risk":{"badge":"Low","tone":"success"},"evidence":{"summary":"200ms 阈值 = SLO 的 80%","detail":"历史数据：99.3% 的时间内 P99 < 160ms，告警噪音低"},"action":{"badge":"done","tone":"success"}},{"item":"日志采样率","conclusion":"高峰期 1% 采样导致排查困难","risk":{"badge":"Medium","tone":"warning"},"evidence":{"summary":"高峰期约 200 条/分钟","detail":"上次 P2 故障排查耗时 40 分钟，主因日志量不足，无法定位具体请求链路"},"action":["动态采样方案调研"]}],"type":"matrix"},{"span":4,"title":"发布决策树","items":[{"level":0,"condition":"CI 全部通过？","result":"继续部署流程"},{"level":1,"condition":"Canary 错误率 < 0.5%？","result":"扩大灰度比例"},{"level":2,"condition":"[[P99]] < 200ms？","result":"继续扩量到 100%"},{"level":2,"condition":"P99 ≥ 200ms","result":"暂停，升级告警"},{"level":1,"condition":"错误率 ≥ 0.5%","result":"立即触发自动回滚"},{"level":0,"condition":"CI 失败","result":"阻断，通知责任人"}],"type":"decisionTree","id":"decisionTree-7"},{"span":8,"title":"关键配置变更 — livenessProbe 超时","lines":[{"number":24,"type":"context","text":"  livenessProbe:"},{"number":25,"type":"remove","text":"-   initialDelaySeconds: 5"},{"number":25,"type":"add","text":"+   initialDelaySeconds: 15"},{"number":26,"type":"remove","text":"-   timeoutSeconds: 5"},{"number":26,"type":"add","text":"+   timeoutSeconds: 10"},{"number":27,"type":"context","text":"  readinessProbe:"},{"number":28,"type":"remove","text":"-   initialDelaySeconds: 3"},{"number":28,"type":"add","text":"+   initialDelaySeconds: 12"},{"number":29,"type":"remove","text":"-   failureThreshold: 3"},{"number":29,"type":"add","text":"+   failureThreshold: 5"}],"findings":[{"severity":"P1","title":"修复冷启动误回滚","body":"Java 服务 p50 启动耗时 8-12s，原 5s 超时必然在冷启动时触发失败。"},{"severity":"P2","title":"readiness 同步调整","body":"避免 Pod 未就绪时接收流量，`failureThreshold` 增大以减少抖动。"}],"type":"diffReview","id":"diffReview-8"},{"title":"发布前检查清单","columns":[{"title":"阻塞项","icon":"!","tone":"danger","items":[{"title":"`livenessProbe` 超时调整并在 staging 验证","done":false},{"title":"自动回滚链路端到端测试","done":false}]},{"title":"建议项","icon":"~","tone":"warning","items":["日志动态采样方案调研",{"title":"Game Day 回滚演练排期","done":false},{"title":"Runbook 更新超时参数说明","done":true}]},{"title":"已完成","icon":"✓","tone":"success","items":[{"title":"Canary Controller 逻辑审查","done":true},{"title":"[[P99]] 告警阈值与 [[SLO]] 对齐","done":true},{"title":"ECR 镜像漏洞扫描通过（0 High）","done":true},{"title":"回归测试全部通过（450 个）","done":true}]}],"type":"kanban","id":"kanban-9"}]};
 const toast = document.getElementById("toast");
 function showToast(text) {
   toast.textContent = text || "已复制";
