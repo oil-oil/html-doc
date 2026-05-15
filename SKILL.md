@@ -62,7 +62,7 @@ Each block parses independently — a JSON error in one block shows an error car
 ## Workflow
 
 1. Identify the information shape: summary, metrics, sequence, comparison, architecture, state change, code review, evidence, nested structure, or editor.
-2. Create a `.md` file. Open `references/schema.md` when exact fields are needed. See `examples/cicd-review.md` for a complete multi-component example.
+2. Create a `.md` file. Open `references/schema.md` when exact fields are needed. See `examples/component-showcase.md` for every component type; `examples/cicd-review.md` for a realistic multi-component document.
 3. Render it:
 
 ```bash
