@@ -84,6 +84,7 @@ function defaultSpan(type) {
     variantGrid: 8,
     codeAnnotation: 6,
     chart: 8,
+    crossRef: 12,
   }[type] || 12;
 }
 
@@ -109,6 +110,7 @@ function renderByType(block) {
     codeAnnotation: renderCodeAnnotation,
     diffReview: renderDiffReview,
     chart: renderChart,
+    crossRef: renderCrossRef,
     evidenceBoard: renderEvidenceBoard,
     variantGrid: renderVariantGrid,
     kanban: renderKanban,
@@ -789,6 +791,37 @@ function renderEmbed(block) {
   return `${renderHead(block)}<div class="embed-wrap" style="--embed-height:${escAttr(height)}">
     <iframe class="embed-frame" src="${escAttr(block.url || "about:blank")}" title="${escAttr(block.title || "Embedded content")}" loading="lazy" sandbox="${escAttr(block.sandbox || "allow-scripts allow-same-origin allow-forms allow-popups")}"></iframe>
     <div class="embed-fallback">如果预览无法加载，可以打开：<a href="${escAttr(block.url || "#")}" target="_blank" rel="noopener noreferrer">${rich(block.url || "")}</a></div>
+  </div>`;
+}
+
+function renderCrossRef(block) {
+  const primary = block.primary || {};
+  const refs = Array.isArray(block.references) ? block.references : [];
+  const links = Array.isArray(block.links) ? block.links : [];
+  const markerId = `cr-arrow-${escAttr(block.id || "main")}`;
+  function highlightContent(content) {
+    let html = esc(String(content || ""));
+    links.forEach(link => {
+      const escaped = esc(link.text || "");
+      if (!escaped) return;
+      const safe = escaped.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      html = html.replace(new RegExp(safe, "g"),
+        `<mark class="crossref-hl" data-cr-from="${escAttr(link.to)}">${escaped}</mark>`);
+    });
+    return html;
+  }
+  const sectionsHtml = (primary.sections || []).map(s =>
+    `<div class="crossref-section">${s.title ? `<div class="crossref-section-title">${esc(s.title)}</div>` : ""}<pre>${highlightContent(s.content)}</pre></div>`
+  ).join("");
+  const refsHtml = refs.map(ref =>
+    `<div class="crossref-ref" data-cr-target="${escAttr(ref.id)}"><div class="crossref-ref-label">${esc(ref.label || ref.id)}</div><pre>${esc(ref.preview || "")}</pre></div>`
+  ).join("");
+  return `${renderHead(block)}<div class="crossref" data-crossref="${escAttr(block.id || "main")}">
+    <svg class="crossref-arrows"><defs><marker id="${markerId}" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="var(--accent-tertiary)"/></marker></defs></svg>
+    <div class="crossref-layout">
+      <div class="crossref-primary"><div class="crossref-file-label">${esc(primary.label || "")}</div>${sectionsHtml}</div>
+      <div class="crossref-refs">${refsHtml}</div>
+    </div>
   </div>`;
 }
 

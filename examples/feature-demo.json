@@ -1,0 +1,177 @@
+{
+  "meta": {
+    "title": "API 性能季报",
+    "subtitle": "2025 Q2",
+    "glossary": {
+      "P99": "第 99 百分位延迟：99% 的请求在此时间内完成，代表长尾体验",
+      "SLA": "服务质量协议：与客户约定的可用性和响应时间标准",
+      "TTI": "首次可交互时间：页面从加载到用户可操作所需的时间",
+      "错误预算": "SLA 允许的最大故障时间，例如 99.9% 可用性对应每月约 43 分钟"
+    }
+  },
+  "actions": [
+    { "label": "复制摘要", "primary": true, "copy": "API 整体达标，P99 从 480ms 降至 312ms（-35%）。可用性 99.94%，消耗[[错误预算]] 26min，余量充足。建议下季度重点关注 /search 端点的缓存命中率。" }
+  ],
+  "content": [
+    {
+      "id": "overview",
+      "type": "hero",
+      "kicker": "季度报告",
+      "title": "API 性能季报 · 2025 Q2",
+      "body": "覆盖全部 12 个生产端点，基于 2.4 亿次真实请求。",
+      "tags": ["达标", "P99 改善", "可用性 99.94%"]
+    },
+    {
+      "id": "key-metrics",
+      "type": "metrics",
+      "span": 12,
+      "items": [
+        { "label": "P99 延迟", "value": "312ms", "note": "↓35% vs Q1", "spark": [480, 460, 430, 400, 370, 340, 312] },
+        { "label": "可用性", "value": "99.94%", "note": "[[SLA]] 目标 99.9%", "spark": [99.91, 99.93, 99.94, 99.92, 99.95, 99.94, 99.94] },
+        { "label": "错误率", "value": "0.08%", "note": "低于警戒线 0.1%", "spark": [0.14, 0.12, 0.10, 0.09, 0.08, 0.08, 0.08] },
+        { "label": "[[错误预算]] 消耗", "value": "26 min", "note": "余量 17 min（本月）" }
+      ]
+    },
+    {
+      "id": "p99-trend",
+      "type": "chart",
+      "title": "[[P99]] 延迟趋势（ms）",
+      "span": 8,
+      "variant": "area",
+      "data": {
+        "labels": ["1月", "2月", "3月", "4月", "5月", "6月"],
+        "series": [
+          { "label": "/api/feed", "values": [520, 490, 450, 410, 370, 330] },
+          { "label": "/api/search", "values": [680, 650, 610, 570, 520, 480] },
+          { "label": "/api/user", "values": [210, 200, 195, 190, 185, 178] }
+        ]
+      }
+    },
+    {
+      "id": "error-budget",
+      "type": "chart",
+      "title": "月度错误率（%）",
+      "span": 4,
+      "variant": "bar",
+      "data": {
+        "labels": ["1月", "2月", "3月", "4月", "5月", "6月"],
+        "series": [
+          { "values": [0.14, 0.12, 0.10, 0.09, 0.08, 0.08] }
+        ]
+      }
+    },
+    {
+      "id": "endpoints",
+      "type": "matrix",
+      "title": "端点详情",
+      "span": 12,
+      "search": true,
+      "sortable": true,
+      "filters": [
+        { "key": "状态", "label": "状态", "options": ["达标", "关注", "超标"] }
+      ],
+      "columns": [
+        { "key": "endpoint", "label": "端点", "minWidth": "180px" },
+        { "key": "状态", "label": "状态", "width": "80px" },
+        { "key": "p99", "label": "[[P99]]", "width": "100px" },
+        { "key": "delta", "label": "环比", "width": "80px" },
+        { "key": "tti", "label": "[[TTI]]", "width": "90px" },
+        { "key": "action", "label": "建议行动", "minWidth": "200px" }
+      ],
+      "rows": [
+        { "group": "核心路径" },
+        {
+          "endpoint": "`/api/feed`",
+          "状态": { "badge": "达标", "tone": "success" },
+          "p99": "330ms",
+          "delta": "**↓37%**",
+          "tti": "1.2s",
+          "action": "维持现状，关注 DB 查询计划"
+        },
+        {
+          "endpoint": "`/api/user`",
+          "状态": { "badge": "达标", "tone": "success" },
+          "p99": "178ms",
+          "delta": "↓15%",
+          "tti": "0.8s",
+          "action": "良好，可作为基准参考"
+        },
+        {
+          "endpoint": "`/api/search`",
+          "状态": { "badge": "关注", "tone": "warning" },
+          "p99": "480ms",
+          "delta": "↓29%",
+          "tti": "2.1s",
+          "action": "缓存命中率仅 42%，建议提升至 70%",
+          "details": "主要瓶颈：全文检索走全表扫描，缺少向量索引。建议 Q3 迁移至 Elasticsearch 或添加 pgvector 索引。"
+        },
+        { "group": "管理接口" },
+        {
+          "endpoint": "`/admin/export`",
+          "状态": { "badge": "超标", "tone": "danger" },
+          "p99": "8.4s",
+          "delta": "↑12%",
+          "tti": "—",
+          "action": "**紧急**：改为异步任务队列",
+          "details": "同步导出阻塞 worker 线程，在高峰期触发级联超时。已在 Linear #4821 跟踪，目标 2025-07-15 上线。"
+        },
+        {
+          "endpoint": "`/admin/report`",
+          "状态": { "badge": "关注", "tone": "warning" },
+          "p99": "3.2s",
+          "delta": "↓8%",
+          "tti": "—",
+          "action": "添加分页，限制单次返回 500 行"
+        }
+      ]
+    },
+    {
+      "id": "incidents",
+      "type": "timeline",
+      "span": 12,
+      "title": "Q2 事件记录",
+      "items": [
+        { "time": "4月3日", "title": "DB 连接池耗尽", "body": "高峰期并发超出连接上限，持续 18 分钟。消耗 [[错误预算]] 18min。", "status": "active" },
+        { "time": "5月11日", "title": "CDN 节点故障", "body": "华南区 2 个节点下线，自动切流，用户无感知。", "status": "pending" },
+        { "time": "6月19日", "title": "Search 索引重建", "body": "计划窗口内完成，[[P99]] 临时升高至 620ms，持续 4 分钟。" }
+      ]
+    },
+    {
+      "id": "next-actions",
+      "type": "kanban",
+      "span": 12,
+      "title": "Q3 行动项",
+      "columns": [
+        {
+          "title": "紧急",
+          "tone": "danger",
+          "icon": "!",
+          "items": [
+            { "title": "`/admin/export` 改异步队列，目标 [[P99]] < 200ms", "done": false },
+            { "title": "[[错误预算]] 告警阈值降至 30min，提前预警", "done": false }
+          ]
+        },
+        {
+          "title": "本季度",
+          "tone": "warning",
+          "icon": "→",
+          "items": [
+            "/api/search 缓存命中率提升至 70%",
+            { "title": "全链路 [[TTI]] 监控接入 Grafana", "done": false },
+            "数据库慢查询日志接入告警"
+          ]
+        },
+        {
+          "title": "已完成",
+          "tone": "success",
+          "icon": "✓",
+          "items": [
+            { "title": "feed 端点 DB 查询计划优化", "done": true },
+            { "title": "连接池上限从 100 提升至 200", "done": true },
+            { "title": "[[SLA]] 达标率监控看板上线", "done": true }
+          ]
+        }
+      ]
+    }
+  ]
+}

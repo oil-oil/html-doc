@@ -84,4 +84,5 @@ Use the narrowest component that fits:
 - `variantGrid`: side-by-side options
 - `kanban`: grouped issue, task, risk, or feedback buckets
 - `formEditor`, `sliderLab`, `promptEditor`: one-off editing or tuning surfaces
+- `crossRef`: primary document with highlighted links and bezier arrows to referenced files
 - `embed`: iframe preview with fallback link

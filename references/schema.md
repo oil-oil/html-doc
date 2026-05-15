@@ -78,6 +78,7 @@ Keep this formatting short. Use components for structure and use inline emphasis
 | structured input surface | `formEditor` |
 | tuning controls | `sliderLab` |
 | prompt/template editor | `promptEditor` |
+| file cross-references with arrows | `crossRef` |
 | important external page | `embed` |
 
 ## Core Blocks
@@ -438,6 +439,48 @@ Use `kanban` for grouped checklists: risk buckets, task buckets, review buckets,
   "prompt": "Create a {{doc_type}} for {{audience}}."
 }
 ```
+
+### crossRef
+
+Use `crossRef` to show how a primary document references other files, with highlighted terms and bezier arrows connecting them to the referenced panels. Ideal for skill bundling diagrams, multi-file architecture explanations, config cross-references, and any scenario where inline links in source text need to be traced to their targets.
+
+```json
+{
+  "type": "crossRef",
+  "title": "Skill File Bundle",
+  "primary": {
+    "label": "my-skill/SKILL.md",
+    "sections": [
+      {
+        "title": "YAML Frontmatter",
+        "content": "---\nname: my-skill\ndescription: Does useful things.\n---"
+      },
+      {
+        "title": "Markdown",
+        "content": "## Usage\n\nOpen references/schema.md for field details.\nSee examples/showcase.json for a full example."
+      }
+    ]
+  },
+  "references": [
+    {
+      "id": "schema",
+      "label": "my-skill/references/schema.md",
+      "preview": "# Schema Reference\n\nAll available fields and component types are documented here.\n\n## Top Level\n..."
+    },
+    {
+      "id": "showcase",
+      "label": "my-skill/examples/showcase.json",
+      "preview": "{\n  \"meta\": { \"title\": \"Showcase\" },\n  \"content\": [\n    { \"type\": \"hero\", ... },\n    { \"type\": \"matrix\", ... }\n  ]\n}"
+    }
+  ],
+  "links": [
+    { "text": "references/schema.md", "to": "schema" },
+    { "text": "examples/showcase.json", "to": "showcase" }
+  ]
+}
+```
+
+`primary.sections[]` each take a `title` (optional) and `content` (preformatted text). `links[]` define which text strings inside `content` should be highlighted — the renderer finds each `text` occurrence and draws an arrow to the `references[]` entry whose `id` matches `to`. Each `references[].preview` is shown truncated; keep it representative but concise.
 
 ### embed
 

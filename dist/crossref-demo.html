@@ -1,3 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>html-doc Skill 文件结构</title>
+  <style>
+:root {
+  --bg-canvas: #F9F8F6;
+  --bg-surface: #FFFFFF;
+  --bg-soft: #F4F2EE;
+  --border-base: #E2DDD5;
+  --border-strong: #CFC8BD;
+  --text-main: #2C2B29;
+  --text-muted: #524E49;
+  --text-faint: #8A857D;
+  --accent-primary: #D3543A;
+  --accent-secondary: #4A6754;
+  --accent-tertiary: #D4A35B;
+  --danger-bg: #FBEBE8;
+  --success-bg: #EAF2ED;
+  --mark-bg: #FFF1C7;
+  --font-ui: "Avenir Next", Avenir, "IBM Plex Sans", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+  --font-human: Optima, "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
+  --font-mono: "SFMono-Regular", Menlo, Consolas, monospace;
+  --fs-xs: 11px;
+  --fs-sm: 13px;
+  --fs-base: 14px;
+  --fs-md: 15px;
+  --fs-lg: 18px;
+  --fs-hero: 28px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius: 2px;
+  --nav-width: 180px;
+  --content-max: 1180px;
+  --shell-gap: 0px;
+  --shell-max: calc(var(--nav-width) + var(--shell-gap) + var(--content-max));
+}
+
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
@@ -1229,3 +1273,433 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
   .block { grid-column: span 12 !important; }
   .code-wrap, .diff-wrap, .form-grid { grid-template-columns: 1fr; }
 }
+
+</style>
+</head>
+<body>
+  <header class="toolbar">
+    <div class="toolbar-title"><strong>html-doc Skill 文件结构</strong><span>crossRef 示例</span></div>
+    <div class="toolbar-actions">
+      
+    </div>
+  </header>
+  <main class="artifact-shell">
+    <aside class="side-nav"><a href="#hero">crossRef — 文件交叉引用图</a><a href="#skill-bundle">Skill 文件关系</a></aside>
+    <section class="artifact-grid">
+      <article class="block" id="hero" style="--span:12;">
+    <div class="kicker">组件演示</div>
+    <h1>crossRef — 文件交叉引用图</h1>
+    <div class="rule"></div>
+    <p class="body-copy">展示主文档如何引用其他文件，高亮词到目标之间自动绘制箭头。</p>
+    
+  </article>
+<article class="block" id="skill-bundle" style="--span:12;">
+    <div class="block-header">
+    <div>
+      
+      <h2>Skill 文件关系</h2>
+      
+    </div>
+    
+  </div><div class="crossref" data-crossref="skill-bundle">
+    <svg class="crossref-arrows"><defs><marker id="cr-arrow-skill-bundle" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="var(--accent-tertiary)"/></marker></defs></svg>
+    <div class="crossref-layout">
+      <div class="crossref-primary"><div class="crossref-file-label">html-doc/SKILL.md</div><div class="crossref-section"><div class="crossref-section-title">YAML Frontmatter</div><pre>---
+name: html-doc
+description: Create readable HTML documents
+  from simple JSON when Markdown is too flat.
+metadata:
+  short-description: HTML docs for human review
+---</pre></div><div class="crossref-section"><div class="crossref-section-title">Markdown</div><pre># HTML Doc
+
+Create readable HTML documents by writing
+simple JSON and rendering it with the bundled script.
+
+## Workflow
+
+1. Identify the information shape.
+2. Create a JSON file. Open <mark class="crossref-hl" data-cr-from="schema">references/schema.md</mark>
+   when exact fields or examples are needed.
+3. Render it:
+
+   node scripts/render-html-doc.mjs \
+     <mark class="crossref-hl" data-cr-from="showcase">examples/component-showcase.json</mark> \
+     dist/component-showcase.html
+
+4. Open the HTML and verify layout.</pre></div></div>
+      <div class="crossref-refs"><div class="crossref-ref" data-cr-target="schema"><div class="crossref-ref-label">html-doc/references/schema.md</div><pre># HTML Doc JSON
+
+The agent writes JSON.
+The renderer creates the final HTML.
+
+## Top Level
+
+{
+  &quot;meta&quot;: { &quot;title&quot;: &quot;...&quot;, &quot;glossary&quot;: {} },
+  &quot;content&quot;: [...]
+}
+
+## Component Choice
+
+| Need           | Use              |
+| -------------- | ---------------- |
+| key numbers    | metrics          |
+| data series    | chart            |
+| wide comparison| matrix           |
+| file cross-ref | crossRef         |</pre></div><div class="crossref-ref" data-cr-target="showcase"><div class="crossref-ref-label">html-doc/examples/component-showcase.json</div><pre>{
+  &quot;meta&quot;: {
+    &quot;title&quot;: &quot;Component Showcase&quot;,
+    &quot;subtitle&quot;: &quot;All available components&quot;
+  },
+  &quot;content&quot;: [
+    { &quot;type&quot;: &quot;hero&quot;, ... },
+    { &quot;type&quot;: &quot;metrics&quot;, ... },
+    { &quot;type&quot;: &quot;chart&quot;, ... },
+    { &quot;type&quot;: &quot;matrix&quot;, ... },
+    { &quot;type&quot;: &quot;crossRef&quot;, ... }
+  ]
+}</pre></div></div>
+    </div>
+  </div>
+  </article>
+    </section>
+  </main>
+  <div class="toast" id="toast">已复制</div>
+  <script>
+const artifactSpec = {"meta":{"title":"html-doc Skill 文件结构","subtitle":"crossRef 示例"},"content":[{"id":"hero","type":"hero","kicker":"组件演示","title":"crossRef — 文件交叉引用图","body":"展示主文档如何引用其他文件，高亮词到目标之间自动绘制箭头。"},{"id":"skill-bundle","type":"crossRef","title":"Skill 文件关系","primary":{"label":"html-doc/SKILL.md","sections":[{"title":"YAML Frontmatter","content":"---\nname: html-doc\ndescription: Create readable HTML documents\n  from simple JSON when Markdown is too flat.\nmetadata:\n  short-description: HTML docs for human review\n---"},{"title":"Markdown","content":"# HTML Doc\n\nCreate readable HTML documents by writing\nsimple JSON and rendering it with the bundled script.\n\n## Workflow\n\n1. Identify the information shape.\n2. Create a JSON file. Open references/schema.md\n   when exact fields or examples are needed.\n3. Render it:\n\n   node scripts/render-html-doc.mjs \\\n     examples/component-showcase.json \\\n     dist/component-showcase.html\n\n4. Open the HTML and verify layout."}]},"references":[{"id":"schema","label":"html-doc/references/schema.md","preview":"# HTML Doc JSON\n\nThe agent writes JSON.\nThe renderer creates the final HTML.\n\n## Top Level\n\n{\n  \"meta\": { \"title\": \"...\", \"glossary\": {} },\n  \"content\": [...]\n}\n\n## Component Choice\n\n| Need           | Use              |\n| -------------- | ---------------- |\n| key numbers    | metrics          |\n| data series    | chart            |\n| wide comparison| matrix           |\n| file cross-ref | crossRef         |"},{"id":"showcase","label":"html-doc/examples/component-showcase.json","preview":"{\n  \"meta\": {\n    \"title\": \"Component Showcase\",\n    \"subtitle\": \"All available components\"\n  },\n  \"content\": [\n    { \"type\": \"hero\", ... },\n    { \"type\": \"metrics\", ... },\n    { \"type\": \"chart\", ... },\n    { \"type\": \"matrix\", ... },\n    { \"type\": \"crossRef\", ... }\n  ]\n}"}],"links":[{"text":"references/schema.md","to":"schema"},{"text":"examples/component-showcase.json","to":"showcase"}]}]};
+const toast = document.getElementById("toast");
+function showToast(text) {
+  toast.textContent = text || "已复制";
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 1200);
+}
+async function copyText(text) {
+  await navigator.clipboard.writeText(text);
+  showToast("已复制");
+}
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+function inlineRich(value) {
+  const placeholders = [];
+  const inlineCodePattern = new RegExp("\\x60([^\\x60\\n]+)\\x60", "g");
+  const text = String(value ?? "").replace(inlineCodePattern, (_, code) => {
+    const index = placeholders.push("<code>" + escapeHtml(code) + "</code>") - 1;
+    return "@@HTML_DOC_INLINE_" + index + "@@";
+  });
+  return escapeHtml(text)
+    .replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/@@HTML_DOC_INLINE_(\d+)@@/g, (_, index) => placeholders[Number(index)] || "");
+}
+document.querySelectorAll("[data-copy]").forEach((btn) => {
+  btn.addEventListener("click", () => copyText(btn.dataset.copy || JSON.stringify(artifactSpec, null, 2)));
+});
+document.querySelectorAll("[data-copy-block]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const id = btn.dataset.copyBlock;
+    const block = artifactSpec.content.find((item) => item.id === id);
+    copyText(JSON.stringify(block || {}, null, 2));
+  });
+});
+document.querySelectorAll("[data-slider]").forEach((slider) => {
+  slider.addEventListener("input", () => {
+    const value = document.querySelector('[data-value="' + slider.dataset.slider + '"]');
+    if (value) value.textContent = slider.value;
+  });
+});
+function detailRowFor(table, id) {
+  return Array.from(table.querySelectorAll("[data-detail-row]")).find((row) => row.dataset.detailRow === id);
+}
+function matrixValueCompare(a, b, direction) {
+  const an = Number(a);
+  const bn = Number(b);
+  const result = Number.isFinite(an) && Number.isFinite(bn)
+    ? an - bn
+    : String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: "base" });
+  return direction === "asc" ? result : -result;
+}
+function applyMatrixFilters(id) {
+  const table = document.querySelector('[data-matrix="' + id + '"]');
+  if (!table) return;
+  const search = (document.querySelector('[data-matrix-search="' + id + '"]')?.value || "").trim().toLowerCase();
+  const selects = Array.from(document.querySelectorAll('[data-matrix-filter="' + id + '"]'));
+  table.querySelectorAll("tbody tr[data-row-id]").forEach((row) => {
+    const textMatch = !search || (row.dataset.search || "").toLowerCase().includes(search);
+    const rowFilters = row.dataset.filters ? JSON.parse(row.dataset.filters) : {};
+    const filterMatch = selects.every((select) => !select.value || String(rowFilters[select.dataset.filterKey] || "") === select.value);
+    const visible = textMatch && filterMatch;
+    row.hidden = !visible;
+    const detail = detailRowFor(table, row.dataset.rowId);
+    if (detail) detail.hidden = !visible || detail.dataset.open !== "true";
+  });
+}
+document.querySelectorAll("[data-matrix-search]").forEach((input) => {
+  input.addEventListener("input", () => applyMatrixFilters(input.dataset.matrixSearch));
+});
+document.querySelectorAll("[data-matrix-filter]").forEach((select) => {
+  select.addEventListener("change", () => applyMatrixFilters(select.dataset.matrixFilter));
+});
+document.querySelectorAll("[data-detail-toggle]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const table = btn.closest("table");
+    const detail = table ? detailRowFor(table, btn.dataset.detailToggle) : null;
+    if (!detail) return;
+    const open = detail.hidden;
+    detail.hidden = !open;
+    detail.dataset.open = open ? "true" : "false";
+    btn.textContent = open ? "−" : "+";
+  });
+});
+document.querySelectorAll('[data-matrix][data-sortable="true"] th[data-sort-index]').forEach((th) => {
+  th.addEventListener("click", () => {
+    const table = th.closest("table");
+    const tbody = table?.querySelector("tbody");
+    if (!tbody) return;
+    const index = Number(th.dataset.sortIndex || 0);
+    const direction = th.dataset.sortDir === "asc" ? "desc" : "asc";
+    table.querySelectorAll("th[data-sort-index]").forEach((header) => delete header.dataset.sortDir);
+    th.dataset.sortDir = direction;
+    const sections = [];
+    let section = { group: null, pairs: [] };
+    sections.push(section);
+    Array.from(tbody.children).forEach((row) => {
+      if (row.classList.contains("matrix-group")) {
+        section = { group: row, pairs: [] };
+        sections.push(section);
+        return;
+      }
+      if (!row.dataset.rowId) return;
+      section.pairs.push({
+        row,
+        detail: detailRowFor(table, row.dataset.rowId),
+        value: row.children[index]?.dataset.sortValue || row.children[index]?.textContent || "",
+      });
+    });
+    sections.forEach((item) => {
+      item.pairs.sort((a, b) => matrixValueCompare(a.value, b.value, direction));
+      if (item.group) tbody.appendChild(item.group);
+      item.pairs.forEach((pair) => {
+        tbody.appendChild(pair.row);
+        if (pair.detail) tbody.appendChild(pair.detail);
+      });
+    });
+  });
+});
+document.querySelectorAll("[data-kanban]").forEach((board) => {
+  board.querySelectorAll(".kanban-col").forEach((column) => {
+    const boxes = Array.from(column.querySelectorAll('input[type="checkbox"]'));
+    const count = column.querySelector("[data-kanban-done]");
+    const update = () => {
+      if (count) count.textContent = String(boxes.filter((box) => box.checked).length);
+    };
+    boxes.forEach((box) => box.addEventListener("change", update));
+    update();
+  });
+});
+function applyStageState(stage, state) {
+  stage.dataset.state = state;
+  stage.querySelectorAll("[data-visible-states]").forEach((el) => {
+    const states = (el.dataset.visibleStates || "").split(" ").filter(Boolean);
+    if (!states.length || states.includes(state)) el.classList.remove("hidden");
+    else el.classList.add("hidden");
+  });
+  const states = Object.keys((artifactSpec.content.find((b) => b.id === stage.dataset.stage) || {}).states || {});
+  const count = stage.querySelector("[data-stage-count]");
+  if (count && states.length) count.textContent = String(states.indexOf(state) + 1) + "/" + states.length;
+}
+document.querySelectorAll("[data-stage]").forEach((stage) => {
+  const block = artifactSpec.content.find((b) => b.id === stage.dataset.stage) || {};
+  const states = Object.keys(block.states || {});
+  applyStageState(stage, stage.dataset.state || states[0] || "");
+  stage.addEventListener("click", (event) => {
+    const setter = event.target.closest("[data-set-state]");
+    if (setter) applyStageState(stage, setter.dataset.setState);
+  });
+  const next = stage.querySelector("[data-stage-next]");
+  const prev = stage.querySelector("[data-stage-prev]");
+  if (next) next.addEventListener("click", () => {
+    const index = states.indexOf(stage.dataset.state);
+    applyStageState(stage, states[(index + 1) % states.length]);
+  });
+  if (prev) prev.addEventListener("click", () => {
+    const index = states.indexOf(stage.dataset.state);
+    applyStageState(stage, states[(index - 1 + states.length) % states.length]);
+  });
+});
+function setMotionText(root, selector, value) {
+  const el = root.querySelector(selector);
+  if (el && value != null) el.innerHTML = inlineRich(value);
+}
+function setMotionBox(el, state, stage) {
+  const width = Number(stage.width || 1180);
+  const height = Number(stage.height || 560);
+  const pctValue = (value, total) => ((Number(value || 0) / total) * 100).toFixed(4) + "%";
+  if (state.x != null) el.style.setProperty("--x", pctValue(state.x, width));
+  if (state.y != null) el.style.setProperty("--y", pctValue(state.y, height));
+  if (state.w != null) el.style.setProperty("--w", pctValue(state.w, width));
+  if (state.h != null) el.style.setProperty("--h", pctValue(state.h, height));
+  if (state.opacity != null) el.style.setProperty("--opacity", state.opacity);
+  if (state.scale != null) el.style.setProperty("--scale", state.scale);
+  if (state.rotate != null) el.style.setProperty("--rotate", Number(state.rotate || 0) + "deg");
+  if (state.z != null) el.style.setProperty("--z", Number(state.z || 1));
+  if (state.status != null) el.dataset.status = state.status;
+  if (state.emphasis != null) el.dataset.emphasis = state.emphasis;
+}
+function applyMotionStep(motion, index) {
+  const block = artifactSpec.content.find((item) => item.id === motion.dataset.motion) || {};
+  const steps = block.steps || [];
+  if (!steps.length) return;
+  const stage = block.stage || {};
+  const safeIndex = ((index % steps.length) + steps.length) % steps.length;
+  const step = steps[safeIndex] || {};
+  motion.dataset.index = String(safeIndex);
+  motion.querySelectorAll("[data-motion-dot]").forEach((dot) => {
+    dot.classList.toggle("active", Number(dot.dataset.motionDot) === safeIndex);
+  });
+  const caption = motion.querySelector("[data-motion-caption]");
+  if (caption) {
+    setMotionText(caption, "strong", step.title || "");
+    setMotionText(caption, "span", step.body || "");
+  }
+  const objectStates = step.states || {};
+  motion.querySelectorAll("[data-motion-object]").forEach((el) => {
+    const id = el.dataset.motionObject;
+    const source = (block.objects || []).find((obj) => obj.id === id) || {};
+    const base = source.initial || source;
+    const state = { ...base, ...(objectStates[id] || {}) };
+    setMotionBox(el, state, stage);
+    setMotionText(el, "[data-motion-title]", state.title);
+    setMotionText(el, "[data-motion-body]", state.body);
+    setMotionText(el, "[data-motion-label]", state.label);
+    setMotionText(el, "[data-motion-value]", state.value);
+  });
+}
+document.querySelectorAll("[data-motion]").forEach((motion) => {
+  const block = artifactSpec.content.find((item) => item.id === motion.dataset.motion) || {};
+  const steps = block.steps || [];
+  let timer = null;
+  const play = motion.querySelector("[data-motion-play]");
+  const start = () => {
+    if (!steps.length || timer) return;
+    timer = setInterval(() => applyMotionStep(motion, Number(motion.dataset.index || 0) + 1), Number(block.interval || 1600));
+    if (play) play.textContent = "Pause";
+  };
+  const stop = () => {
+    clearInterval(timer);
+    timer = null;
+    if (play) play.textContent = "Play";
+  };
+  motion.querySelector("[data-motion-next]")?.addEventListener("click", () => {
+    stop();
+    applyMotionStep(motion, Number(motion.dataset.index || 0) + 1);
+  });
+  motion.querySelector("[data-motion-prev]")?.addEventListener("click", () => {
+    stop();
+    applyMotionStep(motion, Number(motion.dataset.index || 0) - 1);
+  });
+  motion.querySelectorAll("[data-motion-dot]").forEach((dot) => {
+    dot.addEventListener("click", () => {
+      stop();
+      applyMotionStep(motion, Number(dot.dataset.motionDot));
+    });
+  });
+  play?.addEventListener("click", () => timer ? stop() : start());
+  applyMotionStep(motion, 0);
+  if (block.autoplay !== false && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) start();
+});
+document.querySelectorAll("[data-rel-map]").forEach((map) => {
+  const sources = Array.from(map.querySelectorAll("[data-rel-source]"));
+  const targets = Array.from(map.querySelectorAll("[data-rel-target]"));
+  const edges = Array.from(map.querySelectorAll("[data-rel-from][data-rel-to]"));
+  const clear = () => map.querySelectorAll(".active").forEach((active) => active.classList.remove("active"));
+  const activateSource = (source) => {
+    clear();
+    sources.find((item) => item.dataset.relSource === source)?.classList.add("active");
+    edges.filter((edge) => edge.dataset.relFrom === source).forEach((edge) => {
+      edge.classList.add("active");
+      targets.find((item) => item.dataset.relTarget === edge.dataset.relTo)?.classList.add("active");
+    });
+  };
+  const activateTarget = (target) => {
+    clear();
+    targets.find((item) => item.dataset.relTarget === target)?.classList.add("active");
+    edges.filter((edge) => edge.dataset.relTo === target).forEach((edge) => {
+      edge.classList.add("active");
+      sources.find((item) => item.dataset.relSource === edge.dataset.relFrom)?.classList.add("active");
+    });
+  };
+  sources.forEach((item) => {
+    item.addEventListener("mouseenter", () => activateSource(item.dataset.relSource));
+    item.addEventListener("mouseleave", clear);
+  });
+  targets.forEach((item) => {
+    item.addEventListener("mouseenter", () => activateTarget(item.dataset.relTarget));
+    item.addEventListener("mouseleave", clear);
+  });
+});
+document.querySelectorAll("[data-tree-node]").forEach((node) => {
+  node.addEventListener("click", () => {
+    const toggle = node.querySelector(".vu-tree-toggle");
+    const children = node.nextElementSibling;
+    if (!toggle || !children?.classList.contains("vu-tree-children")) return;
+    const open = toggle.classList.toggle("open");
+    children.style.display = open ? "block" : "none";
+  });
+});
+document.querySelectorAll("[data-flow-state]").forEach((flow) => {
+  const block = artifactSpec.content.find((item) => item.id === flow.dataset.flowState) || {};
+  const states = block.states || [];
+  const detail = flow.querySelector("[data-state-details]");
+  flow.querySelectorAll("[data-state-id]").forEach((pill) => {
+    pill.addEventListener("click", () => {
+      flow.querySelectorAll("[data-state-id]").forEach((item) => item.classList.remove("active"));
+      pill.classList.add("active");
+      const state = states.find((item) => item.id === pill.dataset.stateId) || {};
+      if (detail) detail.innerHTML = inlineRich(state.detail || state.body || "");
+    });
+  });
+});
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  document.querySelectorAll("[data-crossref]").forEach((container) => {
+    const svg = container.querySelector(".crossref-arrows");
+    if (!svg) return;
+    const cRect = container.getBoundingClientRect();
+    const markerId = "cr-arrow-" + (container.dataset.crossref || "main");
+    container.querySelectorAll("[data-cr-from]").forEach((fromEl) => {
+      const toId = fromEl.dataset.crFrom;
+      const toEl = container.querySelector('[data-cr-target="' + toId + '"]');
+      if (!toEl) return;
+      const fRect = fromEl.getBoundingClientRect();
+      const tRect = toEl.getBoundingClientRect();
+      const x1 = fRect.right - cRect.left;
+      const y1 = fRect.top + fRect.height / 2 - cRect.top;
+      const x2 = tRect.left - cRect.left;
+      const y2 = tRect.top + tRect.height * 0.28 - cRect.top;
+      const mx = (x1 + x2) / 2;
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", "M" + x1 + "," + y1 + " C" + mx + "," + y1 + " " + mx + "," + y2 + " " + x2 + "," + y2);
+      path.setAttribute("fill", "none");
+      path.setAttribute("stroke", "var(--accent-tertiary)");
+      path.setAttribute("stroke-width", "1.5");
+      path.setAttribute("marker-end", "url(#" + markerId + ")");
+      svg.appendChild(path);
+    });
+  });
+}));
+document.querySelectorAll("[data-emphasis-panel]").forEach((panel) => {
+  panel.querySelectorAll("[data-info-id]").forEach((hl) => {
+    hl.addEventListener("mouseenter", () => {
+      panel.querySelectorAll("[data-info-id]").forEach((item) => item.classList.remove("active"));
+      panel.querySelectorAll("[data-info-item]").forEach((item) => item.classList.remove("active"));
+      hl.classList.add("active");
+      panel.querySelector('[data-info-item="' + hl.dataset.infoId + '"]')?.classList.add("active");
+    });
+  });
+});</script>
+</body>
+</html>

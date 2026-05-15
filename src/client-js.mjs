@@ -299,6 +299,33 @@ document.querySelectorAll("[data-flow-state]").forEach((flow) => {
     });
   });
 });
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  document.querySelectorAll("[data-crossref]").forEach((container) => {
+    const svg = container.querySelector(".crossref-arrows");
+    if (!svg) return;
+    const cRect = container.getBoundingClientRect();
+    const markerId = "cr-arrow-" + (container.dataset.crossref || "main");
+    container.querySelectorAll("[data-cr-from]").forEach((fromEl) => {
+      const toId = fromEl.dataset.crFrom;
+      const toEl = container.querySelector('[data-cr-target="' + toId + '"]');
+      if (!toEl) return;
+      const fRect = fromEl.getBoundingClientRect();
+      const tRect = toEl.getBoundingClientRect();
+      const x1 = fRect.right - cRect.left;
+      const y1 = fRect.top + fRect.height / 2 - cRect.top;
+      const x2 = tRect.left - cRect.left;
+      const y2 = tRect.top + tRect.height * 0.28 - cRect.top;
+      const mx = (x1 + x2) / 2;
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", "M" + x1 + "," + y1 + " C" + mx + "," + y1 + " " + mx + "," + y2 + " " + x2 + "," + y2);
+      path.setAttribute("fill", "none");
+      path.setAttribute("stroke", "var(--accent-tertiary)");
+      path.setAttribute("stroke-width", "1.5");
+      path.setAttribute("marker-end", "url(#" + markerId + ")");
+      svg.appendChild(path);
+    });
+  });
+}));
 document.querySelectorAll("[data-emphasis-panel]").forEach((panel) => {
   panel.querySelectorAll("[data-info-id]").forEach((hl) => {
     hl.addEventListener("mouseenter", () => {
