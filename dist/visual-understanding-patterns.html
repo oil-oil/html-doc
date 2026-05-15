@@ -24,7 +24,7 @@
   --font-human: Optima, "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
   --font-mono: "SFMono-Regular", Menlo, Consolas, monospace;
   --fs-xs: 11px;
-  --fs-sm: 12px;
+  --fs-sm: 13px;
   --fs-base: 14px;
   --fs-md: 15px;
   --fs-lg: 18px;
@@ -121,7 +121,6 @@ button:hover { border-color: var(--text-main); }
   grid-column: span var(--span, 12);
   min-height: var(--min-h, auto);
   background: var(--bg-canvas);
-  border: 1px solid var(--border-base);
   padding: var(--space-4);
   overflow: hidden;
 }
@@ -1228,6 +1227,44 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
   transition: .18s ease;
 }
 .toast.show { transform: translateY(0); opacity: 1; }
+.tt { position: relative; border-bottom: 1px dashed var(--text-faint); cursor: help; display: inline; }
+.tt-b {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 240px;
+  padding: 5px 9px;
+  background: var(--text-main);
+  color: #fff;
+  font-size: var(--fs-xs);
+  line-height: 1.45;
+  white-space: normal;
+  z-index: 200;
+  pointer-events: none;
+}
+.tt:hover .tt-b { display: block; }
+.crossref { position: relative; }
+.crossref-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 32px; align-items: start; }
+.crossref-primary { border: 1px solid #B7CDD3; }
+.crossref-file-label { font: 500 var(--fs-sm)/1.4 var(--font-mono); color: #3E6570; padding: var(--space-2) var(--space-3); border-bottom: 1px solid #B7CDD3; background: #EAF1F3; }
+.crossref-section { padding: var(--space-3); border-bottom: 1px solid var(--border-base); }
+.crossref-section:last-child { border-bottom: 0; }
+.crossref-section-title { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .05em; color: var(--text-faint); margin-bottom: var(--space-2); }
+.crossref-section pre { font: 12px/1.6 var(--font-mono); color: var(--text-main); white-space: pre-wrap; word-break: break-all; margin: 0; background: transparent; padding: 0; overflow: hidden; }
+.crossref-hl { background: rgba(212, 163, 91, 0.25); border-bottom: 1px solid var(--accent-tertiary); padding: 0 1px; cursor: default; }
+.crossref-refs { display: grid; gap: var(--space-4); }
+.crossref-ref { border: 1px solid var(--accent-tertiary); }
+.crossref-ref-label { font: 500 var(--fs-sm)/1.4 var(--font-mono); color: var(--accent-tertiary); padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--border-base); background: rgba(212, 163, 91, 0.06); }
+.crossref-ref pre { font: 12px/1.6 var(--font-mono); padding: var(--space-3); color: var(--text-main); white-space: pre-wrap; word-break: break-all; margin: 0; background: transparent; max-height: 200px; overflow: hidden; }
+.crossref-arrows { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 10; }
+.chart-wrap { width: 100%; }
+.chart-svg { width: 100%; height: auto; display: block; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: var(--space-2); }
+.chart-legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-sm); color: var(--text-muted); }
+.chart-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
 @media (max-width: 900px) {
   .artifact-shell { grid-template-columns: 1fr; }
   .side-nav { display: none; }
@@ -1691,6 +1728,33 @@ document.querySelectorAll("[data-flow-state]").forEach((flow) => {
     });
   });
 });
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  document.querySelectorAll("[data-crossref]").forEach((container) => {
+    const svg = container.querySelector(".crossref-arrows");
+    if (!svg) return;
+    const cRect = container.getBoundingClientRect();
+    const markerId = "cr-arrow-" + (container.dataset.crossref || "main");
+    container.querySelectorAll("[data-cr-from]").forEach((fromEl) => {
+      const toId = fromEl.dataset.crFrom;
+      const toEl = container.querySelector('[data-cr-target="' + toId + '"]');
+      if (!toEl) return;
+      const fRect = fromEl.getBoundingClientRect();
+      const tRect = toEl.getBoundingClientRect();
+      const x1 = fRect.right - cRect.left;
+      const y1 = fRect.top + fRect.height / 2 - cRect.top;
+      const x2 = tRect.left - cRect.left;
+      const y2 = tRect.top + tRect.height * 0.28 - cRect.top;
+      const mx = (x1 + x2) / 2;
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", "M" + x1 + "," + y1 + " C" + mx + "," + y1 + " " + mx + "," + y2 + " " + x2 + "," + y2);
+      path.setAttribute("fill", "none");
+      path.setAttribute("stroke", "var(--accent-tertiary)");
+      path.setAttribute("stroke-width", "1.5");
+      path.setAttribute("marker-end", "url(#" + markerId + ")");
+      svg.appendChild(path);
+    });
+  });
+}));
 document.querySelectorAll("[data-emphasis-panel]").forEach((panel) => {
   panel.querySelectorAll("[data-info-id]").forEach((hl) => {
     hl.addEventListener("mouseenter", () => {

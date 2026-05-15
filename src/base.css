@@ -77,7 +77,6 @@ button:hover { border-color: var(--text-main); }
   grid-column: span var(--span, 12);
   min-height: var(--min-h, auto);
   background: var(--bg-canvas);
-  border: 1px solid var(--border-base);
   padding: var(--space-4);
   overflow: hidden;
 }
