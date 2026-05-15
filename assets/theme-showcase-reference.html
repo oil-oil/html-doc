@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>html-artifact Design System Showcase</title>
+    <style>
+        :root {
+            /* Palette: Slightly warm, clean, universal */
+            --bg-color: #F7F6F3;
+            --surface-color: #FFFFFF;
+            --surface-alt: #F0EFEA;
+            --border-color: #E2DFD8;
+            --border-strong: #CFCBC2;
+            
+            --text-primary: #2D2B2A;
+            --text-secondary: #6B6763;
+            --text-tertiary: #96938D;
+            
+            --accent-primary: #D16947; /* Warm terracotta */
+            --accent-secondary: #4A7A9C; /* Muted blue */
+            --accent-success: #558763;
+            --accent-warning: #D99C3B;
+            
+            /* Typography: Humanist, compact */
+            --font-family: "Avenir Next", "Avenir", "Optima", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            --font-mono: "Menlo", "Consolas", "Courier New", monospace;
+            --font-size-xs: 11px;
+            --font-size-sm: 13px;
+            --font-size-base: 14px;
+            --font-size-lg: 16px;
+            --font-size-xl: 20px;
+            
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            
+            --radius-sm: 2px;
+            --radius-md: 4px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            font-size: var(--font-size-base);
+            color: var(--text-primary);
+            background-color: var(--bg-color);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 { font-weight: 500; color: var(--text-primary); }
+        h1 { font-size: var(--font-size-xl); }
+        h2 { font-size: var(--font-size-lg); margin-bottom: var(--spacing-md); }
+        h3 { font-size: var(--font-size-base); }
+        p { color: var(--text-secondary); }
+        .text-xs { font-size: var(--font-size-xs); }
+        .text-sm { font-size: var(--font-size-sm); }
+        .text-muted { color: var(--text-tertiary); }
+        .mono { font-family: var(--font-mono); font-size: var(--font-size-sm); }
+
+        /* Layout */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 80px var(--spacing-lg) var(--spacing-xl);
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: var(--spacing-md);
+        }
+
+        .col-12 { grid-column: span 12; }
+        .col-8 { grid-column: span 8; }
+        .col-6 { grid-column: span 6; }
+        .col-4 { grid-column: span 4; }
+        .col-3 { grid-column: span 3; }
+
+        /* Flat UI Primitives */
+        .panel {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        button {
+            background: var(--surface-alt);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            font-size: var(--font-size-sm);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        button:hover { background: var(--border-color); }
+        button.primary {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+        button.primary:hover { filter: brightness(0.9); }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 6px;
+            background: var(--surface-alt);
+            border: 1px solid var(--border-color);
+            font-size: var(--font-size-xs);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+        }
+
+        /* Specific Components */
+        
+        /* Sticky Nav */
+        .sticky-nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border-color);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        /* Hero & Metrics */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--spacing-sm);
+        }
+        .metric-card {
+            padding: var(--spacing-sm);
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+        }
+        .metric-value { font-size: var(--font-size-xl); color: var(--text-primary); margin: var(--spacing-xs) 0; }
+        .trend-up { color: var(--accent-success); }
+        .trend-down { color: var(--accent-primary); }
+
+        /* Prompt Editor & Code */
+        .editor-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+            height: 100%;
+        }
+        textarea.prompt-box {
+            width: 100%;
+            height: 100px;
+            background: var(--surface-alt);
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-sm);
+            font-family: var(--font-family);
+            font-size: var(--font-size-sm);
+            resize: vertical;
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+        }
+        textarea:focus { outline: 1px solid var(--accent-secondary); }
+        
+        .code-block {
+            background: #FAFAFA;
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            overflow-x: auto;
+        }
+        .code-comment { color: var(--text-tertiary); }
+        .diff-add { background: #e6ffed; color: var(--accent-success); display: block; }
+        .diff-remove { background: #ffeef0; color: var(--accent-primary); display: block; }
+
+        /* Comparison Matrix */
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--font-size-sm);
+        }
+        .matrix-table th, .matrix-table td {
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-sm);
+            text-align: left;
+        }
+        .matrix-table th { background: var(--surface-alt); font-weight: 500; }
+
+        /* Flow / Architecture */
+        .diagram-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-md) 0;
+            position: relative;
+        }
+        .node {
+            border: 1px solid var(--border-strong);
+            background: var(--surface-color);
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-sm);
+            text-align: center;
+            z-index: 2;
+        }
+        .connector {
+            flex-grow: 1;
+            height: 1px;
+            background: var(--border-strong);
+            position: relative;
+        }
+        .connector::after {
+            content: '';
+            position: absolute;
+            right: 0; top: -4px;
+            border-width: 4px 0 4px 6px;
+            border-style: solid;
+            border-color: transparent transparent transparent var(--border-strong);
+        }
+
+        /* Timeline */
+        .timeline {
+            border-left: 2px solid var(--border-color);
+            margin-left: var(--spacing-sm);
+            padding-left: var(--spacing-md);
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: var(--spacing-md);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: calc(var(--spacing-md) * -1 - 6px);
+            top: 4px;
+            width: 8px; height: 8px;
+            background: var(--surface-color);
+            border: 2px solid var(--accent-secondary);
+            border-radius: 50%;
+        }
+
+        /* Kanban / Boards */
+        .board-cols {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-sm);
+        }
+        .board-col {
+            background: var(--surface-alt);
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+        }
+        .card {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-sm);
+        }
+
+        /* Form / Slider Lab */
+        .form-group {
+            margin-bottom: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .form-group label { font-size: var(--font-size-sm); }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 60%;
+            height: 2px;
+            background: var(--border-strong);
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            background: var(--accent-secondary);
+            cursor: pointer;
+        }
+        .toggle {
+            appearance: none;
+            width: 32px; height: 16px;
+            background: var(--border-strong);
+            border-radius: 16px;
+            position: relative;
+            cursor: pointer;
+            outline: none;
+        }
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px; left: 2px;
+            width: 12px; height: 12px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
+        .toggle:checked { background: var(--accent-success); }
+        .toggle:checked::after { left: 18px; }
+
+    </style>
+</head>
+<body>
+
+    <!-- FEATURE: Sticky Navigation and Toolbar -->
+    <nav class="sticky-nav">
+        <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+            <strong>html-artifact</strong>
+            <span class="text-sm text-muted">Theme Sandbox & Component Registry</span>
+        </div>
+        <div style="display: flex; gap: var(--spacing-sm);">
+            <button id="copyBtn">Copy Config</button>
+            <button class="primary" id="exportBtn">Export Layout</button>
+        </div>
+    </nav>
+
+    <main class="container">
+        
+        <!-- FEATURE: Hero section and quick metrics overview utilizing horizontal space -->
+        <div class="col-4 panel">
+            <h2>Context Engine v2.4</h2>
+            <p class="text-sm" style="margin-bottom: var(--spacing-sm);">Active environment profile determining generation constraints and formatting rules for artifact outputs.</p>
+            <div style="display: flex; gap: var(--spacing-xs); flex-wrap: wrap;">
+                <span class="tag">Language: Typescript</span>
+                <span class="tag">Framework: React</span>
+                <span class="tag">Style: Flat</span>
+            </div>
+        </div>
+
+        <div class="col-8 panel">
+            <div class="panel-header">
+                <span class="text-sm font-weight: 500">Generation Metrics (Last 7 Days)</span>
+                <button class="text-xs">View Logs</button>
+            </div>
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="text-xs text-muted">Total Artifacts</div>
+                    <div class="metric-value">1,248</div>
+                    <div class="text-xs trend-up">↑ 12% vs prior</div>
+                </div>
+                <div class="metric-card">
+                    <div class="text-xs text-muted">Avg. Token Usage</div>
+                    <div class="metric-value">4.2k</div>
+                    <div class="text-xs trend-down">↓ 3% optimization</div>
+                </div>
+                <div class="metric-card">
+                    <div class="text-xs text-muted">Syntax Valid</div>
+                    <div class="metric-value">99.8%</div>
+                    <div class="text-xs text-muted">- Stable</div>
+                </div>
+                <div class="metric-card">
+                    <div class="text-xs text-muted">Render Time</div>
+                    <div class="metric-value">240ms</div>
+                    <div class="text-xs trend-up">↑ 15ms latency</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FEATURE: Prompt Editor and Code Diff Review -->
+        <div class="col-4 panel">
+            <div class="panel-header">
+                <span class="text-sm">System Prompt Modifier</span>
+            </div>
+            <div class="editor-container">
+                <textarea class="prompt-box">Ensure all UI components strictly adhere to a flat design language. Eliminate drop shadows, utilize 1px solid borders for depth, and maintain a high data-to-ink ratio in layouts.</textarea>
+                <div style="display: flex; justify-content: flex-end; gap: var(--spacing-xs);">
+                    <button class="text-xs">Revert</button>
+                    <button class="text-xs primary">Apply Rule</button>
+                </div>
+                
+                <hr style="border:0; border-top:1px solid var(--border-color); margin: var(--spacing-sm) 0;">
+                
+                <!-- FEATURE: Slider/Toggle Lab -->
+                <div class="form-group">
+                    <label>Temperature</label>
+                    <input type="range" min="0" max="100" value="25" id="tempSlider">
+                    <span class="text-xs mono" id="tempVal">0.25</span>
+                </div>
+                <div class="form-group">
+                    <label>Stream Response</label>
+                    <input type="checkbox" class="toggle" checked>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-8 panel">
+            <div class="panel-header">
+                <span class="text-sm">Diff Review: Component Refactor</span>
+                <div style="display:flex; gap: 4px;">
+                    <span class="tag">src/components/Card.tsx</span>
+                </div>
+            </div>
+            <div class="code-block mono text-xs">
+                <div class="code-comment">// Applied flat design constraints</div>
+                <div>const Card = ({ children, title }) => {</div>
+                <div class="diff-remove">-  return &lt;div style={{ boxShadow: '0 4px 6px rgba(0,0,0,0.1)', borderRadius: '8px' }}&gt;</div>
+                <div class="diff-add">+  return &lt;div style={{ border: '1px solid var(--border)', borderRadius: '2px', background: '#fff' }}&gt;</div>
+                <div>     {title && &lt;h3 className="card-title"&gt;{title}&lt;/h3&gt;}</div>
+                <div>     &lt;div className="card-body"&gt;{children}&lt;/div&gt;</div>
+                <div>   &lt;/div&gt;;</div>
+                <div>};</div>
+            </div>
+        </div>
+
+        <!-- FEATURE: Comparison Matrix -->
+        <div class="col-12 panel">
+            <div class="panel-header">
+                <span class="text-sm">Variant Matrix Evaluation</span>
+            </div>
+            <table class="matrix-table">
+                <thead>
+                    <tr>
+                        <th>Constraint Profile</th>
+                        <th>Visual Density</th>
+                        <th>Readability Score</th>
+                        <th>Render Complexity</th>
+                        <th>Recommended Use Case</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Strict Flat</strong> (Current)</td>
+                        <td>High</td>
+                        <td>92/100</td>
+                        <td>Low (O(1) paint)</td>
+                        <td>Data-heavy dashboards, admin panels</td>
+                    </tr>
+                    <tr>
+                        <td>Skeuomorphic Lite</td>
+                        <td>Medium</td>
+                        <td>85/100</td>
+                        <td>High (Shadows/Gradients)</td>
+                        <td>Consumer landing pages</td>
+                    </tr>
+                    <tr>
+                        <td>Neumorphic</td>
+                        <td>Low</td>
+                        <td>60/100</td>
+                        <td>Very High</td>
+                        <td>Not recommended</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- FEATURE: Architecture Diagram & Timeline -->
+        <div class="col-8 panel">
+             <div class="panel-header">
+                <span class="text-sm">Pipeline Architecture</span>
+            </div>
+            <div class="diagram-container">
+                <div class="node">User Prompt</div>
+                <div class="connector"></div>
+                <div class="node">Context<br>Analyzer</div>
+                <div class="connector"></div>
+                <div class="node" style="border-color: var(--accent-secondary); border-width: 2px;">Artifact<br>Generator</div>
+                <div class="connector"></div>
+                <div class="node">Validation<br>DOM Render</div>
+            </div>
+             <p class="text-xs text-muted" style="text-align: center; margin-top: var(--spacing-sm);">Data flow visualization across primary generation nodes.</p>
+        </div>
+
+        <div class="col-4 panel">
+            <div class="panel-header">
+                <span class="text-sm">Execution Timeline</span>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="text-xs font-weight: 500">10:42:01.050</div>
+                    <div class="text-sm">Received payload</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="text-xs font-weight: 500">10:42:01.200</div>
+                    <div class="text-sm">Resolved dependencies</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="text-xs font-weight: 500" style="color: var(--accent-secondary);">10:42:03.150</div>
+                    <div class="text-sm">Stream complete (2.1s)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FEATURE: Evidence Board / Kanban -->
+        <div class="col-12 panel">
+            <div class="panel-header">
+                <span class="text-sm">Source Evidence & Insights Board</span>
+                <button class="text-xs">Add Note</button>
+            </div>
+            <div class="board-cols">
+                <div class="board-col">
+                    <div class="text-xs text-muted" style="margin-bottom: 8px;">Raw Extraction</div>
+                    <div class="card">
+                        "Users preferred layouts that didn't feel like nested boxes within boxes."
+                        <div class="text-xs text-muted" style="margin-top:4px;">- UX Study Q3</div>
+                    </div>
+                    <div class="card">
+                        Avoid large font sizes; rely on layout structure for hierarchy.
+                    </div>
+                </div>
+                <div class="board-col">
+                    <div class="text-xs text-muted" style="margin-bottom: 8px;">Synthesized Rules</div>
+                    <div class="card" style="border-left: 3px solid var(--accent-warning);">
+                        Minimize DOM depth. Maximize horizontal grid usage.
+                    </div>
+                    <div class="card" style="border-left: 3px solid var(--accent-success);">
+                        Typography: Humanist sans, 13-14px base size.
+                    </div>
+                </div>
+                <div class="board-col">
+                    <div class="text-xs text-muted" style="margin-bottom: 8px;">Applied Output</div>
+                    <div class="card">
+                        Implemented CSS Grid layout template.
+                    </div>
+                    <div class="card">
+                        Removed CSS box-shadow globally.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // FEATURE: JavaScript Interactions to make prototype feel alive
+        
+        // Slider interaction
+        const slider = document.getElementById('tempSlider');
+        const valDisplay = document.getElementById('tempVal');
+        slider.addEventListener('input', (e) => {
+            const val = (e.target.value / 100).toFixed(2);
+            valDisplay.textContent = val;
+        });
+
+        // Copy button interaction
+        const copyBtn = document.getElementById('copyBtn');
+        copyBtn.addEventListener('click', () => {
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = 'Copied!';
+            copyBtn.style.background = 'var(--accent-success)';
+            copyBtn.style.color = 'white';
+            copyBtn.style.borderColor = 'var(--accent-success)';
+            
+            setTimeout(() => {
+                copyBtn.textContent = originalText;
+                copyBtn.style.background = '';
+                copyBtn.style.color = '';
+                copyBtn.style.borderColor = '';
+            }, 1500);
+        });
+
+        // Export button interaction
+        const exportBtn = document.getElementById('exportBtn');
+        exportBtn.addEventListener('click', () => {
+            exportBtn.textContent = 'Exporting...';
+            setTimeout(() => {
+                exportBtn.textContent = 'Export Layout';
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Narrative Animation Components</title>
+<style>
+  :root {
+    --bg-color: #F9F8F6;
+    --surface-color: #FFFFFF;
+    --text-primary: #2D2C2A;
+    --text-secondary: #76746F;
+    --text-tertiary: #A6A39E;
+    --accent-color: #D96C4A;
+    --border-color: #E6E4E0;
+    --border-light: #F2F0EC;
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: 0.3s ease;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+    padding: 40px;
+    font-size: 14px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 32px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .story-card {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .story-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-light);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .story-stage {
+    height: 240px;
+    background-color: var(--bg-color);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .story-footer {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .story-caption {
+    font-size: 13px;
+    color: var(--text-primary);
+    min-height: 40px;
+  }
+
+  .story-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .stepper {
+    display: flex;
+    gap: 6px;
+  }
+
+  .step-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--border-color);
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+  }
+
+  .step-dot.active {
+    background-color: var(--accent-color);
+  }
+
+  .play-pause {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: color var(--transition-fast);
+  }
+
+  .play-pause:hover {
+    color: var(--text-primary);
+  }
+
+  /* --- Story 1: Product Story --- */
+  .v1-mobile {
+    width: 120px;
+    height: 180px;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px;
+    position: absolute;
+    transform: translateX(0);
+    transition: transform var(--transition-slow);
+  }
+  .v1-line { height: 4px; background: var(--border-light); margin-bottom: 8px; border-radius: 2px; }
+  .v1-line.title { height: 8px; width: 60%; background: var(--border-color); margin-bottom: 12px; }
+  
+  .v1-author {
+    position: absolute;
+    right: 40px;
+    top: 60px;
+    background: white;
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all var(--transition-slow);
+  }
+  .v1-avatar { width: 16px; height: 16px; border-radius: 50%; background: var(--accent-color); }
+  .v1-name { font-size: 10px; color: var(--text-secondary); }
+
+  .v1-stats {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--text-primary);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    display: flex;
+    gap: 12px;
+    opacity: 0;
+    transition: all var(--transition-slow);
+  }
+
+  [data-step="0"] .v1-mobile { transform: translateX(0); }
+  [data-step="1"] .v1-mobile { transform: translateX(-40px); }
+  [data-step="1"] .v1-author { opacity: 1; transform: translateY(0); }
+  [data-step="2"] .v1-mobile { transform: translateX(-40px); }
+  [data-step="2"] .v1-author { opacity: 1; transform: translateY(0); }
+  [data-step="2"] .v1-stats { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* --- Story 2: Workflow Story --- */
+  .v2-node {
+    width: 140px;
+    padding: 12px;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+    transition: all var(--transition-slow);
+    position: relative;
+  }
+  .v2-status {
+    font-size: 10px;
+    text-transform: uppercase;
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+  }
+  .v2-spinner {
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--border-light);
+    border-top-color: var(--accent-color);
+    border-radius: 50%;
+    margin: 8px auto 0;
+    opacity: 0;
+    animation: spin 1s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  [data-step="0"] .v2-node { color: var(--text-secondary); }
+  [data-step="1"] .v2-node { border-color: var(--accent-color); color: var(--text-primary); }
+  [data-step="1"] .v2-spinner { display: block; opacity: 1; }
+  [data-step="1"] .v2-status { display: none; }
+  [data-step="2"] .v2-node { border-color: #5BA882; background: #F4FAF7; color: #2D5C45; }
+  [data-step="2"] .v2-spinner { display: none; }
+
+
+  /* --- Story 3: UI State Story --- */
+  .v3-panel {
+    width: 200px;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: all var(--transition-slow);
+  }
+  .v3-empty { font-size: 11px; color: var(--text-tertiary); text-align: center; font-style: italic; transition: opacity var(--transition-fast);}
+  .v3-field { display: flex; align-items: center; justify-content: space-between; opacity: 0; height: 0; overflow: hidden; transition: all var(--transition-slow); }
+  .v3-label { width: 40px; height: 6px; background: var(--border-color); border-radius: 3px; }
+  .v3-toggle { width: 24px; height: 12px; background: var(--border-light); border-radius: 6px; position: relative; }
+  .v3-toggle::after { content: ''; position: absolute; left: 2px; top: 2px; width: 8px; height: 8px; background: white; border-radius: 50%; }
+  .v3-toggle.on { background: var(--accent-color); }
+  .v3-toggle.on::after { left: 14px; }
+  .v3-btn { background: var(--border-color); height: 24px; border-radius: 4px; opacity: 0; transition: opacity var(--transition-slow); }
+  .v3-toast { position: absolute; top: 20px; background: var(--text-primary); color: white; padding: 4px 12px; font-size: 10px; border-radius: 12px; opacity: 0; transform: translateY(-10px); transition: all var(--transition-slow); }
+
+  [data-step="0"] .v3-empty { opacity: 1; }
+  [data-step="1"] .v3-empty { opacity: 0; height: 0; margin: 0; }
+  [data-step="1"] .v3-field { opacity: 1; height: 12px; }
+  [data-step="2"] .v3-empty { opacity: 0; height: 0; margin: 0; }
+  [data-step="2"] .v3-field { opacity: 1; height: 12px; }
+  [data-step="2"] .v3-toggle { background: var(--accent-color); }
+  [data-step="2"] .v3-toggle::after { left: 14px; }
+  [data-step="2"] .v3-btn { opacity: 1; background: var(--text-primary); }
+  [data-step="3"] .v3-empty { opacity: 0; height: 0; margin: 0; }
+  [data-step="3"] .v3-field { opacity: 1; height: 12px; }
+  [data-step="3"] .v3-toggle { background: var(--accent-color); }
+  [data-step="3"] .v3-toggle::after { left: 14px; }
+  [data-step="3"] .v3-btn { opacity: 1; background: var(--text-primary); }
+  [data-step="3"] .v3-toast { opacity: 1; transform: translateY(0); }
+
+  /* --- Story 4: Decision Story --- */
+  .v4-container { display: flex; gap: 16px; transition: all var(--transition-slow); }
+  .v4-option { width: 80px; height: 60px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 11px; background: white; transition: all var(--transition-slow); }
+  .v4-result-area { position: absolute; bottom: 40px; display: flex; flex-direction: column; gap: 8px; width: 180px; }
+  .v4-rec, .v4-risk { padding: 8px 12px; border-radius: var(--radius-sm); font-size: 11px; opacity: 0; transform: translateY(10px); transition: all var(--transition-slow); }
+  .v4-rec { background: white; border: 1px solid var(--border-color); }
+  .v4-risk { background: #FFF4F0; color: #A84C2D; border: 1px solid #FADED5; }
+
+  [data-step="1"] .v4-container { transform: translateY(-30px); }
+  [data-step="1"] .v4-option:nth-child(2) { border-color: var(--accent-color); background: #FFF8F6; color: var(--accent-color); }
+  [data-step="2"] .v4-container { transform: translateY(-30px); }
+  [data-step="2"] .v4-option:nth-child(2) { border-color: var(--accent-color); background: #FFF8F6; color: var(--accent-color); }
+  [data-step="2"] .v4-rec { opacity: 1; transform: translateY(0); }
+  [data-step="3"] .v4-container { transform: translateY(-30px); }
+  [data-step="3"] .v4-option:nth-child(2) { border-color: var(--accent-color); background: #FFF8F6; color: var(--accent-color); }
+  [data-step="3"] .v4-rec { opacity: 1; transform: translateY(0); }
+  [data-step="3"] .v4-risk { opacity: 1; transform: translateY(0); transition-delay: 0.1s; }
+
+</style>
+</head>
+<body>
+
+<div class="grid">
+
+  <!-- FEATURE: Product Story - Content publishing flow -->
+  <div class="story-card" id="story1">
+    <div class="story-header">Product Story</div>
+    <div class="story-stage" data-step="0">
+      <div class="v1-mobile">
+        <div class="v1-line title"></div>
+        <div class="v1-line"></div>
+        <div class="v1-line"></div>
+        <div class="v1-line" style="width: 80%"></div>
+      </div>
+      <div class="v1-author">
+        <div class="v1-avatar"></div>
+        <div class="v1-name">E. Walker</div>
+      </div>
+      <div class="v1-stats">
+        <span>👁 1.2k</span>
+        <span>✓ Live</span>
+      </div>
+    </div>
+    <div class="story-footer">
+      <div class="story-caption js-caption"></div>
+      <div class="story-controls">
+        <div class="stepper js-stepper"></div>
+        <button class="play-pause js-play-pause">Pause</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURE: Workflow Story - Async task state transitions -->
+  <div class="story-card" id="story2">
+    <div class="story-header">Workflow Story</div>
+    <div class="story-stage" data-step="0">
+      <div class="v2-node">
+        <div>Allocation Task</div>
+        <div class="v2-status js-v2-status">Reserved</div>
+        <div class="v2-spinner"></div>
+      </div>
+    </div>
+    <div class="story-footer">
+      <div class="story-caption js-caption"></div>
+      <div class="story-controls">
+        <div class="stepper js-stepper"></div>
+        <button class="play-pause js-play-pause">Pause</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURE: UI State Story - Settings panel configuration -->
+  <div class="story-card" id="story3">
+    <div class="story-header">UI State Story</div>
+    <div class="story-stage" data-step="0">
+      <div class="v3-toast">Settings applied</div>
+      <div class="v3-panel">
+        <div class="v3-empty">No active configuration.</div>
+        <div class="v3-field"><div class="v3-label"></div><div class="v3-toggle"></div></div>
+        <div class="v3-field"><div class="v3-label" style="width: 60px"></div><div class="v3-toggle"></div></div>
+        <div class="v3-btn"></div>
+      </div>
+    </div>
+    <div class="story-footer">
+      <div class="story-caption js-caption"></div>
+      <div class="story-controls">
+        <div class="stepper js-stepper"></div>
+        <button class="play-pause js-play-pause">Pause</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURE: Decision Story - User choice and implications -->
+  <div class="story-card" id="story4">
+    <div class="story-header">Decision Story</div>
+    <div class="story-stage" data-step="0">
+      <div class="v4-container">
+        <div class="v4-option">Standard</div>
+        <div class="v4-option">Aggressive</div>
+      </div>
+      <div class="v4-result-area">
+        <div class="v4-rec">Yield est: +4.2%</div>
+        <div class="v4-risk">Note: Higher volatility expected.</div>
+      </div>
+    </div>
+    <div class="story-footer">
+      <div class="story-caption js-caption"></div>
+      <div class="story-controls">
+        <div class="stepper js-stepper"></div>
+        <button class="play-pause js-play-pause">Pause</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const storyData = {
+    story1: [
+      "Draft created on the mobile editor.",
+      "Reviewer assigns an author profile.",
+      "Content published with live tracking."
+    ],
+    story2: [
+      "System reserves resources for the task.",
+      "Async process is currently running.",
+      "Task confirmed and finalized successfully."
+    ],
+    story3: [
+      "Panel initializes in an empty state.",
+      "User expands fields for configuration.",
+      "Toggles are set, ready to save.",
+      "Changes saved, notification displayed."
+    ],
+    story4: [
+      "User presented with strategy options.",
+      "Selects the 'Aggressive' pathway.",
+      "System calculates estimated yield.",
+      "Risk disclosure follows selection."
+    ]
+  };
+
+  class Storyboard {
+    constructor(id) {
+      this.element = document.getElementById(id);
+      this.stage = this.element.querySelector('.story-stage');
+      this.caption = this.element.querySelector('.js-caption');
+      this.stepper = this.element.querySelector('.js-stepper');
+      this.playBtn = this.element.querySelector('.js-play-pause');
+      this.texts = storyData[id];
+      this.totalSteps = this.texts.length;
+      this.currentStep = 0;
+      this.isPlaying = true;
+      this.interval = null;
+
+      this.init();
+    }
+
+    init() {
+      // Build stepper
+      for (let i = 0; i < this.totalSteps; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'step-dot';
+        dot.addEventListener('click', () => this.goTo(i));
+        this.stepper.appendChild(dot);
+      }
+
+      this.playBtn.addEventListener('click', () => this.togglePlay());
+      
+      this.updateUI();
+      this.startTimer();
+    }
+
+    updateUI() {
+      this.stage.setAttribute('data-step', this.currentStep);
+      this.caption.textContent = this.texts[this.currentStep];
+      
+      const dots = this.stepper.querySelectorAll('.step-dot');
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === this.currentStep);
+      });
+
+      // Special handling for story 2 text replacement
+      if (this.element.id === 'story2') {
+        const statusEl = this.stage.querySelector('.js-v2-status');
+        if (this.currentStep === 0) statusEl.textContent = 'Reserved';
+        if (this.currentStep === 2) statusEl.textContent = 'Confirmed';
+      }
+    }
+
+    goTo(step) {
+      this.currentStep = step;
+      this.updateUI();
+      if (this.isPlaying) {
+        this.resetTimer();
+      }
+    }
+
+    next() {
+      this.currentStep = (this.currentStep + 1) % this.totalSteps;
+      this.updateUI();
+    }
+
+    togglePlay() {
+      this.isPlaying = !this.isPlaying;
+      this.playBtn.textContent = this.isPlaying ? 'Pause' : 'Play';
+      if (this.isPlaying) {
+        this.next();
+        this.startTimer();
+      } else {
+        this.stopTimer();
+      }
+    }
+
+    startTimer() {
+      this.interval = setInterval(() => this.next(), 3000);
+    }
+
+    stopTimer() {
+      clearInterval(this.interval);
+    }
+
+    resetTimer() {
+      this.stopTimer();
+      this.startTimer();
+    }
+  }
+
+  // Initialize all storyboards
+  document.querySelectorAll('.story-card').forEach(card => {
+    new Storyboard(card.id);
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,816 @@
+{
+  "meta": {
+    "lang": "zh-CN",
+    "title": "html-doc",
+    "subtitle": "Warm Nomad Component Showcase"
+  },
+  "actions": [
+    {
+      "label": "Copy JSON",
+      "copy": "component showcase"
+    },
+    {
+      "label": "Export Layout",
+      "primary": true,
+      "copy": "Render this JSON with scripts/render-html-doc.mjs"
+    }
+  ],
+  "content": [
+    {
+      "id": "hero",
+      "type": "hero",
+      "span": 12,
+      "kicker": "visual first",
+      "title": "用少量 JSON 组合出高质量、可读、可交互的 HTML Doc",
+      "body": "尽量把信息转换成流程、矩阵、对比、批注、编辑器和导出控件。",
+      "tags": [
+        "warm-flat",
+        "low-shadow",
+        "humanist-type",
+        "grid-first",
+        "visual-over-text"
+      ]
+    },
+    {
+      "id": "metrics",
+      "type": "metrics",
+      "span": 4,
+      "title": "核心指标",
+      "body": "数字、趋势和状态适合视觉化，减少长段说明。",
+      "items": [
+        {
+          "label": "TOKENS",
+          "value": "-38%",
+          "note": "JSON 替代重复 HTML",
+          "spark": [
+            8,
+            7,
+            7,
+            5,
+            4,
+            3,
+            3
+          ]
+        },
+        {
+          "label": "READ",
+          "value": "2.4x",
+          "note": "扫读速度提升",
+          "spark": [
+            2,
+            3,
+            4,
+            6,
+            7,
+            8,
+            9
+          ]
+        },
+        {
+          "label": "UI",
+          "value": "17",
+          "note": "内置组件",
+          "spark": [
+            3,
+            3,
+            4,
+            6,
+            8,
+            12,
+            17
+          ]
+        },
+        {
+          "label": "TEXT",
+          "value": "LOW",
+          "note": "正文轻量化",
+          "spark": [
+            9,
+            8,
+            6,
+            5,
+            4,
+            3,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stage",
+      "type": "stage",
+      "span": 8,
+      "title": "Static Stage",
+      "body": "用定位元素表达架构、界面草图和关系图。",
+      "stage": {
+        "width": 960,
+        "height": 520,
+        "background": "grid"
+      },
+      "elements": [
+        {
+          "id": "source_config",
+          "type": "panel",
+          "x": 80,
+          "y": 95,
+          "w": 210,
+          "h": 110,
+          "title": "source_config",
+          "content": "rules / inputs"
+        },
+        {
+          "id": "runtime_state",
+          "type": "panel",
+          "x": 380,
+          "y": 90,
+          "w": 230,
+          "h": 120,
+          "title": "runtime_state",
+          "content": "current mode + status"
+        },
+        {
+          "id": "event_log",
+          "type": "panel",
+          "x": 700,
+          "y": 100,
+          "w": 180,
+          "h": 100,
+          "title": "event_log",
+          "content": "immutable records"
+        },
+        {
+          "id": "guard",
+          "type": "annotation",
+          "x": 385,
+          "y": 275,
+          "w": 250,
+          "h": 74,
+          "content": "运行时只读取已确认配置和容量边界。"
+        },
+        {
+          "id": "line_1",
+          "type": "connection",
+          "from": "source_config",
+          "to": "runtime_state"
+        },
+        {
+          "id": "line_2",
+          "type": "connection",
+          "from": "runtime_state",
+          "to": "event_log"
+        }
+      ]
+    },
+    {
+      "id": "prompt",
+      "type": "promptEditor",
+      "span": 4,
+      "title": "Prompt Editor",
+      "body": "变量高亮，结果可复制。",
+      "prompt": "Create a {{artifact_type}} for {{audience}}. Prefer diagrams, matrices and inline annotations over long prose."
+    },
+    {
+      "id": "motion-demo",
+      "type": "motionStage",
+      "span": 12,
+      "title": "Motion Stage",
+      "body": "同一组对象在步骤之间移动、变色、显隐和改写数值，适合演示真实流程。",
+      "interval": 1600,
+      "stage": {
+        "width": 1180,
+        "height": 520
+      },
+      "objects": [
+        {
+          "id": "phone",
+          "type": "phone",
+          "x": 85,
+          "y": 80,
+          "w": 300,
+          "h": 350,
+          "label": "Publish",
+          "title": "Draft ready",
+          "props": {
+            "items": [
+              {
+                "label": "Caption",
+                "value": "ok"
+              },
+              {
+                "label": "Cover",
+                "value": "set"
+              },
+              {
+                "label": "Channels",
+                "value": "3"
+              }
+            ]
+          }
+        },
+        {
+          "id": "queue",
+          "type": "window",
+          "x": 455,
+          "y": 110,
+          "w": 300,
+          "h": 220,
+          "label": "Queue",
+          "title": "Waiting",
+          "body": "3 channels selected",
+          "props": {
+            "items": [
+              {
+                "label": "XHS",
+                "value": "ready"
+              },
+              {
+                "label": "Douyin",
+                "value": "ready"
+              },
+              {
+                "label": "Bilibili",
+                "value": "ready"
+              }
+            ]
+          }
+        },
+        {
+          "id": "metric",
+          "type": "metric",
+          "x": 855,
+          "y": 130,
+          "w": 170,
+          "h": 120,
+          "value": "0",
+          "label": "published"
+        },
+        {
+          "id": "toast",
+          "type": "note",
+          "x": 760,
+          "y": 330,
+          "w": 280,
+          "h": 82,
+          "body": "发布完成后，读者能直接看到状态变化。",
+          "opacity": 0.35
+        },
+        {
+          "id": "line",
+          "type": "line",
+          "x": 385,
+          "y": 215,
+          "w": 70,
+          "h": 1,
+          "opacity": 0.4
+        }
+      ],
+      "steps": [
+        {
+          "title": "1. 准备内容",
+          "body": "素材、标题和渠道都在同一个画面里呈现。",
+          "states": {
+            "phone": {
+              "emphasis": "focus"
+            },
+            "queue": {
+              "opacity": 0.45,
+              "status": "muted"
+            },
+            "metric": {
+              "value": "0",
+              "opacity": 0.35
+            },
+            "toast": {
+              "opacity": 0.25
+            },
+            "line": {
+              "opacity": 0.25
+            }
+          }
+        },
+        {
+          "title": "2. 提交发布",
+          "body": "队列窗口成为焦点，展示任务被拆分到多个渠道。",
+          "states": {
+            "phone": {
+              "x": 65,
+              "y": 95,
+              "opacity": 0.75
+            },
+            "queue": {
+              "x": 430,
+              "y": 95,
+              "opacity": 1,
+              "emphasis": "focus",
+              "title": "Publishing",
+              "body": "dispatching 3 channel jobs"
+            },
+            "metric": {
+              "value": "0",
+              "opacity": 0.45
+            },
+            "toast": {
+              "opacity": 0.25
+            },
+            "line": {
+              "x": 365,
+              "y": 215,
+              "w": 65,
+              "opacity": 0.7
+            }
+          }
+        },
+        {
+          "title": "3. 状态回写",
+          "body": "同一画面里更新数值和结果提示，减少额外解释。",
+          "states": {
+            "phone": {
+              "x": 65,
+              "y": 95,
+              "opacity": 0.65
+            },
+            "queue": {
+              "x": 390,
+              "y": 115,
+              "emphasis": "success",
+              "title": "Complete",
+              "body": "all channels accepted"
+            },
+            "metric": {
+              "x": 820,
+              "y": 120,
+              "value": "3",
+              "opacity": 1,
+              "emphasis": "success"
+            },
+            "toast": {
+              "opacity": 1,
+              "emphasis": "success"
+            },
+            "line": {
+              "x": 690,
+              "y": 215,
+              "w": 125,
+              "opacity": 0.65
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "flow",
+      "type": "flow",
+      "span": 8,
+      "title": "生成流程",
+      "nodes": [
+        {
+          "label": "需求",
+          "note": "代码、数据、问题"
+        },
+        {
+          "label": "JSON",
+          "note": "意图和结构"
+        },
+        {
+          "label": "Renderer",
+          "note": "组件组合"
+        },
+        {
+          "label": "HTML",
+          "note": "可读可交互"
+        }
+      ]
+    },
+    {
+      "id": "decision",
+      "type": "decisionTree",
+      "span": 4,
+      "title": "组件选择",
+      "items": [
+        {
+          "level": 0,
+          "condition": "需要解释过程",
+          "result": "使用 flow 或 timeline"
+        },
+        {
+          "level": 1,
+          "condition": "有代码变化",
+          "result": "使用 diffReview"
+        },
+        {
+          "level": 1,
+          "condition": "有多个方案",
+          "result": "使用 variantGrid 或 matrix"
+        },
+        {
+          "level": 0,
+          "condition": "需要用户调整",
+          "result": "使用 sliderLab、formEditor 或 promptEditor"
+        }
+      ]
+    },
+    {
+      "id": "matrix",
+      "type": "matrix",
+      "span": 12,
+      "title": "Decision Matrix",
+      "body": "表格先显示对象、结论和风险，长证据放进展开详情。",
+      "search": true,
+      "sortable": true,
+      "filters": [
+        {
+          "key": "risk",
+          "label": "Risk",
+          "options": [
+            "High",
+            "Medium",
+            "Low"
+          ]
+        }
+      ],
+      "columns": [
+        {
+          "key": "object",
+          "label": "对象",
+          "minWidth": "190px"
+        },
+        {
+          "key": "summary",
+          "label": "一句话结论",
+          "minWidth": "260px"
+        },
+        {
+          "key": "risk",
+          "label": "风险",
+          "width": "96px"
+        },
+        {
+          "key": "evidence",
+          "label": "关键证据",
+          "minWidth": "250px"
+        },
+        {
+          "key": "confidence",
+          "label": "置信度",
+          "width": "120px"
+        },
+        {
+          "key": "next",
+          "label": "下一步",
+          "minWidth": "150px"
+        }
+      ],
+      "rows": [
+        {
+          "group": "需要确认"
+        },
+        {
+          "object": "`matrix` 表格",
+          "summary": "**默认展示判断**，证据按需展开。",
+          "risk": {
+            "badge": "Medium",
+            "tone": "warning"
+          },
+          "evidence": {
+            "summary": "Markdown 宽表容易丢列上下文。",
+            "detail": "固定表头和首列后，读者滚动时仍能确认对象和维度。"
+          },
+          "confidence": {
+            "progress": 86,
+            "label": "足够稳定"
+          },
+          "next": [
+            "freeze",
+            "search",
+            "tags"
+          ],
+          "details": "适合方案比较、风险表、PR review、排期表、需求矩阵。"
+        },
+        {
+          "object": "`motionStage` 动画",
+          "summary": "只在状态变化能直观看懂时使用。",
+          "risk": {
+            "badge": "Low",
+            "tone": "success"
+          },
+          "evidence": {
+            "summary": "对象位置、显隐、状态和数值发生变化。",
+            "detail": "字幕只做补充，主信息应该出现在画面变化里。"
+          },
+          "confidence": {
+            "score": 78,
+            "label": "可复用"
+          },
+          "next": {
+            "badge": "demo",
+            "tone": "accent"
+          }
+        },
+        {
+          "group": "可以后置"
+        },
+        {
+          "object": "长正文",
+          "summary": "拆成卡片、矩阵、批注或展开材料。",
+          "risk": {
+            "badge": "High",
+            "tone": "danger"
+          },
+          "evidence": {
+            "summary": "连续段落会让读者反复重建结构。",
+            "detail": "如果内容需要比较、优先级、关系或状态，就改用视觉组件。"
+          },
+          "confidence": {
+            "progress": 92,
+            "label": "明确"
+          },
+          "next": {
+            "badge": "split",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "id": "diff",
+      "type": "diffReview",
+      "span": 8,
+      "title": "Diff Review",
+      "lines": [
+        {
+          "type": "remove",
+          "text": "- <div class=\"card shadow-lg rounded-xl p-8\">"
+        },
+        {
+          "type": "add",
+          "text": "+ <section data-block=\"metric\" class=\"tile\">"
+        },
+        {
+          "type": "add",
+          "text": "+   <Metric value={data.value} spark={data.trend} />"
+        },
+        {
+          "type": "neutral",
+          "text": "  </section>"
+        }
+      ],
+      "findings": [
+        {
+          "severity": "P1",
+          "title": "组件替代样式堆叠",
+          "body": "保留语义数据，避免重复生成视觉细节。"
+        },
+        {
+          "severity": "P2",
+          "title": "降低 DOM 嵌套",
+          "body": "单个 block 直接承载布局，不再卡片套卡片。"
+        }
+      ]
+    },
+    {
+      "id": "timeline",
+      "type": "timeline",
+      "span": 4,
+      "title": "执行时间线",
+      "items": [
+        {
+          "time": "00:00",
+          "title": "读取上下文",
+          "body": "抽取实体和目标"
+        },
+        {
+          "time": "00:12",
+          "title": "选择组件",
+          "body": "映射到 JSON blocks"
+        },
+        {
+          "time": "00:28",
+          "title": "输出 HTML",
+          "body": "浏览器直接打开"
+        }
+      ]
+    },
+    {
+      "id": "architecture",
+      "type": "flow",
+      "span": 8,
+      "title": "生成链路",
+      "nodes": [
+        {
+          "label": "User Context",
+          "note": "需求、代码、数据"
+        },
+        {
+          "label": "HTML Doc JSON",
+          "note": "紧凑结构"
+        },
+        {
+          "label": "Renderer",
+          "note": "主题和组件"
+        },
+        {
+          "label": "HTML",
+          "note": "浏览器阅读"
+        },
+        {
+          "label": "Copy / CSV / Diff",
+          "note": "回流到工作流"
+        }
+      ]
+    },
+    {
+      "id": "variants",
+      "type": "variantGrid",
+      "span": 4,
+      "title": "Variant Grid",
+      "items": [
+        {
+          "label": "A",
+          "title": "报告型",
+          "body": "洞察、证据、结论",
+          "score": 88
+        },
+        {
+          "label": "B",
+          "title": "评审型",
+          "body": "diff、风险、路径",
+          "score": 92
+        },
+        {
+          "label": "C",
+          "title": "编辑型",
+          "body": "表单、滑块、导出",
+          "score": 84
+        }
+      ]
+    },
+    {
+      "id": "code",
+      "type": "codeAnnotation",
+      "span": 6,
+      "title": "代码批注",
+      "code": "function renderBlock(block) {\n  const component = registry[block.type]\n  return component(block)\n}",
+      "annotations": [
+        {
+          "ref": "registry",
+          "body": "组件注册表是 Skill 的稳定核心。"
+        },
+        {
+          "ref": "block.type",
+          "body": "AI 负责选择意图，视觉系统交给渲染器。"
+        }
+      ]
+    },
+    {
+      "id": "sliders",
+      "type": "sliderLab",
+      "span": 6,
+      "title": "Slider Lab",
+      "controls": [
+        {
+          "type": "range",
+          "label": "信息密度",
+          "min": 0,
+          "max": 100,
+          "value": 72
+        },
+        {
+          "type": "range",
+          "label": "暖色强度",
+          "min": 0,
+          "max": 100,
+          "value": 34
+        },
+        {
+          "type": "toggle",
+          "label": "优先可视化",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "evidence",
+      "type": "evidenceBoard",
+      "span": 8,
+      "title": "Evidence Board",
+      "items": [
+        {
+          "label": "USER",
+          "title": "不喜欢容器过度嵌套",
+          "body": "整体采用铺地砖式 grid，组件之间共用 1px 分割线。"
+        },
+        {
+          "label": "DESIGN",
+          "title": "人文感字体",
+          "body": "标题使用 Optima / Avenir Next，中文回退到苹方和霞鹜文楷。"
+        },
+        {
+          "label": "RULE",
+          "title": "文字尽量少",
+          "body": "正文保持轻量；需要细节时交给矩阵、批注或展开材料。"
+        },
+        {
+          "label": "HTML",
+          "title": "充分利用水平空间",
+          "body": "12 栏 span 机制，支持 4/8、6/6、8/4 分列。"
+        }
+      ]
+    },
+    {
+      "id": "kanban",
+      "type": "kanban",
+      "span": 12,
+      "title": "Kanban",
+      "body": "横向分组清单，适合风险桶、任务桶、审查桶和反馈桶。",
+      "columns": [
+        {
+          "title": "客户信任风险",
+          "icon": "!",
+          "tone": "danger",
+          "items": [
+            "未经搜索就确认品牌事实",
+            "连续追问多个 intake 字段",
+            {
+              "title": "对进度事件输出内部 `stage` 名",
+              "done": true
+            },
+            "承诺还没有 finalizer 生成的链接"
+          ]
+        },
+        {
+          "title": "成本与重复风险",
+          "icon": "$",
+          "tone": "warning",
+          "items": [
+            "未得到 yes/no 就启动 async run",
+            "有旧 job 仍然重跑",
+            "身份确认和参数确认混成一轮",
+            {
+              "title": "mock 路径被误报成生产通过",
+              "tone": "accent"
+            }
+          ]
+        },
+        {
+          "title": "资源一致性风险",
+          "icon": "#",
+          "tone": "info",
+          "items": [
+            "`product_id` 放进 payload 而不是 top-level",
+            "`job_type` 没核实就当研究 job",
+            "导出结果缺少上游任务 id",
+            "旧发布能力被当成当前能力"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "form",
+      "type": "formEditor",
+      "span": 6,
+      "title": "Form Editor",
+      "fields": [
+        {
+          "name": "mode",
+          "label": "处理模式",
+          "type": "select",
+          "value": "auto",
+          "options": [
+            "auto",
+            "manual",
+            "precheck"
+          ]
+        },
+        {
+          "name": "density",
+          "label": "密度",
+          "value": "compact"
+        },
+        {
+          "name": "rule",
+          "label": "规则",
+          "type": "textarea",
+          "value": "正文变长时优先转成视觉组件。"
+        }
+      ]
+    },
+    {
+      "id": "insights",
+      "type": "evidenceBoard",
+      "span": 6,
+      "title": "洞察摘要",
+      "items": [
+        {
+          "label": "01",
+          "title": "HTML 的价值来自组织能力",
+          "body": "分列、对比、流程、标注和交互，比长文更重要。"
+        },
+        {
+          "label": "02",
+          "title": "JSON 才是可审查源文件",
+          "body": "HTML 可以生成，JSON 保持清晰。"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>html-artifact | 温暖默认主题</title>
+    <style>
+        :root {
+            /* Color Palette - Warm, Clean, Universal */
+            --bg-main: #F7F5F0;
+            --bg-surface: #FFFFFF;
+            --bg-soft: #FBF7EF;
+            --text-primary: #28241F;
+            --text-secondary: #6E675D;
+            --accent-primary: #B8653B;
+            --accent-hover: #9F5430;
+            --accent-success: #4F8766;
+            --accent-insight: #B77A2F;
+            --accent-cool: #4F7F8B;
+            --border-light: #E4DDD1;
+            
+            /* Typography */
+            --font-family: "Avenir Next", Avenir, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+            --font-display: Optima, "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
+            
+            /* UI Elements */
+            --radius-md: 10px;
+            --radius-lg: 12px;
+            --radius-full: 9999px;
+            --shadow-sm: none;
+            --shadow-md: none;
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0) 260px),
+                var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.5;
+            padding: 2rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1024px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Typography */
+        h1 { font-family: var(--font-display); font-size: 2.15rem; font-weight: 650; letter-spacing: 0; }
+        h2 { font-family: var(--font-display); font-size: 1.25rem; font-weight: 650; margin-bottom: 1rem; color: var(--text-primary); }
+        p { color: var(--text-secondary); }
+
+        /* Surface Cards */
+        .card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+        }
+
+        /* Hero Section */
+        .hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .hero-text p {
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Buttons & Controls */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-primary);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.5rem;
+            background: #EEE8DD;
+            padding: 0.25rem;
+            border-radius: var(--radius-md);
+        }
+
+        .control-tab {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .control-tab.active {
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .metric-card {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .metric-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+            color: var(--accent-success);
+        }
+
+        /* Flowchart */
+        .flowchart {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 1rem 0;
+        }
+
+        .flow-node {
+            background: var(--bg-soft);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+            font-weight: 500;
+        }
+
+        .flow-arrow {
+            color: #B8AA99;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        /* Comparison Matrix */
+        .matrix table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .matrix th, .matrix td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .matrix th {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .matrix tr:last-child td {
+            border-bottom: none;
+        }
+
+        .check { color: var(--accent-success); font-weight: bold; }
+        .cross { color: var(--text-secondary); opacity: 0.5; }
+
+        /* Code & Annotation */
+        .code-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .code-block {
+            background: #2B2520;
+            color: #F4EDE3;
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-highlight {
+            color: #D9915B;
+        }
+
+        .annotation {
+            background: var(--bg-soft);
+            border-left: 4px solid var(--accent-primary);
+            padding: 1rem;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+        }
+
+        /* Insight Card */
+        .insight-card {
+            background: #FFF7E8;
+            border-color: #EAD1A8;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .insight-icon {
+            background: #F4DFB8;
+            color: var(--accent-insight);
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--text-primary);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            transform: translateY(150%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .hero { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .code-section { grid-template-columns: 1fr; }
+            .flowchart { flex-direction: column; align-items: stretch; }
+            .flow-arrow { transform: rotate(90deg); text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- FEATURE: Hero section with title, subtitle, and primary export action -->
+    <header class="hero">
+        <div class="hero-text">
+            <h1>html-artifact</h1>
+            <p>少写 HTML，多生成好看的可视化</p>
+        </div>
+        <button class="btn btn-primary" id="exportBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            复制 Artifact
+        </button>
+    </header>
+
+    <!-- FEATURE: Interactive segmented control to filter/switch views -->
+    <div style="display: flex; justify-content: flex-start;">
+        <div class="controls">
+            <button class="control-tab active" data-target="overview">概览</button>
+            <button class="control-tab" data-target="technical">技术</button>
+        </div>
+    </div>
+
+    <div id="view-overview" class="view-content" style="display: flex; flex-direction: column; gap: 2rem;">
+        <!-- FEATURE: Metric cards visualizing key performance indicators -->
+        <section class="metrics-grid">
+            <div class="card metric-card">
+                <span class="metric-label">生成速度</span>
+                <span class="metric-value" id="val-speed">124ms</span>
+                <span class="metric-trend">提升 12%</span>
+            </div>
+            <div class="card metric-card">
+                <span class="metric-label">可访问性</span>
+                <span class="metric-value">98/100</span>
+                <span class="metric-trend">符合 WCAG AA</span>
+            </div>
+            <div class="card metric-card">
+                <span class="metric-label">文件体积</span>
+                <span class="metric-value">4.2kb</span>
+                <span class="metric-trend" style="color: var(--text-secondary)">零依赖</span>
+            </div>
+        </section>
+
+        <!-- FEATURE: Insight card highlighting a key takeaway visually -->
+        <section class="card insight-card">
+            <div class="insight-icon">!</div>
+            <div>
+                <h3 style="font-size: 1rem; margin-bottom: 0.25rem;">视觉优先</h3>
+                <p style="font-size: 0.9rem; color: #7A5522;">超过 120 字的解释，优先压缩成图表、流程、卡片或交互控件。</p>
+            </div>
+        </section>
+
+        <!-- FEATURE: Flowchart visualizing a multi-step process cleanly -->
+        <section class="card">
+            <h2>生成链路</h2>
+            <div class="flowchart">
+                <div class="flow-node">JSON 输入</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">布局编排</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">主题映射</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node" style="border-color: var(--accent-primary); background: #F8ECE3;">最终 HTML</div>
+            </div>
+        </section>
+    </div>
+
+    <div id="view-technical" class="view-content" style="display: none; flex-direction: column; gap: 2rem;">
+        <!-- FEATURE: Comparison matrix comparing features clearly -->
+        <section class="card matrix">
+            <h2>架构对比</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>能力</th>
+                        <th>直接生成 HTML</th>
+                        <th>JSON 编译器</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>语义结构</td>
+                        <td class="cross">容易漂移</td>
+                        <td class="check">组件保证</td>
+                    </tr>
+                    <tr>
+                        <td>响应式</td>
+                        <td class="cross">依赖提示</td>
+                        <td class="check">默认内置</td>
+                    </tr>
+                    <tr>
+                        <td>交互状态</td>
+                        <td class="cross">手写脚本</td>
+                        <td class="check">组件挂载</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- FEATURE: Code block with an contextual annotation card -->
+        <section class="code-section">
+            <div class="card code-block" id="code-snippet">
+<span style="color: #9B9083;">// 由组件自动挂载交互</span>
+document.querySelectorAll(<span class="code-highlight">'.tab'</span>).forEach(t => {
+  t.addEventListener('click', (e) => {
+    <span style="color: #9B9083;">// 清理旧状态</span>
+    clearActiveStates();
+    <span style="color: #9B9083;">// 显示新视图</span>
+    e.target.classList.add(<span class="code-highlight">'active'</span>);
+    renderView(e.target.dataset.id);
+  });
+});</div>
+            <div class="annotation">
+                <h3 style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-primary)">轻量交互</h3>
+                <p style="font-size: 0.85rem;">组件只暴露语义配置，渲染器负责绑定状态、复制、筛选和导出。</p>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div class="toast" id="toastMessage">已复制 Artifact 配置</div>
+
+<script>
+    // FEATURE: Interactive Tab Switching logic
+    const tabs = document.querySelectorAll('.control-tab');
+    const views = document.querySelectorAll('.view-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Update active tab styling
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            // Show corresponding view
+            const targetId = `view-${tab.dataset.target}`;
+            views.forEach(view => {
+                if(view.id === targetId) {
+                    view.style.display = 'flex';
+                } else {
+                    view.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // FEATURE: Export button interaction with Toast notification
+    const exportBtn = document.getElementById('exportBtn');
+    const toast = document.getElementById('toastMessage');
+    let toastTimeout;
+
+    exportBtn.addEventListener('click', () => {
+        // Change button state temporarily
+        const originalText = exportBtn.innerHTML;
+        exportBtn.innerHTML = '复制中...';
+        exportBtn.style.opacity = '0.7';
+
+        // Simulate network request/action
+        setTimeout(() => {
+            exportBtn.innerHTML = originalText;
+            exportBtn.style.opacity = '1';
+            
+            // Show toast
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }, 600);
+    });
+
+    // FEATURE: Subtle interaction on metric cards (randomly updating value to feel 'alive' occasionally)
+    setInterval(() => {
+        const speedVal = document.getElementById('val-speed');
+        const current = parseInt(speedVal.innerText);
+        // Fluctuate between 110ms and 140ms
+        const newVal = Math.floor(Math.random() * (140 - 110 + 1) + 110);
+        speedVal.innerText = `${newVal}ms`;
+    }, 5000);
+</script>
+
+</body>
+</html>

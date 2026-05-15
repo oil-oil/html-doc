@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML Artifact Visual Reference</title>
+<style>
+    :root {
+        --bg-color: #faf8f5;
+        --text-main: #2c2b29;
+        --text-muted: #6b6965;
+        --border-color: #e5e2db;
+        
+        --color-add: #edf5e8;
+        --color-add-text: #3c7a26;
+        --color-remove: #faeaea;
+        --color-remove-text: #ad3232;
+        
+        --accent-warm: #d97757;
+        --accent-cool: #567e96;
+        --accent-neutral: #e0ddd6;
+
+        --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: var(--font-stack);
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        line-height: 1.6;
+        font-size: 14px;
+        -webkit-font-smoothing: antialiased;
+        padding: 40px 60px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    header {
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+    h1 {
+        font-size: 20px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+
+    .subtitle {
+        color: var(--text-muted);
+        font-size: 13px;
+    }
+
+    section {
+        margin-bottom: 60px;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 24px;
+        gap: 12px;
+    }
+
+    .section-number {
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        color: var(--accent-warm);
+        font-size: 12px;
+        border: 1px solid var(--accent-warm);
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    h2 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-main);
+    }
+
+    .desc {
+        color: var(--text-muted);
+        font-size: 13px;
+        margin-left: auto;
+    }
+
+    /* Visualization Containers */
+    .vis-container {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    /* 1. Differences */
+    .diff-block {
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        font-size: 13px;
+        background: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        padding: 16px;
+    }
+    .diff-line {
+        display: flex;
+        padding: 2px 8px;
+        border-radius: 2px;
+    }
+    .diff-line.add { background-color: var(--color-add); color: var(--color-add-text); }
+    .diff-line.remove { background-color: var(--color-remove); color: var(--color-remove-text); }
+    .diff-line.context { color: var(--text-muted); }
+    .diff-num { width: 30px; user-select: none; opacity: 0.5; }
+
+    /* 2. Relationships */
+    .rel-grid {
+        display: grid;
+        grid-template-columns: 1fr 100px 1fr;
+        gap: 20px;
+        align-items: center;
+    }
+    .rel-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .rel-item {
+        padding: 12px 16px;
+        background: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .rel-item:hover, .rel-item.active {
+        border-color: var(--accent-cool);
+        background-color: rgba(86, 126, 150, 0.05);
+    }
+    .rel-item-title { font-weight: 500; }
+    .rel-item-meta { font-size: 12px; color: var(--text-muted); }
+    .rel-lines {
+        position: relative;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .rel-lines svg {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+    }
+    path.link {
+        fill: none;
+        stroke: var(--border-color);
+        stroke-width: 1.5;
+        transition: stroke 0.3s ease;
+    }
+    path.link.active {
+        stroke: var(--accent-cool);
+        stroke-width: 2;
+    }
+
+    /* 3. Sequences */
+    .timeline {
+        display: flex;
+        align-items: flex-start;
+        position: relative;
+        padding-top: 10px;
+    }
+    .timeline::before {
+        content: '';
+        position: absolute;
+        top: 15px;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: var(--border-color);
+        z-index: 1;
+    }
+    .timeline-node {
+        flex: 1;
+        position: relative;
+        z-index: 2;
+        padding-right: 20px;
+    }
+    .timeline-dot {
+        width: 11px;
+        height: 11px;
+        background: var(--bg-color);
+        border: 2px solid var(--accent-cool);
+        border-radius: 50%;
+        margin-bottom: 12px;
+        transition: background 0.2s;
+        cursor: pointer;
+    }
+    .timeline-dot:hover { background: var(--accent-cool); }
+    .timeline-date { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+    .timeline-title { font-weight: 500; font-size: 13px; }
+
+    /* 4. Structures */
+    .tree-container {
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.8;
+    }
+    .tree-node {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        padding: 4px 0;
+    }
+    .tree-node:hover { background: rgba(0,0,0,0.02); }
+    .tree-toggle {
+        width: 16px;
+        height: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        margin-right: 8px;
+        transition: transform 0.2s;
+    }
+    .tree-toggle.open { transform: rotate(90deg); }
+    .tree-children {
+        padding-left: 24px;
+        border-left: 1px solid var(--border-color);
+        margin-left: 7px;
+    }
+    .tree-key { color: var(--accent-cool); }
+    .tree-value { color: var(--text-main); margin-left: 8px; }
+    .tree-type { color: var(--text-muted); font-size: 11px; margin-left: 8px; }
+
+    /* 5. State Changes */
+    .state-flow {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+    .state-pill {
+        padding: 6px 16px;
+        background: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        font-size: 13px;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .state-pill.active {
+        background: var(--accent-warm);
+        border-color: var(--accent-warm);
+        color: #fff;
+    }
+    .state-arrow {
+        color: var(--border-color);
+    }
+    .state-details {
+        margin-top: 20px;
+        padding: 16px;
+        background: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        font-size: 13px;
+    }
+
+    /* 6. Emphasis */
+    .emphasis-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 40px;
+    }
+    .text-block {
+        font-size: 14px;
+        line-height: 1.8;
+        color: var(--text-muted);
+    }
+    .hl {
+        color: var(--text-main);
+        background: rgba(217, 119, 87, 0.1);
+        padding: 0 4px;
+        border-bottom: 1px solid rgba(217, 119, 87, 0.3);
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .hl:hover, .hl.active {
+        background: rgba(217, 119, 87, 0.2);
+    }
+    .key-info-panel {
+        border-left: 2px solid var(--accent-warm);
+        padding-left: 20px;
+    }
+    .info-item {
+        margin-bottom: 16px;
+        display: none;
+    }
+    .info-item.active { display: block; }
+    .info-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; }
+    .info-value { font-size: 14px; font-weight: 500; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<header>
+    <div>
+        <h1>HTML Artifact Component Design</h1>
+        <div class="subtitle">Visualizing structural data beyond Markdown constraints</div>
+    </div>
+    <div class="desc">JSON Renderer Reference</div>
+</header>
+
+<!-- FEATURE: Visualizes text or code differences using an inline diff approach with subtle color coding. -->
+<section>
+    <div class="section-header">
+        <div class="section-number">1</div>
+        <h2>看差异 (Differences)</h2>
+        <div class="desc">Configuration Drift Analysis</div>
+    </div>
+    <div class="vis-container">
+        <div class="diff-block">
+            <div class="diff-line context"><span class="diff-num">41</span><span>  "server": {</span></div>
+            <div class="diff-line context"><span class="diff-num">42</span><span>    "host": "0.0.0.0",</span></div>
+            <div class="diff-line remove"><span class="diff-num">43</span><span>-   "port": 8080,</span></div>
+            <div class="diff-line add"><span class="diff-num">43</span><span>+   "port": 8443,</span></div>
+            <div class="diff-line context"><span class="diff-num">44</span><span>    "ssl": {</span></div>
+            <div class="diff-line remove"><span class="diff-num">45</span><span>-     "enabled": false</span></div>
+            <div class="diff-line add"><span class="diff-num">45</span><span>+     "enabled": true,</span></div>
+            <div class="diff-line add"><span class="diff-num">46</span><span>+     "certPath": "/etc/ssl/certs/main.pem"</span></div>
+            <div class="diff-line context"><span class="diff-num">47</span><span>    }</span></div>
+            <div class="diff-line context"><span class="diff-num">48</span><span>  }</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURE: Visualizes relationships between entities. Hovering over a source item highlights the connecting SVG path to the target. -->
+<section>
+    <div class="section-header">
+        <div class="section-number">2</div>
+        <h2>看关系 (Relationships)</h2>
+        <div class="desc">Data Pipeline Mapping</div>
+    </div>
+    <div class="vis-container">
+        <div class="rel-grid">
+            <ul class="rel-list" id="rel-source">
+                <li class="rel-item" data-target="target-1">
+                    <div class="rel-item-title">User Profile Events</div>
+                    <div class="rel-item-meta">Kafka Topic: events.user</div>
+                </li>
+                <li class="rel-item" data-target="target-2">
+                    <div class="rel-item-title">Transaction Logs</div>
+                    <div class="rel-item-meta">S3 Bucket: prod-tx-logs</div>
+                </li>
+            </ul>
+            <div class="rel-lines">
+                <svg>
+                    <path class="link" id="link-1" d="M 0 35 C 50 35, 50 35, 100 35" />
+                    <path class="link" id="link-2" d="M 0 115 C 50 115, 50 35, 100 35" />
+                </svg>
+            </div>
+            <ul class="rel-list">
+                <li class="rel-item" id="target-1">
+                    <div class="rel-item-title">Customer Analytics Warehouse</div>
+                    <div class="rel-item-meta">Snowflake schema: analytics.core</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURE: Visualizes a sequence of events over time on a horizontal timeline. -->
+<section>
+    <div class="section-header">
+        <div class="section-number">3</div>
+        <h2>看顺序 (Sequences)</h2>
+        <div class="desc">Deployment Lifecycle</div>
+    </div>
+    <div class="vis-container">
+        <div class="timeline">
+            <div class="timeline-node">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">10:02 AM</div>
+                <div class="timeline-title">Build triggered</div>
+            </div>
+            <div class="timeline-node">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">10:05 AM</div>
+                <div class="timeline-title">Tests passed</div>
+            </div>
+            <div class="timeline-node">
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">10:08 AM</div>
+                <div class="timeline-title">Image pushed to ECR</div>
+            </div>
+            <div class="timeline-node">
+                <div class="timeline-dot" style="border-color: var(--accent-warm);"></div>
+                <div class="timeline-date">10:12 AM</div>
+                <div class="timeline-title" style="color: var(--accent-warm);">Canary rollout</div>
+            </div>
+            <div class="timeline-node">
+                <div class="timeline-dot" style="border-color: var(--border-color);"></div>
+                <div class="timeline-date">Pending</div>
+                <div class="timeline-title" style="color: var(--text-muted);">Full promotion</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURE: Visualizes hierarchical structure using an expandable/collapsible tree layout. -->
+<section>
+    <div class="section-header">
+        <div class="section-number">4</div>
+        <h2>看结构 (Structures)</h2>
+        <div class="desc">API Response Payload</div>
+    </div>
+    <div class="vis-container">
+        <div class="tree-container">
+            <div class="tree-node" onclick="toggleTree(this)">
+                <span class="tree-toggle open">▶</span>
+                <span class="tree-key">data</span>
+                <span class="tree-type">Object</span>
+            </div>
+            <div class="tree-children">
+                <div class="tree-node">
+                    <span class="tree-toggle" style="visibility: hidden;">▶</span>
+                    <span class="tree-key">id</span>:
+                    <span class="tree-value">"usr_9x8f72a"</span>
+                    <span class="tree-type">String</span>
+                </div>
+                <div class="tree-node" onclick="toggleTree(this)">
+                    <span class="tree-toggle open">▶</span>
+                    <span class="tree-key">permissions</span>
+                    <span class="tree-type">Array[2]</span>
+                </div>
+                <div class="tree-children">
+                    <div class="tree-node">
+                        <span class="tree-toggle" style="visibility: hidden;">▶</span>
+                        <span class="tree-key">0</span>:
+                        <span class="tree-value">"read:invoices"</span>
+                    </div>
+                    <div class="tree-node">
+                        <span class="tree-toggle" style="visibility: hidden;">▶</span>
+                        <span class="tree-key">1</span>:
+                        <span class="tree-value">"write:reports"</span>
+                    </div>
+                </div>
+                <div class="tree-node">
+                    <span class="tree-toggle" style="visibility: hidden;">▶</span>
+                    <span class="tree-key">lastLogin</span>:
+                    <span class="tree-value">"2023-10-24T08:12:00Z"</span>
+                    <span class="tree-type">DateTime</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURE: Visualizes state transitions. Clicking a pill updates the details area below. -->
+<section>
+    <div class="section-header">
+        <div class="section-number">5</div>
+        <h2>看状态变化 (State Changes)</h2>
+        <div class="desc">Order Fulfillment State Machine</div>
+    </div>
+    <div class="vis-container">
+        <div class="state-flow" id="state-flow">
+            <div class="state-pill" data-state="created">Created</div>
+            <span class="state-arrow">→</span>
+            <div class="state-pill active" data-state="processing">Processing</div>
+            <span class="state-arrow">→</span>
+            <div class="state-pill" data-state="shipped">Shipped</div>
+            <span class="state-arrow">→</span>
+            <div class="state-pill" data-state="delivered">Delivered</div>
+        </div>
+        <div class="state-details" id="state-details">
+            Inventory allocated. Awaiting carrier pickup schedule from warehouse C.
+        </div>
+    </div>
+</section>
+
+<!-- FEATURE: Visualizes emphasis within text. Clicking highlighted text reveals structured metadata in the side panel. -->
+<section>
+    <div class="section-header">
+        <div class="section-number">6</div>
+        <h2>看重点 (Emphasis)</h2>
+        <div class="desc">Entity Extraction from Unstructured Log</div>
+    </div>
+    <div class="vis-container">
+        <div class="emphasis-grid">
+            <div class="text-block" id="emphasis-text">
+                System detected unusual memory consumption on node <span class="hl active" data-info="info-node">worker-pool-b-04</span>. 
+                Process <span class="hl" data-info="info-proc">java-ml-service</span> exceeded threshold, peaking at 
+                <span class="hl" data-info="info-metric">14.2 GB</span> RAM usage. Auto-scaling policy triggered eviction 
+                at <span class="hl" data-info="info-time">2023-10-25 14:33:02 UTC</span>.
+            </div>
+            <div class="key-info-panel" id="emphasis-panel">
+                <div class="info-item active" id="info-node">
+                    <div class="info-label">Infrastructure Node</div>
+                    <div class="info-value">worker-pool-b-04</div>
+                    <div class="info-label" style="margin-top: 8px;">Zone</div>
+                    <div class="info-value" style="font-size: 13px; color: var(--text-muted);">us-east-1c</div>
+                </div>
+                <div class="info-item" id="info-proc">
+                    <div class="info-label">Target Process</div>
+                    <div class="info-value">java-ml-service</div>
+                </div>
+                <div class="info-item" id="info-metric">
+                    <div class="info-label">Metric Anomaly</div>
+                    <div class="info-value">Memory: 14.2 GB</div>
+                </div>
+                <div class="info-item" id="info-time">
+                    <div class="info-label">Timestamp</div>
+                    <div class="info-value">2023-10-25 14:33:02 UTC</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // 2. Relationships Interaction
+    const relItems = document.querySelectorAll('#rel-source .rel-item');
+    const links = document.querySelectorAll('.link');
+    const targetItem = document.getElementById('target-1');
+
+    relItems.forEach((item, index) => {
+        item.addEventListener('mouseenter', () => {
+            links[index].classList.add('active');
+            targetItem.classList.add('active');
+        });
+        item.addEventListener('mouseleave', () => {
+            links[index].classList.remove('active');
+            targetItem.classList.remove('active');
+        });
+    });
+
+    // 4. Structures Interaction
+    function toggleTree(element) {
+        const toggle = element.querySelector('.tree-toggle');
+        const children = element.nextElementSibling;
+        
+        if (toggle && children && children.classList.contains('tree-children')) {
+            const isOpen = toggle.classList.contains('open');
+            if (isOpen) {
+                toggle.classList.remove('open');
+                toggle.style.transform = 'rotate(0deg)';
+                children.style.display = 'none';
+            } else {
+                toggle.classList.add('open');
+                toggle.style.transform = 'rotate(90deg)';
+                children.style.display = 'block';
+            }
+        }
+    }
+
+    // 5. State Changes Interaction
+    const statePills = document.querySelectorAll('.state-pill');
+    const stateDetails = document.getElementById('state-details');
+    const stateMessages = {
+        'created': 'Order received and payment verified. Forwarded to fulfillment system.',
+        'processing': 'Inventory allocated. Awaiting carrier pickup schedule from warehouse C.',
+        'shipped': 'Package handed over to FedEx. Tracking number generated: FX839201992.',
+        'delivered': 'Proof of delivery recorded at front desk.'
+    };
+
+    statePills.forEach(pill => {
+        pill.addEventListener('click', () => {
+            statePills.forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            stateDetails.textContent = stateMessages[pill.dataset.state];
+        });
+    });
+
+    // 6. Emphasis Interaction
+    const hls = document.querySelectorAll('.hl');
+    const infoItems = document.querySelectorAll('.info-item');
+
+    hls.forEach(hl => {
+        hl.addEventListener('mouseenter', () => {
+            hls.forEach(h => h.classList.remove('active'));
+            infoItems.forEach(i => i.classList.remove('active'));
+            
+            hl.classList.add('active');
+            document.getElementById(hl.dataset.info).classList.add('active');
+        });
+    });
+</script>
+
+</body>
+</html>

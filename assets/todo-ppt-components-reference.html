@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warm Nomad Component Showcase</title>
+    <style>
+        :root {
+            --bg-color: #faf9f5;
+            --text-main: #33312e;
+            --text-muted: #8c8984;
+            --border-color: #e6e4dc;
+            --accent-warm: #c46247;
+            --accent-cool: #6b7a6f;
+            --bg-hover: #f0eee6;
+            
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-serif: 'Georgia', 'Times New Roman', serif;
+            --font-mono: 'Menlo', 'Monaco', 'Courier New', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            font-size: 13px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 { font-weight: 500; margin-bottom: 0.5rem; }
+        .font-serif { font-family: var(--font-serif); }
+        .text-xs { font-size: 11px; }
+        .text-sm { font-size: 12px; }
+        .text-lg { font-size: 16px; }
+        .text-xl { font-size: 24px; }
+        .text-xxl { font-size: 48px; letter-spacing: -0.02em; line-height: 1.1; }
+        .text-muted { color: var(--text-muted); }
+        .text-accent { color: var(--accent-warm); }
+        
+        /* Layout Utilities */
+        .flex { display: flex; }
+        .flex-col { display: flex; flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .grid { display: grid; }
+        
+        /* Borders & Flats */
+        .border { border: 1px solid var(--border-color); }
+        .border-t { border-top: 1px solid var(--border-color); }
+        .border-b { border-bottom: 1px solid var(--border-color); }
+        .border-l { border-left: 1px solid var(--border-color); }
+        .border-r { border-right: 1px solid var(--border-color); }
+        
+        /* Layout */
+        nav {
+            width: 200px;
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1rem;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        nav ul { list-style: none; }
+        nav li { margin-bottom: 0.5rem; }
+        nav a { 
+            text-decoration: none; 
+            color: var(--text-muted); 
+            display: block; 
+            padding: 4px 8px;
+            transition: all 0.2s;
+        }
+        nav a:hover, nav a.active {
+            color: var(--text-main);
+            background: var(--bg-hover);
+        }
+        nav .section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin: 1.5rem 0 0.5rem 8px;
+        }
+
+        main {
+            flex: 1;
+            padding: 3rem 4rem;
+            max-width: 1000px;
+        }
+
+        section { margin-bottom: 4rem; }
+        .section-header { margin-bottom: 1.5rem; border-bottom: 1px solid var(--text-main); padding-bottom: 0.5rem; }
+
+        /* --- Components --- */
+
+        /* Progress Tracker */
+        .progress-tracker {
+            display: flex;
+            border: 1px solid var(--border-color);
+            height: 24px;
+        }
+        .progress-segment {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            border-right: 1px solid var(--border-color);
+            background: var(--bg-color);
+            color: var(--text-muted);
+        }
+        .progress-segment:last-child { border-right: none; }
+        .progress-segment.done { background: var(--bg-hover); color: var(--text-main); }
+        .progress-segment.active { color: var(--accent-warm); font-weight: 500; }
+
+        /* Task Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .data-table th, .data-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .data-table th {
+            font-weight: normal;
+            color: var(--text-muted);
+            padding-top: 0;
+        }
+        .data-table tr:hover td { background-color: var(--bg-hover); }
+        .status-dot {
+            display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px;
+        }
+        .status-todo .status-dot { background: var(--border-color); }
+        .status-doing .status-dot { background: var(--accent-warm); }
+        .status-done .status-dot { background: var(--accent-cool); }
+
+        /* Checkbox List */
+        .check-list { list-style: none; border-top: 1px solid var(--border-color); }
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            gap: 12px;
+            cursor: pointer;
+        }
+        .check-item:hover { background: var(--bg-hover); }
+        .custom-checkbox {
+            appearance: none;
+            width: 14px; height: 14px;
+            border: 1px solid var(--text-muted);
+            border-radius: 0;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            margin-top: 2px;
+        }
+        .custom-checkbox:checked {
+            background-color: var(--text-main);
+            border-color: var(--text-main);
+        }
+        .custom-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 3px; top: 1px;
+            width: 3px; height: 7px;
+            border: solid var(--bg-color);
+            border-width: 0 1px 1px 0;
+            transform: rotate(45deg);
+        }
+        .check-item.completed .check-text {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        /* Dependency List */
+        .dep-list { border-left: 1px solid var(--border-color); padding-left: 1rem; margin-left: 0.5rem;}
+        .dep-item { position: relative; padding: 4px 0; display: flex; align-items: center; gap: 8px;}
+        .dep-item::before {
+            content: '';
+            position: absolute;
+            left: -1rem; top: 50%;
+            width: 0.8rem; height: 1px;
+            background: var(--border-color);
+        }
+
+        /* --- Slide Components --- */
+        .slide-wrapper {
+            aspect-ratio: 16 / 9;
+            border: 1px solid var(--border-color);
+            background: #fff; /* Slightly brighter for slides */
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .slide-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 8px;
+        }
+
+        /* Specific Slides */
+        .slide-title { justify-content: center; text-align: center; }
+        .slide-title .font-serif { font-size: 3rem; margin-bottom: 1rem; color: var(--text-main); }
+        
+        .slide-big-number { flex-direction: row; align-items: center; justify-content: center; gap: 3rem; }
+        .slide-big-number .number { font-size: 6rem; font-family: var(--font-serif); color: var(--accent-warm); line-height: 1; }
+        
+        .slide-quote { justify-content: center; padding: 0 4rem; }
+        .slide-quote blockquote { font-size: 1.5rem; font-family: var(--font-serif); font-style: italic; border-left: 1px solid var(--accent-warm); padding-left: 2rem; margin-bottom: 1rem; }
+        
+        .slide-timeline { justify-content: center; }
+        .timeline-track { position: relative; height: 1px; background: var(--border-color); width: 100%; margin: 2rem 0; display: flex; justify-content: space-between; }
+        .timeline-node { position: relative; display: flex; flex-direction: column; align-items: center; }
+        .timeline-node::before { content: ''; width: 5px; height: 5px; background: var(--text-main); position: absolute; top: -2px; }
+        .timeline-content { position: absolute; top: 1rem; text-align: center; width: 100px; font-size: 11px; }
+        .timeline-node:nth-child(even) .timeline-content { top: auto; bottom: 1rem; }
+
+        .slide-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; flex: 1; margin-top: 1rem; }
+        .metric-box { border: 1px solid var(--border-color); padding: 1rem; display: flex; flex-direction: column; justify-content: center; align-items: center;}
+        
+        /* Filters */
+        .filter-bar { display: flex; gap: 1rem; margin-bottom: 1rem; font-size: 11px; }
+        .filter-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 2px 0; border-bottom: 1px solid transparent; }
+        .filter-btn.active { color: var(--text-main); border-bottom-color: var(--text-main); }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="section-title">Task & Mgmt</div>
+        <ul>
+            <li><a href="#progress">Progress Tracker</a></li>
+            <li><a href="#tasks">Task Table</a></li>
+            <li><a href="#checklist">Checklist</a></li>
+            <li><a href="#dependencies">Dependencies</a></li>
+        </ul>
+        <div class="section-title">Narrative Slides</div>
+        <ul>
+            <li><a href="#slide-title">Title & Section</a></li>
+            <li><a href="#slide-number">Big Number</a></li>
+            <li><a href="#slide-quote">Quote</a></li>
+            <li><a href="#slide-timeline">Timeline</a></li>
+            <li><a href="#slide-comparison">Comparison</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- FEATURE: Progress Tracker - Visualizes linear flow of phases -->
+        <section id="progress">
+            <h2 class="section-header font-serif">Project Phases</h2>
+            <div class="progress-tracker">
+                <div class="progress-segment done">Discovery</div>
+                <div class="progress-segment done">Design</div>
+                <div class="progress-segment active">Implementation</div>
+                <div class="progress-segment">Testing</div>
+                <div class="progress-segment">Deployment</div>
+            </div>
+        </section>
+
+        <!-- FEATURE: Task Table - High density data view with minimal borders and inline status -->
+        <section id="tasks">
+            <h2 class="section-header font-serif">Action Items</h2>
+            <div class="filter-bar" id="task-filters">
+                <button class="filter-btn active" data-filter="all">All Items</button>
+                <button class="filter-btn" data-filter="doing">In Progress</button>
+                <button class="filter-btn" data-filter="todo">Backlog</button>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 50%">Task Description</th>
+                        <th>Assignee</th>
+                        <th>Status</th>
+                        <th>Target</th>
+                    </tr>
+                </thead>
+                <tbody id="task-body">
+                    <tr class="task-row" data-status="doing">
+                        <td>Finalize database schema migration</td>
+                        <td>A. Chen</td>
+                        <td class="status-doing"><span class="status-dot"></span>In Progress</td>
+                        <td>Oct 12</td>
+                    </tr>
+                    <tr class="task-row" data-status="todo">
+                        <td>Draft Q3 compliance report</td>
+                        <td>M. Dubois</td>
+                        <td class="status-todo"><span class="status-dot"></span>Backlog</td>
+                        <td>Oct 15</td>
+                    </tr>
+                    <tr class="task-row" data-status="done">
+                        <td>Review external vendor contracts</td>
+                        <td>S. Kim</td>
+                        <td class="status-done"><span class="status-dot"></span>Completed</td>
+                        <td>Oct 08</td>
+                    </tr>
+                    <tr class="task-row" data-status="doing">
+                        <td>Update client API documentation</td>
+                        <td>A. Chen</td>
+                        <td class="status-doing"><span class="status-dot"></span>In Progress</td>
+                        <td>Oct 14</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- FEATURE: Checklist - Interactive todo list with custom checkboxes and strikethrough state -->
+        <section id="checklist">
+            <h2 class="section-header font-serif">Pre-flight Checklist</h2>
+            <ul class="check-list">
+                <li class="check-item">
+                    <input type="checkbox" class="custom-checkbox">
+                    <span class="check-text">Verify environment variables in staging</span>
+                </li>
+                <li class="check-item completed">
+                    <input type="checkbox" class="custom-checkbox" checked>
+                    <span class="check-text">Run full integration test suite</span>
+                </li>
+                <li class="check-item">
+                    <input type="checkbox" class="custom-checkbox">
+                    <span class="check-text">Notify stakeholder group of downtime</span>
+                </li>
+                <li class="check-item">
+                    <input type="checkbox" class="custom-checkbox">
+                    <span class="check-text">Backup production database snapshot</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- FEATURE: Dependency List - Visualizes parent/child relationships without deep nesting -->
+        <section id="dependencies">
+            <h2 class="section-header font-serif">Blockers & Dependencies</h2>
+            <div class="text-sm" style="margin-bottom: 8px;">Launch Marketing Campaign</div>
+            <div class="dep-list text-muted">
+                <div class="dep-item">Approve final ad copy <span style="font-size: 10px; border: 1px solid var(--border-color); padding: 1px 4px;">Blocked</span></div>
+                <div class="dep-item">Confirm media spend allocation</div>
+                <div class="dep-list">
+                    <div class="dep-item">Finance Q4 budget approval</div>
+                </div>
+            </div>
+        </section>
+
+        <div style="height: 4rem;"></div>
+
+        <!-- FEATURE: Title Slide - Minimalist, large typography for presentation start -->
+        <section id="slide-title">
+            <div class="slide-wrapper slide-title">
+                <div class="font-serif">Q4 Strategic Alignment</div>
+                <div class="text-muted">Navigating market shifts and operational efficiency.</div>
+                
+                <div class="slide-footer" style="position: absolute; bottom: 2rem; left: 2rem; right: 2rem; border:none; padding:0;">
+                    <span>Oct 2023</span>
+                    <span>Internal Draft v2</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- FEATURE: Big Number Slide - Highlights a single key metric for impact -->
+        <section id="slide-number">
+            <div class="slide-wrapper slide-big-number">
+                <div class="number">42<span style="font-size: 2rem;">%</span></div>
+                <div style="max-width: 200px;">
+                    <div class="font-serif text-lg border-b" style="padding-bottom: 8px; margin-bottom: 8px;">Reduction in Latency</div>
+                    <div class="text-muted text-xs">Achieved post-migration to the new distributed architecture, exceeding initial targets.</div>
+                </div>
+                
+                <div class="slide-footer" style="position: absolute; bottom: 2rem; left: 2rem; right: 2rem;">
+                    <span>Performance Metrics</span>
+                    <span>Slide 04</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- FEATURE: Quote Slide - Editorial typography for qualitative insights -->
+        <section id="slide-quote">
+            <div class="slide-wrapper slide-quote">
+                <blockquote>
+                    The bottleneck wasn't the technology, it was how our teams were communicating across the stack.
+                </blockquote>
+                <div class="text-muted text-sm" style="padding-left: 2rem;">— Director of Engineering, Post-Mortem</div>
+                
+                <div class="slide-footer" style="position: absolute; bottom: 2rem; left: 2rem; right: 2rem;">
+                    <span>Qualitative Feedback</span>
+                    <span>Slide 07</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- FEATURE: Timeline Slide - Flat visual representation of chronological events -->
+        <section id="slide-timeline">
+            <div class="slide-wrapper slide-timeline">
+                <div class="font-serif text-lg" style="margin-bottom: 1rem; text-align: center;">Rollout Schedule</div>
+                
+                <div class="timeline-track">
+                    <div class="timeline-node">
+                        <div class="timeline-content"><strong>Phase 1</strong><br>Alpha Testers</div>
+                    </div>
+                    <div class="timeline-node">
+                        <div class="timeline-content"><strong>Phase 2</strong><br>Beta Group (10%)</div>
+                    </div>
+                    <div class="timeline-node">
+                        <div class="timeline-content"><strong>Phase 3</strong><br>General Availability</div>
+                    </div>
+                    <div class="timeline-node">
+                        <div class="timeline-content"><strong>Phase 4</strong><br>Deprecate Legacy</div>
+                    </div>
+                </div>
+
+                <div class="slide-footer" style="position: absolute; bottom: 2rem; left: 2rem; right: 2rem;">
+                    <span>Roadmap</span>
+                    <span>Slide 12</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Interactive Checklist
+        document.querySelectorAll('.check-item').forEach(item => {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            
+            // Handle clicking anywhere on the row
+            item.addEventListener('click', (e) => {
+                if(e.target !== checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                }
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+
+            // Handle direct checkbox clicks
+            checkbox.addEventListener('change', (e) => {
+                e.stopPropagation();
+                if (e.target.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        });
+
+        // Task Table Filtering
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const taskRows = document.querySelectorAll('.task-row');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active state
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const filter = btn.dataset.filter;
+
+                // Filter rows
+                taskRows.forEach(row => {
+                    if (filter === 'all' || row.dataset.status === filter) {
+                        row.style.display = 'table-row';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Simple smooth scroll for nav
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

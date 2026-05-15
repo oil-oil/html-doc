@@ -1,0 +1,1962 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>html-doc</title>
+  <style>
+:root {
+  --bg-canvas: #F9F8F6;
+  --bg-surface: #FFFFFF;
+  --bg-soft: #F4F2EE;
+  --border-base: #E2DDD5;
+  --border-strong: #CFC8BD;
+  --text-main: #2C2B29;
+  --text-muted: #524E49;
+  --text-faint: #8A857D;
+  --accent-primary: #D3543A;
+  --accent-secondary: #4A6754;
+  --accent-tertiary: #D4A35B;
+  --danger-bg: #FBEBE8;
+  --success-bg: #EAF2ED;
+  --mark-bg: #FFF1C7;
+  --font-ui: "Avenir Next", Avenir, "IBM Plex Sans", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+  --font-human: Optima, "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
+  --font-mono: "SFMono-Regular", Menlo, Consolas, monospace;
+  --fs-xs: 11px;
+  --fs-sm: 13px;
+  --fs-base: 14px;
+  --fs-md: 15px;
+  --fs-lg: 18px;
+  --fs-hero: 28px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius: 2px;
+  --nav-width: 180px;
+  --content-max: 1180px;
+  --shell-gap: 0px;
+  --shell-max: calc(var(--nav-width) + var(--shell-gap) + var(--content-max));
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  color: var(--text-main);
+  background: var(--bg-canvas);
+  font-family: var(--font-ui);
+  font-size: var(--fs-base);
+  line-height: 1.48;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, textarea, select { font: inherit; }
+button {
+  border: 1px solid var(--border-strong);
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border-radius: var(--radius);
+  padding: 5px 9px;
+  cursor: pointer;
+}
+button:hover { border-color: var(--text-main); }
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  align-items: center;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-6);
+  background: rgba(249, 248, 246, .94);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-base);
+}
+.toolbar-title { display: flex; align-items: baseline; gap: var(--space-3); }
+.toolbar-title strong { font-family: var(--font-human); font-weight: 500; font-size: var(--fs-md); }
+.toolbar-title span { color: var(--text-muted); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .04em; }
+.toolbar-actions { display: flex; gap: var(--space-2); align-items: center; }
+.toolbar button.primary { background: var(--text-main); color: white; border-color: var(--text-main); border-radius: 999px; padding-inline: 14px; }
+.artifact-shell {
+  display: grid;
+  grid-template-columns: var(--nav-width) minmax(0, var(--content-max));
+  gap: var(--shell-gap);
+  width: min(calc(100% - 64px), var(--shell-max));
+  margin: 0 auto;
+}
+.side-nav {
+  position: sticky;
+  top: 45px;
+  align-self: start;
+  height: calc(100dvh - 45px);
+  padding: var(--space-6) var(--space-4);
+  background: transparent;
+}
+.side-nav a {
+  display: block;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: var(--fs-xs);
+  padding: 5px 0;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.side-nav a:hover { color: var(--accent-primary); }
+.artifact-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: 0;
+  row-gap: var(--space-6);
+  background: transparent;
+  width: 100%;
+  justify-self: stretch;
+  margin: var(--space-6) 0 var(--space-8);
+}
+.block {
+  grid-column: span var(--span, 12);
+  min-height: var(--min-h, auto);
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-base);
+  padding: var(--space-4);
+  overflow: hidden;
+}
+.block.editor-panel { background: var(--bg-surface); }
+.block.soft { background: var(--bg-soft); }
+.block-header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  align-items: start;
+  margin-bottom: var(--space-3);
+}
+.kicker, .label {
+  color: var(--text-faint);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: .055em;
+}
+h1, h2, h3, p { margin: 0; }
+h1 { font: 500 var(--fs-hero)/1.18 var(--font-human); max-width: 760px; }
+h2 { font: 600 var(--fs-lg)/1.28 var(--font-human); }
+h3 { font: 600 var(--fs-base)/1.35 var(--font-ui); }
+p { color: var(--text-main); }
+code {
+  font-family: var(--font-mono);
+  font-size: .92em;
+  color: var(--text-main);
+  background: var(--bg-soft);
+  border: 1px solid var(--border-base);
+  padding: 1px 4px;
+  border-radius: var(--radius);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.rich-code-block {
+  margin: 4px 0;
+  padding: var(--space-2);
+  overflow: auto;
+  background: var(--bg-soft);
+  border: 1px solid var(--border-base);
+}
+.rich-code-block code {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  white-space: pre;
+}
+strong { color: var(--text-main); font-weight: 650; }
+.text-xs { font-size: var(--fs-xs); }
+.text-sm { font-size: var(--fs-sm); }
+.text-muted { color: var(--text-muted); }
+.mono { font-family: var(--font-mono); }
+.body-copy {
+  max-width: 76ch;
+  color: var(--text-muted);
+  line-height: 1.58;
+}
+.rule {
+  width: 42px;
+  height: 2px;
+  background: var(--accent-primary);
+  margin: var(--space-3) 0;
+}
+.tags { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.tag {
+  border: 1px solid var(--border-base);
+  color: var(--text-muted);
+  background: rgba(255,255,255,.45);
+  font-size: var(--fs-xs);
+  padding: 2px 6px;
+}
+.metrics-grid, .variant-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--border-base); border: 1px solid var(--border-base); }
+.metric, .variant { background: var(--bg-canvas); padding: var(--space-3); }
+.metric-value { font: 600 30px/1 var(--font-mono); margin: var(--space-2) 0; }
+.sparkline { width: 100%; height: 22px; margin-top: var(--space-2); }
+.flow { position: relative; min-height: 150px; }
+.flow-track {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: var(--space-6);
+  align-items: center;
+  height: 100%;
+}
+.flow-node {
+  min-width: 0;
+  border: 1px solid var(--border-strong);
+  background: rgba(255,255,255,.38);
+  padding: var(--space-3);
+  position: relative;
+}
+.flow-node,
+.flow-node p,
+.flow-node strong {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.flow-node code {
+  white-space: normal;
+}
+.flow-node::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: calc(var(--space-6) * -1);
+  width: var(--space-6);
+  height: 1px;
+  background: var(--border-strong);
+}
+.flow-node:last-child::after { display: none; }
+.flow-node:last-child { border-color: var(--accent-primary); }
+.dot { display:inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-primary); margin-right: 6px; }
+.timeline-line {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  padding-top: 10px;
+  margin-top: var(--space-3);
+}
+.timeline-line::before {
+  content: "";
+  position: absolute;
+  top: 15px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #E5E2DB;
+  z-index: 1;
+}
+.timeline-item {
+  flex: 1;
+  position: relative;
+  z-index: 2;
+  padding-right: 20px;
+}
+.timeline-item::before {
+  content: "";
+  display: block;
+  width: 11px;
+  height: 11px;
+  margin-bottom: 12px;
+  background: var(--bg-canvas);
+  border: 2px solid #567E96;
+  border-radius: 50%;
+}
+.timeline-item.active::before { border-color: #D97757; }
+.timeline-item.pending::before { border-color: #E5E2DB; }
+.timeline-item.active strong { color: #D97757; }
+.timeline-item.pending strong { color: #6B6965; }
+.matrix-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+.matrix-tools input,
+.matrix-tools select {
+  min-height: 28px;
+  border: 1px solid var(--border-base);
+  background: var(--bg-surface);
+  color: var(--text-main);
+  padding: 4px 8px;
+}
+.matrix-tools input { min-width: min(320px, 100%); }
+.matrix-tools label {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.matrix-wrap {
+  max-width: 100%;
+  max-height: var(--matrix-max-height, 560px);
+  overflow: auto;
+  border: 1px solid var(--border-base);
+  background: var(--bg-canvas);
+}
+.matrix {
+  min-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--fs-sm);
+  background: var(--bg-canvas);
+}
+.matrix th,
+.matrix td {
+  border-right: 1px solid var(--border-base);
+  border-bottom: 1px solid var(--border-base);
+  padding: var(--space-2);
+  text-align: left;
+  vertical-align: top;
+  min-width: 132px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.matrix th:first-child,
+.matrix td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  min-width: 178px;
+  background: var(--bg-canvas);
+}
+.matrix-row.stripe td { background: rgba(244, 242, 238, .58); }
+.matrix-row.stripe td:first-child { background: #F4F2EE; }
+.matrix-row:hover td { background: #FFFCF5; }
+.matrix-row:hover td:first-child { background: #FFFCF5; }
+.matrix th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  color: var(--text-main);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  font-weight: 750;
+  background: var(--bg-soft);
+}
+.matrix th:first-child { z-index: 4; }
+.matrix[data-sortable="true"] th { cursor: pointer; }
+.matrix[data-sortable="true"] th:hover { color: var(--text-main); }
+.matrix-group td {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: #F1EEE8;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  font-weight: 650;
+}
+.matrix-detail-row td {
+  background: var(--bg-soft);
+  color: var(--text-muted);
+}
+.matrix-toggle {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  margin-right: 6px;
+  line-height: 1;
+  color: var(--text-muted);
+  background: transparent;
+}
+.score { display:inline-block; width: 38px; height: 10px; background: linear-gradient(90deg, var(--accent-secondary) var(--score, 70%), var(--border-base) 0); }
+.cell-tags { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+.cell-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  border: 1px solid var(--border-base);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  padding: 1px 6px;
+  font-size: var(--fs-xs);
+  line-height: 1.35;
+}
+.cell-badge.tone-danger { background: var(--danger-bg); border-color: #E8B9AE; color: #9E3A28; }
+.cell-badge.tone-warning { background: #FFF4D8; border-color: #E7C36C; color: #7A5A18; }
+.cell-badge.tone-success { background: var(--success-bg); border-color: #B8D0BC; color: #3C6A45; }
+.cell-badge.tone-info { background: #EAF1F3; border-color: #B7CDD3; color: #3E6570; }
+.cell-badge.tone-accent { background: #FCEAE5; border-color: #E7B5A7; color: var(--accent-primary); }
+.cell-progress {
+  display: inline-block;
+  width: 54px;
+  height: 8px;
+  margin-right: 6px;
+  background: var(--border-base);
+  vertical-align: middle;
+}
+.cell-progress span {
+  display: block;
+  width: var(--progress, 0%);
+  height: 100%;
+  background: var(--accent-secondary);
+}
+.cell-summary { color: var(--text-main); }
+.cell-detail {
+  margin-top: 3px;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  line-height: 1.45;
+}
+.decision-tree { display: grid; gap: var(--space-2); }
+.decision-node { border-left: 1px solid var(--border-strong); padding-left: var(--indent, 12px); margin-left: var(--indent, 0); }
+.decision-node strong { font-weight: 600; }
+.code-wrap { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(180px, .6fr); gap: 1px; background: var(--border-base); border: 1px solid var(--border-base); }
+.diff-wrap { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(220px, .65fr); gap: 20px; align-items: start; }
+pre, .annotation-pane { margin: 0; background: var(--bg-soft); padding: var(--space-3); overflow: auto; }
+pre { font: 12px/1.55 var(--font-mono); color: var(--text-main); }
+.annotation-pane { font-family: var(--font-human); color: var(--text-muted); border-left: 2px solid var(--accent-primary); background: transparent; padding-left: var(--space-4); }
+.line-note { background: var(--mark-bg); padding: 0 3px; }
+.diff-line { display:flex; padding: 2px 8px; border-radius: 2px; }
+.diff-add { background: #EDF5E8; color: #3C7A26; }
+.diff-remove { background: #FAEAEA; color: #AD3232; }
+.diff-context { color: #6B6965; }
+.diff-num { width: 30px; user-select: none; opacity: .5; flex: 0 0 auto; }
+.layered-arch {
+  position: relative;
+  min-height: var(--arch-height, 620px);
+  border: 1px solid var(--border-base);
+  overflow: hidden;
+  background:
+    radial-gradient(circle, rgba(207, 200, 189, .62) 1px, transparent 1px),
+    var(--bg-canvas);
+  background-size: 24px 24px;
+}
+.arch-lane {
+  position: absolute;
+  top: 44px;
+  bottom: 86px;
+  left: var(--x);
+  width: var(--w);
+  border: 1px dashed var(--border-strong);
+  background: rgba(255,255,255,.28);
+}
+.arch-lane-title {
+  padding: var(--space-3);
+  color: var(--text-faint);
+  font-size: var(--fs-md);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.arch-lane-title span {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.arch-box {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  min-height: var(--h);
+  border: 1px solid var(--node-border, var(--border-strong));
+  background: var(--node-bg, rgba(255,255,255,.82));
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 2;
+}
+.arch-box strong { font: 600 var(--fs-base)/1.28 var(--font-ui); }
+.arch-box p { margin-top: 5px; color: var(--text-muted); font-size: var(--fs-sm); }
+.arch-box.external { --node-bg: #F1E6F7; --node-border: #7B4CA0; }
+.arch-box.api { --node-bg: #FBE5D8; --node-border: #CC5B36; }
+.arch-box.data { --node-bg: #E4EEF6; --node-border: #3E6E94; }
+.arch-box.worker { --node-bg: #E7F1DF; --node-border: #5D7F55; }
+.arch-box.provider { --node-bg: #F8EFCF; --node-border: #B9923D; }
+.arch-box.outbound { --node-bg: #EFE4F7; --node-border: #7B4CA0; }
+.arch-edges {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.arch-edge {
+  fill: none;
+  stroke: var(--accent-primary);
+  stroke-width: 1.7;
+}
+.arch-edge.dashed { stroke-dasharray: 6 5; }
+.arch-step {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  z-index: 3;
+  min-width: 19px;
+  height: 19px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid var(--accent-primary);
+  background: var(--bg-canvas);
+  color: var(--accent-primary);
+  font: 600 11px/1 var(--font-mono);
+}
+.arch-edge-label {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  z-index: 3;
+  padding: 1px 5px;
+  background: rgba(249,248,246,.86);
+  color: var(--text-muted);
+  font: 11px/1.35 var(--font-mono);
+  white-space: nowrap;
+}
+.arch-legend {
+  position: absolute;
+  left: var(--space-4);
+  right: var(--space-4);
+  bottom: var(--space-4);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  border-top: 1px dashed var(--border-strong);
+  padding-top: var(--space-3);
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+.arch-legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.arch-legend-swatch {
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--node-border, var(--border-strong));
+  background: var(--node-bg, var(--bg-soft));
+}
+.arch-legend-swatch.external { --node-bg: #F1E6F7; --node-border: #7B4CA0; }
+.arch-legend-swatch.api { --node-bg: #FBE5D8; --node-border: #CC5B36; }
+.arch-legend-swatch.data { --node-bg: #E4EEF6; --node-border: #3E6E94; }
+.arch-legend-swatch.worker { --node-bg: #E7F1DF; --node-border: #5D7F55; }
+.arch-legend-swatch.provider { --node-bg: #F8EFCF; --node-border: #B9923D; }
+.arch-legend-swatch.outbound { --node-bg: #EFE4F7; --node-border: #7B4CA0; }
+.vu-diff-block {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: #fff;
+  border: 1px solid #E5E2DB;
+  border-radius: 4px;
+  padding: 16px;
+}
+.vu-diff-line {
+  display: flex;
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+.vu-diff-line.add { background-color: #EDF5E8; color: #3C7A26; }
+.vu-diff-line.remove { background-color: #FAEAEA; color: #AD3232; }
+.vu-diff-line.context { color: #6B6965; }
+.vu-diff-num {
+  width: 30px;
+  user-select: none;
+  opacity: .5;
+  flex: 0 0 auto;
+}
+.vu-rel-grid {
+  display: grid;
+  grid-template-columns: 1fr 100px 1fr;
+  gap: 20px;
+  align-items: center;
+}
+.vu-rel-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+}
+.vu-rel-item {
+  padding: 12px 16px;
+  background: #fff;
+  border: 1px solid #E5E2DB;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.vu-rel-item:hover,
+.vu-rel-item.active {
+  border-color: #567E96;
+  background-color: rgba(86,126,150,.05);
+}
+.vu-rel-title { font-weight: 500; }
+.vu-rel-meta { font-size: 12px; color: #6B6965; }
+.vu-rel-lines {
+  position: relative;
+  min-height: 158px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vu-rel-lines svg {
+  width: 100%;
+  height: 100%;
+  min-height: 158px;
+  pointer-events: none;
+}
+.vu-rel-link {
+  fill: none;
+  stroke: #E5E2DB;
+  stroke-width: 1.5;
+  transition: stroke .3s ease, stroke-width .3s ease;
+}
+.vu-rel-link.active {
+  stroke: #567E96;
+  stroke-width: 2;
+}
+.vu-timeline {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  padding-top: 10px;
+}
+.vu-timeline::before {
+  content: "";
+  position: absolute;
+  top: 15px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #E5E2DB;
+  z-index: 1;
+}
+.vu-timeline-node {
+  flex: 1;
+  position: relative;
+  z-index: 2;
+  padding-right: 20px;
+}
+.vu-timeline-dot {
+  width: 11px;
+  height: 11px;
+  background: var(--bg-canvas);
+  border: 2px solid #567E96;
+  border-radius: 50%;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: background .2s;
+}
+.vu-timeline-dot:hover { background: #567E96; }
+.vu-timeline-date {
+  color: #6B6965;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+.vu-timeline-title {
+  font-size: 13px;
+  font-weight: 500;
+}
+.vu-tree {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.8;
+}
+.vu-tree-node {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 4px 0;
+}
+.vu-tree-node:hover { background: rgba(0,0,0,.02); }
+.vu-tree-toggle {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #6B6965;
+  margin-right: 8px;
+  transition: transform .2s;
+}
+.vu-tree-toggle.open { transform: rotate(90deg); }
+.vu-tree-children {
+  padding-left: 24px;
+  border-left: 1px solid #E5E2DB;
+  margin-left: 7px;
+}
+.vu-tree-key { color: #567E96; }
+.vu-tree-value { color: var(--text-main); margin-left: 8px; }
+.vu-tree-type { color: #6B6965; font-size: 11px; margin-left: 8px; }
+.vu-state-flow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.vu-state-pill {
+  padding: 6px 16px;
+  background: #fff;
+  border: 1px solid #E5E2DB;
+  border-radius: 16px;
+  color: #6B6965;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.vu-state-pill.active {
+  background: #D97757;
+  border-color: #D97757;
+  color: #fff;
+}
+.vu-state-arrow { color: #E5E2DB; }
+.vu-state-details {
+  margin-top: 20px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #E5E2DB;
+  border-radius: 4px;
+  font-size: 13px;
+}
+.vu-emphasis-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 40px;
+}
+.vu-text-block {
+  color: #6B6965;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.vu-hl {
+  color: var(--text-main);
+  background: rgba(217,119,87,.1);
+  padding: 0 4px;
+  border-bottom: 1px solid rgba(217,119,87,.3);
+  cursor: pointer;
+  transition: background .2s;
+}
+.vu-hl:hover,
+.vu-hl.active { background: rgba(217,119,87,.2); }
+.vu-info-panel {
+  border-left: 2px solid #D97757;
+  padding-left: 20px;
+}
+.vu-info-item {
+  margin-bottom: 16px;
+  display: none;
+}
+.vu-info-item.active { display: block; }
+.vu-info-label {
+  color: #6B6965;
+  font-size: 11px;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+.vu-info-value {
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 4px;
+}
+.masonry { columns: 3 220px; column-gap: 1px; background: var(--border-base); border: 1px solid var(--border-base); }
+.note { break-inside: avoid; background: var(--note-bg, #FFF8E8); padding: var(--space-3); margin-bottom: 1px; min-height: 82px; }
+.note:nth-child(4n+1) { --note-bg: #FFF8E8; }
+.note:nth-child(4n+2) { --note-bg: #EEF4EF; }
+.note:nth-child(4n+3) { --note-bg: #EEF3F4; }
+.note:nth-child(4n+4) { --note-bg: #F5EFE8; }
+.kanban {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-6);
+  align-items: start;
+}
+.kanban-col {
+  --kanban-accent: var(--accent-secondary);
+  min-width: 0;
+}
+.kanban-col.tone-danger { --kanban-accent: var(--accent-primary); }
+.kanban-col.tone-warning { --kanban-accent: var(--accent-tertiary); }
+.kanban-col.tone-success { --kanban-accent: var(--accent-secondary); }
+.kanban-col.tone-info { --kanban-accent: #637699; }
+.kanban-col.tone-accent { --kanban-accent: var(--accent-primary); }
+.kanban-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border-base);
+}
+.kanban-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-main);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.kanban-icon,
+.kanban-item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--kanban-accent);
+  font-size: 14px;
+  line-height: 1;
+}
+.kanban-count {
+  color: var(--text-muted);
+  font: 12px/1 var(--font-mono);
+}
+.kanban-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+}
+.kanban-card {
+  border-bottom: 1px solid rgba(226, 221, 213, .68);
+}
+.kanban-card:last-child { border-bottom: 0; }
+.kanban-card:hover { background: rgba(255,255,255,.45); }
+.kanban-check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: 10px 0;
+  cursor: pointer;
+}
+.kanban-check input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.kanban-box {
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+  margin-top: 2px;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-canvas);
+}
+.kanban-check input:checked + .kanban-box {
+  border-color: var(--kanban-accent);
+  background: var(--kanban-accent);
+  box-shadow: inset 0 0 0 3px var(--bg-canvas);
+}
+.kanban-text {
+  color: var(--text-main);
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+}
+.kanban-check input:checked ~ .kanban-text {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--border-strong);
+}
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4) var(--space-6); }
+.field { display: grid; grid-template-columns: 120px minmax(0, 1fr); align-items: end; gap: var(--space-3); }
+.field input, .field select, .field textarea {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--border-strong);
+  border-radius: 0;
+  background: transparent;
+  padding: 5px 0;
+  color: var(--text-main);
+}
+.field textarea { min-height: 80px; resize: vertical; }
+.slider-row { display: grid; grid-template-columns: 120px 1fr 44px; align-items: center; gap: var(--space-3); margin: var(--space-3) 0; }
+input[type="range"] { appearance: none; width: 100%; height: 1px; background: var(--border-strong); }
+input[type="range"]::-webkit-slider-thumb { appearance: none; width: 5px; height: 18px; background: var(--accent-primary); border: 0; cursor: pointer; }
+.switch { appearance: none; width: 30px; height: 16px; border: 1px solid var(--border-strong); background: transparent; position: relative; vertical-align: middle; }
+.switch::after { content:""; position:absolute; left:2px; top:2px; width:10px; height:10px; background: var(--border-strong); transition:.18s; }
+.switch:checked::after { left:16px; background: var(--accent-secondary); }
+.prompt-paper {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-base);
+  min-height: 180px;
+  padding: var(--space-4);
+  font: 14px/1.65 var(--font-human);
+}
+.motion-wrap {
+  border: 1px solid var(--border-base);
+  background: var(--bg-surface);
+}
+.motion-canvas {
+  position: relative;
+  aspect-ratio: var(--motion-ratio, 16 / 9);
+  min-height: 390px;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.68), rgba(249,248,246,.86)),
+    var(--bg-canvas);
+}
+.motion-object {
+  position: absolute;
+  left: var(--x, 0);
+  top: var(--y, 0);
+  width: var(--w, 120px);
+  height: var(--h, 32px);
+  opacity: var(--opacity, 1);
+  transform: translateZ(0) scale(var(--scale, 1)) rotate(var(--rotate, 0deg));
+  z-index: var(--z, 1);
+  transition:
+    left .54s cubic-bezier(.2,.82,.2,1),
+    top .54s cubic-bezier(.2,.82,.2,1),
+    width .54s cubic-bezier(.2,.82,.2,1),
+    height .54s cubic-bezier(.2,.82,.2,1),
+    opacity .34s ease,
+    transform .54s cubic-bezier(.2,.82,.2,1);
+}
+.motion-surface {
+  height: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border-base);
+  background: rgba(255,255,255,.72);
+  color: var(--text-main);
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.motion-object[data-emphasis="focus"] .motion-surface { border-color: var(--accent-primary); background: rgba(255,255,255,.9); }
+.motion-object[data-emphasis="success"] .motion-surface { border-color: var(--accent-secondary); background: var(--success-bg); }
+.motion-object[data-emphasis="warning"] .motion-surface { border-color: var(--accent-tertiary); background: #FFF8E8; }
+.motion-object[data-status="muted"] { opacity: .46; }
+.motion-object[data-status="hidden"] { opacity: 0; pointer-events: none; }
+.motion-object[data-status="active"] .motion-surface { border-color: var(--accent-primary); }
+.motion-object[data-status="success"] .motion-surface { border-color: var(--accent-secondary); }
+.motion-panel .motion-surface,
+.motion-card .motion-surface,
+.motion-window .motion-surface,
+.motion-note .motion-surface { padding: var(--space-3); }
+.motion-card .motion-surface { background: rgba(255,255,255,.82); }
+.motion-note .motion-surface {
+  border-left: 2px solid var(--accent-tertiary);
+  background: #FFF8E8;
+}
+.motion-text .motion-surface,
+.motion-badge .motion-surface,
+.motion-button .motion-surface,
+.motion-line .motion-surface {
+  border: 0;
+  background: transparent;
+}
+.motion-badge .motion-surface {
+  display: inline-grid;
+  place-items: center;
+  padding: 5px 9px;
+  border: 1px solid var(--border-base);
+  background: rgba(255,255,255,.78);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  font-size: var(--fs-xs);
+}
+.motion-button .motion-surface {
+  display: grid;
+  place-items: center;
+  min-height: 34px;
+  border: 1px solid var(--text-main);
+  background: var(--text-main);
+  color: white;
+}
+.motion-metric .motion-surface {
+  padding: var(--space-3);
+  background: rgba(255,255,255,.68);
+}
+.motion-value {
+  font: 600 42px/1 var(--font-mono);
+  color: var(--accent-primary);
+}
+.motion-phone .motion-surface {
+  border-radius: 24px;
+  padding: 14px;
+  background: #fff;
+}
+.motion-phone-screen {
+  height: 100%;
+  min-height: 260px;
+  border: 1px solid var(--border-base);
+  background: var(--bg-soft);
+  padding: var(--space-2);
+  overflow: hidden;
+}
+.motion-window-bar {
+  display: flex;
+  gap: 5px;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border-base);
+  margin-bottom: var(--space-2);
+}
+.motion-window-bar span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+.motion-list {
+  display: grid;
+  gap: 6px;
+  margin-top: var(--space-2);
+}
+.motion-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  border: 1px solid var(--border-base);
+  background: rgba(255,255,255,.58);
+  padding: 6px 8px;
+}
+.motion-pill {
+  color: var(--accent-secondary);
+  font-size: var(--fs-xs);
+}
+.motion-line .motion-surface {
+  min-height: 1px;
+  height: 1px;
+  background: var(--accent-primary);
+  transform-origin: left center;
+}
+.motion-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 56px;
+  border-top: 1px solid var(--border-base);
+  padding: var(--space-3);
+}
+.motion-caption strong { display: block; color: var(--text-main); margin-bottom: 2px; }
+.motion-caption span { color: var(--text-muted); font-size: var(--fs-sm); }
+.motion-controls { display: flex; align-items: center; gap: var(--space-2); }
+.motion-dots { display: flex; gap: 6px; }
+.motion-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  padding: 0;
+}
+.motion-dot.active { background: var(--accent-primary); border-color: var(--accent-primary); }
+@media (prefers-reduced-motion: reduce) {
+  .motion-object { transition: none; }
+}
+.embed-wrap {
+  border: 1px solid var(--border-base);
+  background: var(--bg-surface);
+}
+.embed-frame {
+  width: 100%;
+  height: var(--embed-height, 520px);
+  border: 0;
+  display: block;
+  background: white;
+}
+.embed-fallback {
+  border-top: 1px solid var(--border-base);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+.stage-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--stage-ratio, 16 / 9);
+  min-height: 360px;
+  overflow: hidden;
+  border: 1px solid var(--border-base);
+  background:
+    radial-gradient(circle, rgba(207, 200, 189, .62) 1px, transparent 1px),
+    var(--stage-bg, #FBF9F6);
+  background-size: 20px 20px;
+}
+.stage-layer,
+.stage-lines {
+  position: absolute;
+  inset: 0;
+}
+.stage-lines {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.stage-el {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  height: var(--h);
+  transform: translateZ(0);
+}
+[data-visible-states].hidden { display: none; }
+.stage-panel {
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  background: rgba(255,255,255,.68);
+  padding: var(--space-3);
+}
+.stage-panel,
+.stage-panel p,
+.stage-note,
+.stage-text,
+.stage-input,
+.stage-toggle {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.stage-panel p {
+  line-height: 1.42;
+}
+.stage-panel-title {
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: .055em;
+  margin-bottom: var(--space-2);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.stage-text {
+  font-family: var(--font-human);
+  font-size: var(--fs-md);
+  line-height: 1.36;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+.stage-note {
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-left: 2px solid var(--accent-tertiary);
+  background: rgba(255, 248, 232, .8);
+  padding: var(--space-2);
+  font: 12px/1.5 var(--font-human);
+  color: var(--text-muted);
+}
+.stage-panel code,
+.stage-note code,
+.stage-text code,
+.motion-surface code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.stage-button {
+  width: 100%;
+  height: var(--h);
+  min-height: 28px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+}
+.stage-button.primary {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
+}
+.stage-input {
+  width: 100%;
+  height: var(--h);
+  min-height: 26px;
+  border: 1px solid var(--border-base);
+  background: var(--bg-surface);
+  padding: 0 var(--space-2);
+  color: var(--text-muted);
+}
+.stage-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-muted);
+}
+.stage-hotspot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  box-shadow: 0 0 0 0 rgba(211, 84, 58, .36);
+  animation: pulse 1.6s infinite;
+}
+.stage-stepper {
+  position: absolute;
+  left: 50%;
+  bottom: var(--space-3);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: rgba(44, 43, 41, .92);
+  color: white;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: var(--fs-xs);
+}
+.stage-stepper button {
+  border: 0;
+  color: white;
+  background: transparent;
+  padding: 1px 5px;
+}
+@keyframes pulse {
+  70% { box-shadow: 0 0 0 10px rgba(211, 84, 58, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(211, 84, 58, 0); }
+}
+mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
+.copy-mini { font-size: var(--fs-xs); padding: 2px 6px; }
+.toast {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  transform: translateY(20px);
+  opacity: 0;
+  background: var(--text-main);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 999px;
+  transition: .18s ease;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.tt { position: relative; border-bottom: 1px dashed var(--text-faint); cursor: help; display: inline; }
+.tt-b {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 240px;
+  padding: 5px 9px;
+  background: var(--text-main);
+  color: #fff;
+  font-size: var(--fs-xs);
+  line-height: 1.45;
+  white-space: normal;
+  z-index: 200;
+  pointer-events: none;
+}
+.tt:hover .tt-b { display: block; }
+.chart-wrap { width: 100%; }
+.chart-svg { width: 100%; height: auto; display: block; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: var(--space-2); }
+.chart-legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-sm); color: var(--text-muted); }
+.chart-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
+@media (max-width: 900px) {
+  .artifact-shell { grid-template-columns: 1fr; }
+  .side-nav { display: none; }
+  .artifact-grid { width: 100%; margin: 0; border-left: 0; border-right: 0; }
+  .block { grid-column: span 12 !important; }
+  .code-wrap, .diff-wrap, .form-grid { grid-template-columns: 1fr; }
+}
+
+</style>
+</head>
+<body>
+  <header class="toolbar">
+    <div class="toolbar-title"><strong>html-doc</strong><span>Warm Nomad Component Showcase</span></div>
+    <div class="toolbar-actions">
+      <button class="" data-copy="component showcase" data-action="0">Copy JSON</button><button class="primary" data-copy="Render this JSON with scripts/render-html-doc.mjs" data-action="1">Export Layout</button>
+    </div>
+  </header>
+  <main class="artifact-shell">
+    <aside class="side-nav"><a href="#hero">用少量 JSON 组合出高质量、可读、可交互的 HTML Doc</a><a href="#metrics">核心指标</a><a href="#stage">Static Stage</a><a href="#prompt">Prompt Editor</a><a href="#motion-demo">Motion Stage</a><a href="#flow">生成流程</a><a href="#decision">组件选择</a><a href="#matrix">Decision Matrix</a><a href="#diff">Diff Review</a><a href="#timeline">执行时间线</a><a href="#architecture">生成链路</a><a href="#variants">Variant Grid</a><a href="#code">代码批注</a><a href="#sliders">Slider Lab</a><a href="#evidence">Evidence Board</a><a href="#kanban">Kanban</a><a href="#form">Form Editor</a><a href="#insights">洞察摘要</a></aside>
+    <section class="artifact-grid">
+      <article class="block" id="hero" style="--span:12;">
+    <div class="kicker">visual first</div>
+    <h1>用少量 JSON 组合出高质量、可读、可交互的 HTML Doc</h1>
+    <div class="rule"></div>
+    <p class="body-copy">尽量把信息转换成流程、矩阵、对比、批注、编辑器和导出控件。</p>
+    <div class="tags" style="margin-top:var(--space-4)"><span class="tag">warm-flat</span><span class="tag">low-shadow</span><span class="tag">humanist-type</span><span class="tag">grid-first</span><span class="tag">visual-over-text</span></div>
+  </article>
+<article class="block" id="metrics" style="--span:4;">
+    <div class="block-header">
+    <div>
+      
+      <h2>核心指标</h2>
+      <p class="body-copy">数字、趋势和状态适合视觉化，减少长段说明。</p>
+    </div>
+    
+  </div><div class="metrics-grid">
+    <div class="metric">
+      <div class="label">TOKENS</div>
+      <div class="metric-value">-38%</div>
+      <div class="text-muted">JSON 替代重复 HTML</div>
+      <svg class="sparkline" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0.0,4.0 16.7,7.2 33.3,7.2 50.0,13.6 66.7,16.8 83.3,20.0 100.0,20.0" fill="none" stroke="var(--accent-secondary)" stroke-width="1.5"/><line x1="0" y1="22" x2="100" y2="22" stroke="var(--border-base)" /></svg>
+    </div><div class="metric">
+      <div class="label">READ</div>
+      <div class="metric-value">2.4x</div>
+      <div class="text-muted">扫读速度提升</div>
+      <svg class="sparkline" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0.0,20.0 16.7,17.7 33.3,15.4 50.0,10.9 66.7,8.6 83.3,6.3 100.0,4.0" fill="none" stroke="var(--accent-secondary)" stroke-width="1.5"/><line x1="0" y1="22" x2="100" y2="22" stroke="var(--border-base)" /></svg>
+    </div><div class="metric">
+      <div class="label">UI</div>
+      <div class="metric-value">17</div>
+      <div class="text-muted">内置组件</div>
+      <svg class="sparkline" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0.0,20.0 16.7,20.0 33.3,18.9 50.0,16.6 66.7,14.3 83.3,9.7 100.0,4.0" fill="none" stroke="var(--accent-secondary)" stroke-width="1.5"/><line x1="0" y1="22" x2="100" y2="22" stroke="var(--border-base)" /></svg>
+    </div><div class="metric">
+      <div class="label">TEXT</div>
+      <div class="metric-value">LOW</div>
+      <div class="text-muted">正文轻量化</div>
+      <svg class="sparkline" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline points="0.0,4.0 16.7,6.3 33.3,10.9 50.0,13.1 66.7,15.4 83.3,17.7 100.0,20.0" fill="none" stroke="var(--accent-secondary)" stroke-width="1.5"/><line x1="0" y1="22" x2="100" y2="22" stroke="var(--border-base)" /></svg>
+    </div>
+  </div>
+  </article>
+<article class="block" id="stage" style="--span:8;">
+    <div class="block-header">
+    <div>
+      
+      <h2>Static Stage</h2>
+      <p class="body-copy">用定位元素表达架构、界面草图和关系图。</p>
+    </div>
+    <button class="copy-mini" data-copy-block="stage">Copy</button>
+  </div><div class="stage-wrap" data-stage="stage" data-state="" style="--stage-ratio:960 / 520; --stage-bg:#FBF9F6">
+    <svg class="stage-lines" viewBox="0 0 960 520" preserveAspectRatio="none"><path class="stage-line " data-visible-states="" d="M 290 150 L 335 150 L 335 150 L 380 150" fill="none" stroke="var(--accent-primary)" stroke-width="1.4" stroke-dasharray="0"/><circle data-visible-states="" cx="380" cy="150" r="3.5" fill="var(--accent-primary)" /><path class="stage-line " data-visible-states="" d="M 610 150 L 655 150 L 655 150 L 700 150" fill="none" stroke="var(--accent-primary)" stroke-width="1.4" stroke-dasharray="0"/><circle data-visible-states="" cx="700" cy="150" r="3.5" fill="var(--accent-primary)" /></svg>
+    <div class="stage-layer">
+      <div class="stage-el" data-el="source_config" data-visible-states="" style="--x:8.3333%;--y:18.2692%;--w:21.8750%;--h:21.1538%;" ><div class="stage-panel"><div class="stage-panel-title">source_config</div><p>rules / inputs</p></div></div><div class="stage-el" data-el="runtime_state" data-visible-states="" style="--x:39.5833%;--y:17.3077%;--w:23.9583%;--h:23.0769%;" ><div class="stage-panel"><div class="stage-panel-title">runtime_state</div><p>current mode + status</p></div></div><div class="stage-el" data-el="event_log" data-visible-states="" style="--x:72.9167%;--y:19.2308%;--w:18.7500%;--h:19.2308%;" ><div class="stage-panel"><div class="stage-panel-title">event_log</div><p>immutable records</p></div></div><div class="stage-el" data-el="guard" data-visible-states="" style="--x:40.1042%;--y:52.8846%;--w:26.0417%;--h:14.2308%;" ><div class="stage-note">运行时只读取已确认配置和容量边界。</div></div>
+    </div>
+    
+  </div>
+  </article>
+<article class="block editor-panel" id="prompt" style="--span:4;">
+    <div class="block-header">
+    <div>
+      
+      <h2>Prompt Editor</h2>
+      <p class="body-copy">变量高亮，结果可复制。</p>
+    </div>
+    <button class="copy-mini" data-copy-block="prompt">Copy</button>
+  </div><div class="prompt-paper" contenteditable="true">Create a <mark>{{artifact_type}}</mark> for <mark>{{audience}}</mark>. Prefer diagrams, matrices and inline annotations over long prose.</div>
+  </article>
+<article class="block" id="motion-demo" style="--span:12;">
+    <div class="block-header">
+    <div>
+      
+      <h2>Motion Stage</h2>
+      <p class="body-copy">同一组对象在步骤之间移动、变色、显隐和改写数值，适合演示真实流程。</p>
+    </div>
+    <button class="copy-mini" data-copy-block="motion-demo">Copy</button>
+  </div><div class="motion-wrap" data-motion="motion-demo" data-index="0" data-autoplay="true">
+    <div class="motion-canvas" style="--motion-ratio:1180 / 520">
+      <div class="motion-object motion-phone" data-motion-object="phone" data-status="" data-emphasis="" style="--x:7.2034%;--y:15.3846%;--w:25.4237%;--h:67.3077%;--opacity:1;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface"><div class="motion-phone-screen">
+      <div class="label" data-motion-label>Publish</div>
+      <strong data-motion-title>Draft ready</strong>
+      <div class="motion-list"><div class="motion-list-item"><span>Caption</span><span class="motion-pill">ok</span></div><div class="motion-list-item"><span>Cover</span><span class="motion-pill">set</span></div><div class="motion-list-item"><span>Channels</span><span class="motion-pill">3</span></div></div>
+    </div></div></div><div class="motion-object motion-window" data-motion-object="queue" data-status="" data-emphasis="" style="--x:38.5593%;--y:21.1538%;--w:25.4237%;--h:42.3077%;--opacity:1;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface">
+      <div class="motion-window-bar"><span></span><span></span><span></span></div>
+      <div class="label" data-motion-label>Queue</div>
+      <strong data-motion-title>Waiting</strong>
+      <p class="text-sm" data-motion-body>3 channels selected</p>
+      <div class="motion-list"><div class="motion-list-item"><span>XHS</span><span class="motion-pill">ready</span></div><div class="motion-list-item"><span>Douyin</span><span class="motion-pill">ready</span></div><div class="motion-list-item"><span>Bilibili</span><span class="motion-pill">ready</span></div></div>
+    </div></div><div class="motion-object motion-metric" data-motion-object="metric" data-status="" data-emphasis="" style="--x:72.4576%;--y:25.0000%;--w:14.4068%;--h:23.0769%;--opacity:1;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface">
+      <div class="motion-value" data-motion-value>0</div>
+      <p class="text-sm" data-motion-label>published</p>
+    </div></div><div class="motion-object motion-note" data-motion-object="toast" data-status="" data-emphasis="" style="--x:64.4068%;--y:63.4615%;--w:23.7288%;--h:15.7692%;--opacity:0.35;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface">
+    
+    <strong data-motion-title></strong>
+    <p class="text-sm" data-motion-body>发布完成后，读者能直接看到状态变化。</p>
+    
+  </div></div><div class="motion-object motion-line" data-motion-object="line" data-status="" data-emphasis="" style="--x:32.6271%;--y:41.3462%;--w:5.9322%;--h:0.1923%;--opacity:0.4;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface"></div></div>
+    </div>
+    <div class="motion-footer">
+      <div class="motion-caption" data-motion-caption>
+        <strong>1. 准备内容</strong>
+        <span>素材、标题和渠道都在同一个画面里呈现。</span>
+      </div>
+      <div class="motion-controls">
+        <button data-motion-prev>‹</button>
+        <div class="motion-dots"><button class="motion-dot active" data-motion-dot="0" aria-label="Step 1"></button><button class="motion-dot " data-motion-dot="1" aria-label="Step 2"></button><button class="motion-dot " data-motion-dot="2" aria-label="Step 3"></button></div>
+        <button data-motion-next>›</button>
+        <button data-motion-play>Pause</button>
+      </div>
+    </div>
+  </div>
+  </article>
+<article class="block" id="flow" style="--span:8;">
+    <div class="block-header">
+    <div>
+      
+      <h2>生成流程</h2>
+      
+    </div>
+    
+  </div><div class="flow"><div class="flow-track">
+    <div class="flow-node"><span class="dot"></span><strong>需求</strong><p class="text-sm">代码、数据、问题</p></div><div class="flow-node"><span class="dot"></span><strong>JSON</strong><p class="text-sm">意图和结构</p></div><div class="flow-node"><span class="dot"></span><strong>Renderer</strong><p class="text-sm">组件组合</p></div><div class="flow-node"><span class="dot"></span><strong>HTML</strong><p class="text-sm">可读可交互</p></div>
+  </div></div>
+  </article>
+<article class="block" id="decision" style="--span:4;">
+    <div class="block-header">
+    <div>
+      
+      <h2>组件选择</h2>
+      
+    </div>
+    
+  </div><div class="decision-tree">
+    <div class="decision-node" style="--indent:12px"><strong>需要解释过程</strong><p class="text-sm">使用 flow 或 timeline</p></div><div class="decision-node" style="--indent:28px"><strong>有代码变化</strong><p class="text-sm">使用 diffReview</p></div><div class="decision-node" style="--indent:28px"><strong>有多个方案</strong><p class="text-sm">使用 variantGrid 或 matrix</p></div><div class="decision-node" style="--indent:12px"><strong>需要用户调整</strong><p class="text-sm">使用 sliderLab、formEditor 或 promptEditor</p></div>
+  </div>
+  </article>
+<article class="block" id="matrix" style="--span:12;">
+    <div class="block-header">
+    <div>
+      
+      <h2>Decision Matrix</h2>
+      <p class="body-copy">表格先显示对象、结论和风险，长证据放进展开详情。</p>
+    </div>
+    <button class="copy-mini" data-copy-block="matrix">Copy</button>
+  </div><div class="matrix-tools" data-matrix-tools="matrix">
+    <input data-matrix-search="matrix" type="search" placeholder="Search table" />
+    <label>Risk<select data-matrix-filter="matrix" data-filter-key="risk">
+      <option value="">All</option>
+      <option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option>
+    </select></label>
+  </div><div class="matrix-wrap">
+    <table class="matrix" data-matrix="matrix" data-sortable="true">
+      <thead><tr><th style="min-width:190px" data-sort-index="0">对象</th><th style="min-width:260px" data-sort-index="1">一句话结论</th><th style="width:96px" data-sort-index="2">风险</th><th style="min-width:250px" data-sort-index="3">关键证据</th><th style="width:120px" data-sort-index="4">置信度</th><th style="min-width:150px" data-sort-index="5">下一步</th></tr></thead>
+      <tbody><tr class="matrix-group"><td colspan="6">需要确认</td></tr><tr class="matrix-row" data-row-id="matrix-1" data-search="&#96;matrix&#96; 表格 **默认展示判断**，证据按需展开。 Medium Markdown 宽表容易丢列上下文。 固定表头和首列后，读者滚动时仍能确认对象和维度。 足够稳定 freeze search tags" data-filters="{&quot;risk&quot;:&quot;Medium&quot;}"><td data-sort-value="&#96;matrix&#96; 表格" style="min-width:190px"><button class="matrix-toggle" data-detail-toggle="matrix-1" aria-label="Toggle row detail">+</button><code>matrix</code> 表格</td><td data-sort-value="**默认展示判断**，证据按需展开。" style="min-width:260px"><strong>默认展示判断</strong>，证据按需展开。</td><td data-sort-value="Medium" style="width:96px"><span class="cell-badge tone-warning">Medium</span></td><td data-sort-value="Markdown 宽表容易丢列上下文。 固定表头和首列后，读者滚动时仍能确认对象和维度。" style="min-width:250px"><div class="cell-summary">Markdown 宽表容易丢列上下文。</div><div class="cell-detail">固定表头和首列后，读者滚动时仍能确认对象和维度。</div></td><td data-sort-value="86" style="width:120px"><span class="cell-progress"><span style="--progress:86%"></span></span> 足够稳定</td><td data-sort-value="freeze search tags" style="min-width:150px"><span class="cell-tags"><span class="cell-badge">freeze</span><span class="cell-badge">search</span><span class="cell-badge">tags</span></span></td></tr><tr class="matrix-detail-row" data-detail-row="matrix-1" hidden><td colspan="6">适合方案比较、风险表、PR review、排期表、需求矩阵。</td></tr><tr class="matrix-row stripe" data-row-id="matrix-2" data-search="&#96;motionStage&#96; 动画 只在状态变化能直观看懂时使用。 Low 对象位置、显隐、状态和数值发生变化。 字幕只做补充，主信息应该出现在画面变化里。 可复用 demo" data-filters="{&quot;risk&quot;:&quot;Low&quot;}"><td data-sort-value="&#96;motionStage&#96; 动画" style="min-width:190px"><code>motionStage</code> 动画</td><td data-sort-value="只在状态变化能直观看懂时使用。" style="min-width:260px">只在状态变化能直观看懂时使用。</td><td data-sort-value="Low" style="width:96px"><span class="cell-badge tone-success">Low</span></td><td data-sort-value="对象位置、显隐、状态和数值发生变化。 字幕只做补充，主信息应该出现在画面变化里。" style="min-width:250px"><div class="cell-summary">对象位置、显隐、状态和数值发生变化。</div><div class="cell-detail">字幕只做补充，主信息应该出现在画面变化里。</div></td><td data-sort-value="78" style="width:120px"><span class="score" style="--score:78%"></span> 可复用</td><td data-sort-value="demo" style="min-width:150px"><span class="cell-badge tone-accent">demo</span></td></tr><tr class="matrix-group"><td colspan="6">可以后置</td></tr><tr class="matrix-row" data-row-id="matrix-4" data-search="长正文 拆成卡片、矩阵、批注或展开材料。 High 连续段落会让读者反复重建结构。 如果内容需要比较、优先级、关系或状态，就改用视觉组件。 明确 split" data-filters="{&quot;risk&quot;:&quot;High&quot;}"><td data-sort-value="长正文" style="min-width:190px">长正文</td><td data-sort-value="拆成卡片、矩阵、批注或展开材料。" style="min-width:260px">拆成卡片、矩阵、批注或展开材料。</td><td data-sort-value="High" style="width:96px"><span class="cell-badge tone-danger">High</span></td><td data-sort-value="连续段落会让读者反复重建结构。 如果内容需要比较、优先级、关系或状态，就改用视觉组件。" style="min-width:250px"><div class="cell-summary">连续段落会让读者反复重建结构。</div><div class="cell-detail">如果内容需要比较、优先级、关系或状态，就改用视觉组件。</div></td><td data-sort-value="92" style="width:120px"><span class="cell-progress"><span style="--progress:92%"></span></span> 明确</td><td data-sort-value="split" style="min-width:150px"><span class="cell-badge tone-info">split</span></td></tr></tbody>
+    </table>
+  </div>
+  </article>
+<article class="block" id="diff" style="--span:8;">
+    <div class="block-header">
+    <div>
+      
+      <h2>Diff Review</h2>
+      
+    </div>
+    <button class="copy-mini" data-copy-block="diff">Copy</button>
+  </div><div><div class="diff-wrap"><div class="vu-diff-block">
+    <div class="diff-line diff-remove"><span class="diff-num"></span><span>- &lt;div class=&quot;card shadow-lg rounded-xl p-8&quot;&gt;</span></div><div class="diff-line diff-add"><span class="diff-num"></span><span>+ &lt;section data-block=&quot;metric&quot; class=&quot;tile&quot;&gt;</span></div><div class="diff-line diff-add"><span class="diff-num"></span><span>+   &lt;Metric value={data.value} spark={data.trend} /&gt;</span></div><div class="diff-line diff-context"><span class="diff-num"></span><span>  &lt;/section&gt;</span></div>
+  </div><div class="annotation-pane"><p><mark>P1</mark> 组件替代样式堆叠<br>保留语义数据，避免重复生成视觉细节。</p><p><mark>P2</mark> 降低 DOM 嵌套<br>单个 block 直接承载布局，不再卡片套卡片。</p></div></div></div>
+  </article>
+<article class="block" id="timeline" style="--span:4;">
+    <div class="block-header">
+    <div>
+      
+      <h2>执行时间线</h2>
+      
+    </div>
+    
+  </div><div class="timeline-line">
+    <div class="timeline-item "><div class="label">00:00</div><strong>读取上下文</strong><p class="text-sm">抽取实体和目标</p></div><div class="timeline-item "><div class="label">00:12</div><strong>选择组件</strong><p class="text-sm">映射到 JSON blocks</p></div><div class="timeline-item "><div class="label">00:28</div><strong>输出 HTML</strong><p class="text-sm">浏览器直接打开</p></div>
+  </div>
+  </article>
+<article class="block" id="architecture" style="--span:8;">
+    <div class="block-header">
+    <div>
+      
+      <h2>生成链路</h2>
+      
+    </div>
+    
+  </div><div class="flow"><div class="flow-track">
+    <div class="flow-node"><span class="dot"></span><strong>User Context</strong><p class="text-sm">需求、代码、数据</p></div><div class="flow-node"><span class="dot"></span><strong>HTML Doc JSON</strong><p class="text-sm">紧凑结构</p></div><div class="flow-node"><span class="dot"></span><strong>Renderer</strong><p class="text-sm">主题和组件</p></div><div class="flow-node"><span class="dot"></span><strong>HTML</strong><p class="text-sm">浏览器阅读</p></div><div class="flow-node"><span class="dot"></span><strong>Copy / CSV / Diff</strong><p class="text-sm">回流到工作流</p></div>
+  </div></div>
+  </article>
+<article class="block" id="variants" style="--span:4;">
+    <div class="block-header">
+    <div>
+      
+      <h2>Variant Grid</h2>
+      
+    </div>
+    <button class="copy-mini" data-copy-block="variants">Copy</button>
+  </div><div class="variant-grid">
+    <div class="variant"><div class="label">A</div><h3>报告型</h3><p class="text-sm">洞察、证据、结论</p><div class="score" style="--score:88%; margin-top:var(--space-2)"></div></div><div class="variant"><div class="label">B</div><h3>评审型</h3><p class="text-sm">diff、风险、路径</p><div class="score" style="--score:92%; margin-top:var(--space-2)"></div></div><div class="variant"><div class="label">C</div><h3>编辑型</h3><p class="text-sm">表单、滑块、导出</p><div class="score" style="--score:84%; margin-top:var(--space-2)"></div></div>
+  </div>
+  </article>
+<article class="block" id="code" style="--span:6;">
+    <div class="block-header">
+    <div>
+      
+      <h2>代码批注</h2>
+      
+    </div>
+    <button class="copy-mini" data-copy-block="code">Copy</button>
+  </div><div class="code-wrap">
+    <pre>function renderBlock(block) {
+  const component = registry[block.type]
+  return component(block)
+}</pre>
+    <div class="annotation-pane"><p><mark>registry</mark> 组件注册表是 Skill 的稳定核心。</p><p><mark>block.type</mark> AI 负责选择意图，视觉系统交给渲染器。</p></div>
+  </div>
+  </article>
+<article class="block" id="sliders" style="--span:6;">
+    <div class="block-header">
+    <div>
+      
+      <h2>Slider Lab</h2>
+      
+    </div>
+    
+  </div><div>
+    <div class="slider-row"><span class="label">信息密度</span><input type="range" min="0" max="100" value="72" data-slider="0"><span class="mono" data-value="0">72</span></div><div class="slider-row"><span class="label">暖色强度</span><input type="range" min="0" max="100" value="34" data-slider="1"><span class="mono" data-value="1">34</span></div><div class="slider-row"><span class="label">优先可视化</span><input class="switch" type="checkbox" checked><span></span></div>
+  </div>
+  </article>
+<article class="block" id="evidence" style="--span:8;">
+    <div class="block-header">
+    <div>
+      
+      <h2>Evidence Board</h2>
+      
+    </div>
+    
+  </div><div class="masonry">
+    <div class="note"><div class="label">USER</div><strong>不喜欢容器过度嵌套</strong><p class="text-sm">整体采用铺地砖式 grid，组件之间共用 1px 分割线。</p></div><div class="note"><div class="label">DESIGN</div><strong>人文感字体</strong><p class="text-sm">标题使用 Optima / Avenir Next，中文回退到苹方和霞鹜文楷。</p></div><div class="note"><div class="label">RULE</div><strong>文字尽量少</strong><p class="text-sm">正文保持轻量；需要细节时交给矩阵、批注或展开材料。</p></div><div class="note"><div class="label">HTML</div><strong>充分利用水平空间</strong><p class="text-sm">12 栏 span 机制，支持 4/8、6/6、8/4 分列。</p></div>
+  </div>
+  </article>
+<article class="block" id="kanban" style="--span:12;">
+    <div class="block-header">
+    <div>
+      
+      <h2>Kanban</h2>
+      <p class="body-copy">横向分组清单，适合风险桶、任务桶、审查桶和反馈桶。</p>
+    </div>
+    <button class="copy-mini" data-copy-block="kanban">Copy</button>
+  </div><div class="kanban" data-kanban="kanban">
+    <section class="kanban-col tone-danger">
+    <header class="kanban-head">
+      <div class="kanban-title"><span class="kanban-icon">!</span><span>客户信任风险</span></div>
+      <div class="kanban-count"><span data-kanban-done>1</span> / <span>4</span></div>
+    </header>
+    <ul class="kanban-list">
+      <li class="kanban-card ">
+    <label class="kanban-check">
+      <input type="checkbox" >
+      <span class="kanban-box"></span>
+      <span class="kanban-text">未经搜索就确认品牌事实</span>
+    </label>
+  </li><li class="kanban-card ">
+    <label class="kanban-check">
+      <input type="checkbox" >
+      <span class="kanban-box"></span>
+      <span class="kanban-text">连续追问多个 intake 字段</span>
+    </label>
+  </li><li class="kanban-card ">
+    <label class="kanban-check">
+      <input type="checkbox" checked>
+      <span class="kanban-box"></span>
+      <span class="kanban-text">对进度事件输出内部 <code>stage</code> 名</span>
+    </label>
+  </li><li class="kanban-card ">
+    <label class="kanban-check">
+      <input type="checkbox" >
+      <span class="kanban-box"></span>
+      <span class="kanban-text">承诺还没有 finalizer 生成的链接</span>
+    </label>
+  </li>
+    </ul>
+  </section><section class="kanban-col tone-warning">
+    <header class="kanban-head">
+      <div class="kanban-title"><span class="kanban-icon">$</span><span>成本与重复风险</span></div>
+      <div class="kanban-count"><span data-kanban-done>0</span> / <span>4</span></div>
+    </header>
+    <ul class="kanban-list">
+      <li class="kanban-card ">
+    <label class="kanban-check">
+      <input type="checkbox" >
+      <span class="kanban-box"></span>
+      <span class="kanban-text">未得到 yes/no 就启动 async run</span>
+    </label>
+  </li><li class="kanban-card ">
+    <label class="kanban-check">
+      <input type="checkbox" >
+      <span class="kanban-box"></span>
+      <span class="kanban-text">有旧 job 仍然重跑</span>
+    </label>
+  </li><li class="kanban-card ">
+    <label class="kanban-check">
+      <input type="checkbox" >
+      <span class="kanban-box"></span>
+      <span class="kanban-text">身份确认和参数确认混成一轮</span>
+    </label>
+  </li><li class="kanban-card tone-accent">
+    <label class="kanban-check">
+      <input type="checkbox" >
+      <span class="kanban-box"></span>
+      <span class="kanban-text">mock 路径被误报成生产通过</span>
+    </label>
+  </li>
+    </ul>
+  </section><section class="kanban-col tone-info">
+    <header class="kanban-head">
+      <div class="kanban-title"><span class="kanban-icon">#</span><span>资源一致性风险</span></div>
+      <div class="kanban-count"><span data-kanban-done>0</span> / <span>4</span></div>
+    </header>
+    <ul class="kanban-list">
+      <li class="kanban-card ">
+    <label class="kanban-check">
+      <input type="checkbox" >
+      <span class="kanban-box"></span>
+      <span class="kanban-text"><code>product_id</code> 放进 payload 而不是 top-level</span>
+    </label>
+  </li><li class="kanban-card ">
+    <label class="kanban-check">
+      <input type="checkbox" >
+      <span class="kanban-box"></span>
+      <span class="kanban-text"><code>job_type</code> 没核实就当研究 job</span>
+    </label>
+  </li><li class="kanban-card ">
+    <label class="kanban-check">
+      <input type="checkbox" >
+      <span class="kanban-box"></span>
+      <span class="kanban-text">导出结果缺少上游任务 id</span>
+    </label>
+  </li><li class="kanban-card ">
+    <label class="kanban-check">
+      <input type="checkbox" >
+      <span class="kanban-box"></span>
+      <span class="kanban-text">旧发布能力被当成当前能力</span>
+    </label>
+  </li>
+    </ul>
+  </section>
+  </div>
+  </article>
+<article class="block editor-panel" id="form" style="--span:6;">
+    <div class="block-header">
+    <div>
+      
+      <h2>Form Editor</h2>
+      
+    </div>
+    <button class="copy-mini" data-copy-block="form">Copy</button>
+  </div><div class="form-grid">
+    <label class="field"><span class="label">处理模式</span><select><option selected>auto</option><option >manual</option><option >precheck</option></select></label><label class="field"><span class="label">密度</span><input value="compact"></label><label class="field"><span class="label">规则</span><textarea>正文变长时优先转成视觉组件。</textarea></label>
+  </div>
+  </article>
+<article class="block" id="insights" style="--span:6;">
+    <div class="block-header">
+    <div>
+      
+      <h2>洞察摘要</h2>
+      
+    </div>
+    
+  </div><div class="masonry">
+    <div class="note"><div class="label">01</div><strong>HTML 的价值来自组织能力</strong><p class="text-sm">分列、对比、流程、标注和交互，比长文更重要。</p></div><div class="note"><div class="label">02</div><strong>JSON 才是可审查源文件</strong><p class="text-sm">HTML 可以生成，JSON 保持清晰。</p></div>
+  </div>
+  </article>
+    </section>
+  </main>
+  <div class="toast" id="toast">已复制</div>
+  <script>
+const artifactSpec = {"meta":{"lang":"zh-CN","title":"html-doc","subtitle":"Warm Nomad Component Showcase"},"actions":[{"label":"Copy JSON","copy":"component showcase"},{"label":"Export Layout","primary":true,"copy":"Render this JSON with scripts/render-html-doc.mjs"}],"content":[{"id":"hero","type":"hero","span":12,"kicker":"visual first","title":"用少量 JSON 组合出高质量、可读、可交互的 HTML Doc","body":"尽量把信息转换成流程、矩阵、对比、批注、编辑器和导出控件。","tags":["warm-flat","low-shadow","humanist-type","grid-first","visual-over-text"]},{"id":"metrics","type":"metrics","span":4,"title":"核心指标","body":"数字、趋势和状态适合视觉化，减少长段说明。","items":[{"label":"TOKENS","value":"-38%","note":"JSON 替代重复 HTML","spark":[8,7,7,5,4,3,3]},{"label":"READ","value":"2.4x","note":"扫读速度提升","spark":[2,3,4,6,7,8,9]},{"label":"UI","value":"17","note":"内置组件","spark":[3,3,4,6,8,12,17]},{"label":"TEXT","value":"LOW","note":"正文轻量化","spark":[9,8,6,5,4,3,2]}]},{"id":"stage","type":"stage","span":8,"title":"Static Stage","body":"用定位元素表达架构、界面草图和关系图。","stage":{"width":960,"height":520,"background":"grid"},"elements":[{"id":"source_config","type":"panel","x":80,"y":95,"w":210,"h":110,"title":"source_config","content":"rules / inputs"},{"id":"runtime_state","type":"panel","x":380,"y":90,"w":230,"h":120,"title":"runtime_state","content":"current mode + status"},{"id":"event_log","type":"panel","x":700,"y":100,"w":180,"h":100,"title":"event_log","content":"immutable records"},{"id":"guard","type":"annotation","x":385,"y":275,"w":250,"h":74,"content":"运行时只读取已确认配置和容量边界。"},{"id":"line_1","type":"connection","from":"source_config","to":"runtime_state"},{"id":"line_2","type":"connection","from":"runtime_state","to":"event_log"}]},{"id":"prompt","type":"promptEditor","span":4,"title":"Prompt Editor","body":"变量高亮，结果可复制。","prompt":"Create a {{artifact_type}} for {{audience}}. Prefer diagrams, matrices and inline annotations over long prose."},{"id":"motion-demo","type":"motionStage","span":12,"title":"Motion Stage","body":"同一组对象在步骤之间移动、变色、显隐和改写数值，适合演示真实流程。","interval":1600,"stage":{"width":1180,"height":520},"objects":[{"id":"phone","type":"phone","x":85,"y":80,"w":300,"h":350,"label":"Publish","title":"Draft ready","props":{"items":[{"label":"Caption","value":"ok"},{"label":"Cover","value":"set"},{"label":"Channels","value":"3"}]}},{"id":"queue","type":"window","x":455,"y":110,"w":300,"h":220,"label":"Queue","title":"Waiting","body":"3 channels selected","props":{"items":[{"label":"XHS","value":"ready"},{"label":"Douyin","value":"ready"},{"label":"Bilibili","value":"ready"}]}},{"id":"metric","type":"metric","x":855,"y":130,"w":170,"h":120,"value":"0","label":"published"},{"id":"toast","type":"note","x":760,"y":330,"w":280,"h":82,"body":"发布完成后，读者能直接看到状态变化。","opacity":0.35},{"id":"line","type":"line","x":385,"y":215,"w":70,"h":1,"opacity":0.4}],"steps":[{"title":"1. 准备内容","body":"素材、标题和渠道都在同一个画面里呈现。","states":{"phone":{"emphasis":"focus"},"queue":{"opacity":0.45,"status":"muted"},"metric":{"value":"0","opacity":0.35},"toast":{"opacity":0.25},"line":{"opacity":0.25}}},{"title":"2. 提交发布","body":"队列窗口成为焦点，展示任务被拆分到多个渠道。","states":{"phone":{"x":65,"y":95,"opacity":0.75},"queue":{"x":430,"y":95,"opacity":1,"emphasis":"focus","title":"Publishing","body":"dispatching 3 channel jobs"},"metric":{"value":"0","opacity":0.45},"toast":{"opacity":0.25},"line":{"x":365,"y":215,"w":65,"opacity":0.7}}},{"title":"3. 状态回写","body":"同一画面里更新数值和结果提示，减少额外解释。","states":{"phone":{"x":65,"y":95,"opacity":0.65},"queue":{"x":390,"y":115,"emphasis":"success","title":"Complete","body":"all channels accepted"},"metric":{"x":820,"y":120,"value":"3","opacity":1,"emphasis":"success"},"toast":{"opacity":1,"emphasis":"success"},"line":{"x":690,"y":215,"w":125,"opacity":0.65}}}]},{"id":"flow","type":"flow","span":8,"title":"生成流程","nodes":[{"label":"需求","note":"代码、数据、问题"},{"label":"JSON","note":"意图和结构"},{"label":"Renderer","note":"组件组合"},{"label":"HTML","note":"可读可交互"}]},{"id":"decision","type":"decisionTree","span":4,"title":"组件选择","items":[{"level":0,"condition":"需要解释过程","result":"使用 flow 或 timeline"},{"level":1,"condition":"有代码变化","result":"使用 diffReview"},{"level":1,"condition":"有多个方案","result":"使用 variantGrid 或 matrix"},{"level":0,"condition":"需要用户调整","result":"使用 sliderLab、formEditor 或 promptEditor"}]},{"id":"matrix","type":"matrix","span":12,"title":"Decision Matrix","body":"表格先显示对象、结论和风险，长证据放进展开详情。","search":true,"sortable":true,"filters":[{"key":"risk","label":"Risk","options":["High","Medium","Low"]}],"columns":[{"key":"object","label":"对象","minWidth":"190px"},{"key":"summary","label":"一句话结论","minWidth":"260px"},{"key":"risk","label":"风险","width":"96px"},{"key":"evidence","label":"关键证据","minWidth":"250px"},{"key":"confidence","label":"置信度","width":"120px"},{"key":"next","label":"下一步","minWidth":"150px"}],"rows":[{"group":"需要确认"},{"object":"`matrix` 表格","summary":"**默认展示判断**，证据按需展开。","risk":{"badge":"Medium","tone":"warning"},"evidence":{"summary":"Markdown 宽表容易丢列上下文。","detail":"固定表头和首列后，读者滚动时仍能确认对象和维度。"},"confidence":{"progress":86,"label":"足够稳定"},"next":["freeze","search","tags"],"details":"适合方案比较、风险表、PR review、排期表、需求矩阵。"},{"object":"`motionStage` 动画","summary":"只在状态变化能直观看懂时使用。","risk":{"badge":"Low","tone":"success"},"evidence":{"summary":"对象位置、显隐、状态和数值发生变化。","detail":"字幕只做补充，主信息应该出现在画面变化里。"},"confidence":{"score":78,"label":"可复用"},"next":{"badge":"demo","tone":"accent"}},{"group":"可以后置"},{"object":"长正文","summary":"拆成卡片、矩阵、批注或展开材料。","risk":{"badge":"High","tone":"danger"},"evidence":{"summary":"连续段落会让读者反复重建结构。","detail":"如果内容需要比较、优先级、关系或状态，就改用视觉组件。"},"confidence":{"progress":92,"label":"明确"},"next":{"badge":"split","tone":"info"}}]},{"id":"diff","type":"diffReview","span":8,"title":"Diff Review","lines":[{"type":"remove","text":"- <div class=\"card shadow-lg rounded-xl p-8\">"},{"type":"add","text":"+ <section data-block=\"metric\" class=\"tile\">"},{"type":"add","text":"+   <Metric value={data.value} spark={data.trend} />"},{"type":"neutral","text":"  <\/section>"}],"findings":[{"severity":"P1","title":"组件替代样式堆叠","body":"保留语义数据，避免重复生成视觉细节。"},{"severity":"P2","title":"降低 DOM 嵌套","body":"单个 block 直接承载布局，不再卡片套卡片。"}]},{"id":"timeline","type":"timeline","span":4,"title":"执行时间线","items":[{"time":"00:00","title":"读取上下文","body":"抽取实体和目标"},{"time":"00:12","title":"选择组件","body":"映射到 JSON blocks"},{"time":"00:28","title":"输出 HTML","body":"浏览器直接打开"}]},{"id":"architecture","type":"flow","span":8,"title":"生成链路","nodes":[{"label":"User Context","note":"需求、代码、数据"},{"label":"HTML Doc JSON","note":"紧凑结构"},{"label":"Renderer","note":"主题和组件"},{"label":"HTML","note":"浏览器阅读"},{"label":"Copy / CSV / Diff","note":"回流到工作流"}]},{"id":"variants","type":"variantGrid","span":4,"title":"Variant Grid","items":[{"label":"A","title":"报告型","body":"洞察、证据、结论","score":88},{"label":"B","title":"评审型","body":"diff、风险、路径","score":92},{"label":"C","title":"编辑型","body":"表单、滑块、导出","score":84}]},{"id":"code","type":"codeAnnotation","span":6,"title":"代码批注","code":"function renderBlock(block) {\n  const component = registry[block.type]\n  return component(block)\n}","annotations":[{"ref":"registry","body":"组件注册表是 Skill 的稳定核心。"},{"ref":"block.type","body":"AI 负责选择意图，视觉系统交给渲染器。"}]},{"id":"sliders","type":"sliderLab","span":6,"title":"Slider Lab","controls":[{"type":"range","label":"信息密度","min":0,"max":100,"value":72},{"type":"range","label":"暖色强度","min":0,"max":100,"value":34},{"type":"toggle","label":"优先可视化","value":true}]},{"id":"evidence","type":"evidenceBoard","span":8,"title":"Evidence Board","items":[{"label":"USER","title":"不喜欢容器过度嵌套","body":"整体采用铺地砖式 grid，组件之间共用 1px 分割线。"},{"label":"DESIGN","title":"人文感字体","body":"标题使用 Optima / Avenir Next，中文回退到苹方和霞鹜文楷。"},{"label":"RULE","title":"文字尽量少","body":"正文保持轻量；需要细节时交给矩阵、批注或展开材料。"},{"label":"HTML","title":"充分利用水平空间","body":"12 栏 span 机制，支持 4/8、6/6、8/4 分列。"}]},{"id":"kanban","type":"kanban","span":12,"title":"Kanban","body":"横向分组清单，适合风险桶、任务桶、审查桶和反馈桶。","columns":[{"title":"客户信任风险","icon":"!","tone":"danger","items":["未经搜索就确认品牌事实","连续追问多个 intake 字段",{"title":"对进度事件输出内部 `stage` 名","done":true},"承诺还没有 finalizer 生成的链接"]},{"title":"成本与重复风险","icon":"$","tone":"warning","items":["未得到 yes/no 就启动 async run","有旧 job 仍然重跑","身份确认和参数确认混成一轮",{"title":"mock 路径被误报成生产通过","tone":"accent"}]},{"title":"资源一致性风险","icon":"#","tone":"info","items":["`product_id` 放进 payload 而不是 top-level","`job_type` 没核实就当研究 job","导出结果缺少上游任务 id","旧发布能力被当成当前能力"]}]},{"id":"form","type":"formEditor","span":6,"title":"Form Editor","fields":[{"name":"mode","label":"处理模式","type":"select","value":"auto","options":["auto","manual","precheck"]},{"name":"density","label":"密度","value":"compact"},{"name":"rule","label":"规则","type":"textarea","value":"正文变长时优先转成视觉组件。"}]},{"id":"insights","type":"evidenceBoard","span":6,"title":"洞察摘要","items":[{"label":"01","title":"HTML 的价值来自组织能力","body":"分列、对比、流程、标注和交互，比长文更重要。"},{"label":"02","title":"JSON 才是可审查源文件","body":"HTML 可以生成，JSON 保持清晰。"}]}]};
+const toast = document.getElementById("toast");
+function showToast(text) {
+  toast.textContent = text || "已复制";
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 1200);
+}
+async function copyText(text) {
+  await navigator.clipboard.writeText(text);
+  showToast("已复制");
+}
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+function inlineRich(value) {
+  const placeholders = [];
+  const inlineCodePattern = new RegExp("\\x60([^\\x60\\n]+)\\x60", "g");
+  const text = String(value ?? "").replace(inlineCodePattern, (_, code) => {
+    const index = placeholders.push("<code>" + escapeHtml(code) + "</code>") - 1;
+    return "@@HTML_DOC_INLINE_" + index + "@@";
+  });
+  return escapeHtml(text)
+    .replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/@@HTML_DOC_INLINE_(\d+)@@/g, (_, index) => placeholders[Number(index)] || "");
+}
+document.querySelectorAll("[data-copy]").forEach((btn) => {
+  btn.addEventListener("click", () => copyText(btn.dataset.copy || JSON.stringify(artifactSpec, null, 2)));
+});
+document.querySelectorAll("[data-copy-block]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const id = btn.dataset.copyBlock;
+    const block = artifactSpec.content.find((item) => item.id === id);
+    copyText(JSON.stringify(block || {}, null, 2));
+  });
+});
+document.querySelectorAll("[data-slider]").forEach((slider) => {
+  slider.addEventListener("input", () => {
+    const value = document.querySelector('[data-value="' + slider.dataset.slider + '"]');
+    if (value) value.textContent = slider.value;
+  });
+});
+function detailRowFor(table, id) {
+  return Array.from(table.querySelectorAll("[data-detail-row]")).find((row) => row.dataset.detailRow === id);
+}
+function matrixValueCompare(a, b, direction) {
+  const an = Number(a);
+  const bn = Number(b);
+  const result = Number.isFinite(an) && Number.isFinite(bn)
+    ? an - bn
+    : String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: "base" });
+  return direction === "asc" ? result : -result;
+}
+function applyMatrixFilters(id) {
+  const table = document.querySelector('[data-matrix="' + id + '"]');
+  if (!table) return;
+  const search = (document.querySelector('[data-matrix-search="' + id + '"]')?.value || "").trim().toLowerCase();
+  const selects = Array.from(document.querySelectorAll('[data-matrix-filter="' + id + '"]'));
+  table.querySelectorAll("tbody tr[data-row-id]").forEach((row) => {
+    const textMatch = !search || (row.dataset.search || "").toLowerCase().includes(search);
+    const rowFilters = row.dataset.filters ? JSON.parse(row.dataset.filters) : {};
+    const filterMatch = selects.every((select) => !select.value || String(rowFilters[select.dataset.filterKey] || "") === select.value);
+    const visible = textMatch && filterMatch;
+    row.hidden = !visible;
+    const detail = detailRowFor(table, row.dataset.rowId);
+    if (detail) detail.hidden = !visible || detail.dataset.open !== "true";
+  });
+}
+document.querySelectorAll("[data-matrix-search]").forEach((input) => {
+  input.addEventListener("input", () => applyMatrixFilters(input.dataset.matrixSearch));
+});
+document.querySelectorAll("[data-matrix-filter]").forEach((select) => {
+  select.addEventListener("change", () => applyMatrixFilters(select.dataset.matrixFilter));
+});
+document.querySelectorAll("[data-detail-toggle]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const table = btn.closest("table");
+    const detail = table ? detailRowFor(table, btn.dataset.detailToggle) : null;
+    if (!detail) return;
+    const open = detail.hidden;
+    detail.hidden = !open;
+    detail.dataset.open = open ? "true" : "false";
+    btn.textContent = open ? "−" : "+";
+  });
+});
+document.querySelectorAll('[data-matrix][data-sortable="true"] th[data-sort-index]').forEach((th) => {
+  th.addEventListener("click", () => {
+    const table = th.closest("table");
+    const tbody = table?.querySelector("tbody");
+    if (!tbody) return;
+    const index = Number(th.dataset.sortIndex || 0);
+    const direction = th.dataset.sortDir === "asc" ? "desc" : "asc";
+    table.querySelectorAll("th[data-sort-index]").forEach((header) => delete header.dataset.sortDir);
+    th.dataset.sortDir = direction;
+    const sections = [];
+    let section = { group: null, pairs: [] };
+    sections.push(section);
+    Array.from(tbody.children).forEach((row) => {
+      if (row.classList.contains("matrix-group")) {
+        section = { group: row, pairs: [] };
+        sections.push(section);
+        return;
+      }
+      if (!row.dataset.rowId) return;
+      section.pairs.push({
+        row,
+        detail: detailRowFor(table, row.dataset.rowId),
+        value: row.children[index]?.dataset.sortValue || row.children[index]?.textContent || "",
+      });
+    });
+    sections.forEach((item) => {
+      item.pairs.sort((a, b) => matrixValueCompare(a.value, b.value, direction));
+      if (item.group) tbody.appendChild(item.group);
+      item.pairs.forEach((pair) => {
+        tbody.appendChild(pair.row);
+        if (pair.detail) tbody.appendChild(pair.detail);
+      });
+    });
+  });
+});
+document.querySelectorAll("[data-kanban]").forEach((board) => {
+  board.querySelectorAll(".kanban-col").forEach((column) => {
+    const boxes = Array.from(column.querySelectorAll('input[type="checkbox"]'));
+    const count = column.querySelector("[data-kanban-done]");
+    const update = () => {
+      if (count) count.textContent = String(boxes.filter((box) => box.checked).length);
+    };
+    boxes.forEach((box) => box.addEventListener("change", update));
+    update();
+  });
+});
+function applyStageState(stage, state) {
+  stage.dataset.state = state;
+  stage.querySelectorAll("[data-visible-states]").forEach((el) => {
+    const states = (el.dataset.visibleStates || "").split(" ").filter(Boolean);
+    if (!states.length || states.includes(state)) el.classList.remove("hidden");
+    else el.classList.add("hidden");
+  });
+  const states = Object.keys((artifactSpec.content.find((b) => b.id === stage.dataset.stage) || {}).states || {});
+  const count = stage.querySelector("[data-stage-count]");
+  if (count && states.length) count.textContent = String(states.indexOf(state) + 1) + "/" + states.length;
+}
+document.querySelectorAll("[data-stage]").forEach((stage) => {
+  const block = artifactSpec.content.find((b) => b.id === stage.dataset.stage) || {};
+  const states = Object.keys(block.states || {});
+  applyStageState(stage, stage.dataset.state || states[0] || "");
+  stage.addEventListener("click", (event) => {
+    const setter = event.target.closest("[data-set-state]");
+    if (setter) applyStageState(stage, setter.dataset.setState);
+  });
+  const next = stage.querySelector("[data-stage-next]");
+  const prev = stage.querySelector("[data-stage-prev]");
+  if (next) next.addEventListener("click", () => {
+    const index = states.indexOf(stage.dataset.state);
+    applyStageState(stage, states[(index + 1) % states.length]);
+  });
+  if (prev) prev.addEventListener("click", () => {
+    const index = states.indexOf(stage.dataset.state);
+    applyStageState(stage, states[(index - 1 + states.length) % states.length]);
+  });
+});
+function setMotionText(root, selector, value) {
+  const el = root.querySelector(selector);
+  if (el && value != null) el.innerHTML = inlineRich(value);
+}
+function setMotionBox(el, state, stage) {
+  const width = Number(stage.width || 1180);
+  const height = Number(stage.height || 560);
+  const pctValue = (value, total) => ((Number(value || 0) / total) * 100).toFixed(4) + "%";
+  if (state.x != null) el.style.setProperty("--x", pctValue(state.x, width));
+  if (state.y != null) el.style.setProperty("--y", pctValue(state.y, height));
+  if (state.w != null) el.style.setProperty("--w", pctValue(state.w, width));
+  if (state.h != null) el.style.setProperty("--h", pctValue(state.h, height));
+  if (state.opacity != null) el.style.setProperty("--opacity", state.opacity);
+  if (state.scale != null) el.style.setProperty("--scale", state.scale);
+  if (state.rotate != null) el.style.setProperty("--rotate", Number(state.rotate || 0) + "deg");
+  if (state.z != null) el.style.setProperty("--z", Number(state.z || 1));
+  if (state.status != null) el.dataset.status = state.status;
+  if (state.emphasis != null) el.dataset.emphasis = state.emphasis;
+}
+function applyMotionStep(motion, index) {
+  const block = artifactSpec.content.find((item) => item.id === motion.dataset.motion) || {};
+  const steps = block.steps || [];
+  if (!steps.length) return;
+  const stage = block.stage || {};
+  const safeIndex = ((index % steps.length) + steps.length) % steps.length;
+  const step = steps[safeIndex] || {};
+  motion.dataset.index = String(safeIndex);
+  motion.querySelectorAll("[data-motion-dot]").forEach((dot) => {
+    dot.classList.toggle("active", Number(dot.dataset.motionDot) === safeIndex);
+  });
+  const caption = motion.querySelector("[data-motion-caption]");
+  if (caption) {
+    setMotionText(caption, "strong", step.title || "");
+    setMotionText(caption, "span", step.body || "");
+  }
+  const objectStates = step.states || {};
+  motion.querySelectorAll("[data-motion-object]").forEach((el) => {
+    const id = el.dataset.motionObject;
+    const source = (block.objects || []).find((obj) => obj.id === id) || {};
+    const base = source.initial || source;
+    const state = { ...base, ...(objectStates[id] || {}) };
+    setMotionBox(el, state, stage);
+    setMotionText(el, "[data-motion-title]", state.title);
+    setMotionText(el, "[data-motion-body]", state.body);
+    setMotionText(el, "[data-motion-label]", state.label);
+    setMotionText(el, "[data-motion-value]", state.value);
+  });
+}
+document.querySelectorAll("[data-motion]").forEach((motion) => {
+  const block = artifactSpec.content.find((item) => item.id === motion.dataset.motion) || {};
+  const steps = block.steps || [];
+  let timer = null;
+  const play = motion.querySelector("[data-motion-play]");
+  const start = () => {
+    if (!steps.length || timer) return;
+    timer = setInterval(() => applyMotionStep(motion, Number(motion.dataset.index || 0) + 1), Number(block.interval || 1600));
+    if (play) play.textContent = "Pause";
+  };
+  const stop = () => {
+    clearInterval(timer);
+    timer = null;
+    if (play) play.textContent = "Play";
+  };
+  motion.querySelector("[data-motion-next]")?.addEventListener("click", () => {
+    stop();
+    applyMotionStep(motion, Number(motion.dataset.index || 0) + 1);
+  });
+  motion.querySelector("[data-motion-prev]")?.addEventListener("click", () => {
+    stop();
+    applyMotionStep(motion, Number(motion.dataset.index || 0) - 1);
+  });
+  motion.querySelectorAll("[data-motion-dot]").forEach((dot) => {
+    dot.addEventListener("click", () => {
+      stop();
+      applyMotionStep(motion, Number(dot.dataset.motionDot));
+    });
+  });
+  play?.addEventListener("click", () => timer ? stop() : start());
+  applyMotionStep(motion, 0);
+  if (block.autoplay !== false && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) start();
+});
+document.querySelectorAll("[data-rel-map]").forEach((map) => {
+  const sources = Array.from(map.querySelectorAll("[data-rel-source]"));
+  const targets = Array.from(map.querySelectorAll("[data-rel-target]"));
+  const edges = Array.from(map.querySelectorAll("[data-rel-from][data-rel-to]"));
+  const clear = () => map.querySelectorAll(".active").forEach((active) => active.classList.remove("active"));
+  const activateSource = (source) => {
+    clear();
+    sources.find((item) => item.dataset.relSource === source)?.classList.add("active");
+    edges.filter((edge) => edge.dataset.relFrom === source).forEach((edge) => {
+      edge.classList.add("active");
+      targets.find((item) => item.dataset.relTarget === edge.dataset.relTo)?.classList.add("active");
+    });
+  };
+  const activateTarget = (target) => {
+    clear();
+    targets.find((item) => item.dataset.relTarget === target)?.classList.add("active");
+    edges.filter((edge) => edge.dataset.relTo === target).forEach((edge) => {
+      edge.classList.add("active");
+      sources.find((item) => item.dataset.relSource === edge.dataset.relFrom)?.classList.add("active");
+    });
+  };
+  sources.forEach((item) => {
+    item.addEventListener("mouseenter", () => activateSource(item.dataset.relSource));
+    item.addEventListener("mouseleave", clear);
+  });
+  targets.forEach((item) => {
+    item.addEventListener("mouseenter", () => activateTarget(item.dataset.relTarget));
+    item.addEventListener("mouseleave", clear);
+  });
+});
+document.querySelectorAll("[data-tree-node]").forEach((node) => {
+  node.addEventListener("click", () => {
+    const toggle = node.querySelector(".vu-tree-toggle");
+    const children = node.nextElementSibling;
+    if (!toggle || !children?.classList.contains("vu-tree-children")) return;
+    const open = toggle.classList.toggle("open");
+    children.style.display = open ? "block" : "none";
+  });
+});
+document.querySelectorAll("[data-flow-state]").forEach((flow) => {
+  const block = artifactSpec.content.find((item) => item.id === flow.dataset.flowState) || {};
+  const states = block.states || [];
+  const detail = flow.querySelector("[data-state-details]");
+  flow.querySelectorAll("[data-state-id]").forEach((pill) => {
+    pill.addEventListener("click", () => {
+      flow.querySelectorAll("[data-state-id]").forEach((item) => item.classList.remove("active"));
+      pill.classList.add("active");
+      const state = states.find((item) => item.id === pill.dataset.stateId) || {};
+      if (detail) detail.innerHTML = inlineRich(state.detail || state.body || "");
+    });
+  });
+});
+document.querySelectorAll("[data-emphasis-panel]").forEach((panel) => {
+  panel.querySelectorAll("[data-info-id]").forEach((hl) => {
+    hl.addEventListener("mouseenter", () => {
+      panel.querySelectorAll("[data-info-id]").forEach((item) => item.classList.remove("active"));
+      panel.querySelectorAll("[data-info-item]").forEach((item) => item.classList.remove("active"));
+      hl.classList.add("active");
+      panel.querySelector('[data-info-item="' + hl.dataset.infoId + '"]')?.classList.add("active");
+    });
+  });
+});</script>
+</body>
+</html>

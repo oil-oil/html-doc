@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture Animation Patterns</title>
+<style>
+    /* Design System: warm-nomad */
+    :root {
+        --bg-base: #FAF9F6;
+        --bg-surface: #FFFFFF;
+        --border-color: #E5E2DC;
+        --text-main: #33312E;
+        --text-muted: #85827D;
+        --accent-warm: #D4A373;
+        --accent-green: #8A9A5B;
+        --accent-red: #C97A7E;
+        --accent-blue: #7393B3;
+        
+        --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        
+        --radius: 2px;
+        --timing: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background-color: var(--bg-base);
+        color: var(--text-main);
+        font-family: var(--font-ui);
+        font-size: 13px;
+        line-height: 1.5;
+        padding: 2rem;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    h1 {
+        font-size: 16px;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+    }
+
+    button.toggle-motion {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        padding: 4px 12px;
+        border-radius: var(--radius);
+        color: var(--text-main);
+        font-family: var(--font-ui);
+        font-size: 12px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    button.toggle-motion:hover {
+        background: var(--bg-surface);
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        position: relative;
+    }
+
+    .card-title {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+        border-bottom: 1px dashed var(--border-color);
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Animation Pause State */
+    body.motion-paused * {
+        animation-play-state: paused !important;
+        transition: none !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
+
+    /* --- 1. Data Flow --- */
+    .flow-container {
+        position: relative;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .node {
+        border: 1px solid var(--border-color);
+        padding: 0.5rem;
+        background: var(--bg-base);
+        z-index: 2;
+        font-family: var(--font-mono);
+        font-size: 11px;
+    }
+    .flow-svg {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: 1;
+        pointer-events: none;
+    }
+    .flow-path {
+        fill: none;
+        stroke: var(--border-color);
+        stroke-width: 1;
+    }
+    .flow-packet {
+        fill: var(--accent-warm);
+        offset-path: path('M 50 60 L 250 60');
+        animation: movePacket 2s linear infinite;
+    }
+    @keyframes movePacket {
+        0% { offset-distance: 0%; opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { offset-distance: 100%; opacity: 0; }
+    }
+
+    /* --- 2. State Machine --- */
+    .state-machine {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        justify-content: center;
+        height: 120px;
+    }
+    .state-node {
+        padding: 4px 12px;
+        border: 1px solid var(--border-color);
+        color: var(--text-muted);
+        transition: all var(--timing);
+        font-size: 12px;
+    }
+    .state-node.active {
+        border-color: var(--text-main);
+        color: var(--text-main);
+        background: var(--bg-base);
+    }
+    .state-arrow {
+        color: var(--border-color);
+        font-size: 10px;
+    }
+
+    /* --- 3. Async Task Flow (Stepper) --- */
+    .stepper {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        height: 120px;
+        justify-content: center;
+    }
+    .step {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        opacity: 0.4;
+        transition: opacity var(--timing);
+    }
+    .step.active, .step.completed {
+        opacity: 1;
+    }
+    .step-indicator {
+        width: 12px; height: 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 50%;
+        position: relative;
+        transition: all var(--timing);
+    }
+    .step.completed .step-indicator {
+        background: var(--border-color);
+    }
+    .step.active .step-indicator {
+        border-color: var(--accent-blue);
+        background: var(--bg-surface);
+    }
+    .step.active .step-indicator::after {
+        content: '';
+        position: absolute;
+        top: 2px; left: 2px; right: 2px; bottom: 2px;
+        background: var(--accent-blue);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+    .step-label { font-size: 12px; }
+    @keyframes pulse {
+        0% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(0.8); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* --- 4. Diff Review --- */
+    .diff-container {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        height: 120px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .diff-line {
+        padding: 2px 4px;
+        color: var(--text-muted);
+        transition: background-color var(--timing), color var(--timing);
+        white-space: pre;
+    }
+    .diff-line.add.highlight {
+        background-color: rgba(138, 154, 91, 0.15); /* accent-green */
+        color: var(--text-main);
+    }
+    .diff-line.remove.highlight {
+        background-color: rgba(201, 122, 126, 0.15); /* accent-red */
+        color: var(--text-main);
+        text-decoration: line-through;
+    }
+
+    /* --- 5. Metrics & Sparkline --- */
+    .metric-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 120px;
+    }
+    .metric-value {
+        font-size: 24px;
+        font-weight: 400;
+        margin-bottom: 0.5rem;
+        font-family: var(--font-mono);
+    }
+    .sparkline-svg {
+        width: 100%;
+        height: 40px;
+    }
+    .sparkline-path {
+        fill: none;
+        stroke: var(--accent-green);
+        stroke-width: 1.5;
+        stroke-dasharray: 200;
+        stroke-dashoffset: 200;
+    }
+    .sparkline-path.draw {
+        animation: drawLine 2s forwards ease-out;
+    }
+    @keyframes drawLine {
+        to { stroke-dashoffset: 0; }
+    }
+
+    /* --- 6. Attention Spotlight --- */
+    .spotlight-wrapper {
+        position: relative;
+        height: 120px;
+        display: flex;
+        gap: 0.5rem;
+    }
+    .spotlight-card {
+        flex: 1;
+        border: 1px solid var(--border-color);
+        padding: 0.5rem;
+        font-size: 11px;
+        transition: all var(--timing);
+        background: var(--bg-surface);
+    }
+    .spotlight-overlay {
+        position: absolute;
+        top: -10px; left: -10px; right: -10px; bottom: -10px;
+        background: rgba(250, 249, 246, 0.8); /* bg-base with opacity */
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity var(--timing);
+        z-index: 10;
+    }
+    .spotlight-wrapper.active .spotlight-overlay {
+        opacity: 1;
+    }
+    .spotlight-wrapper.active .spotlight-card.risk {
+        position: relative;
+        z-index: 20;
+        border-color: var(--accent-red);
+        background: var(--bg-surface);
+        box-shadow: 0 0 0 1px var(--accent-red);
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Architecture Animation Patterns</h1>
+    <button class="toggle-motion" id="motionToggle">Pause Animations</button>
+</header>
+
+<div class="grid">
+    <!-- FEATURE: Data flow animation along an SVG path to represent API calls or capacity consumption -->
+    <div class="card">
+        <div class="card-title">1. Data Flow</div>
+        <div class="flow-container">
+            <div class="node">Gateway</div>
+            <svg class="flow-svg" viewBox="0 0 300 120">
+                <path class="flow-path" d="M 50 60 L 250 60" />
+                <circle class="flow-packet" r="3" />
+            </svg>
+            <div class="node">Ledger Svc</div>
+        </div>
+    </div>
+
+    <!-- FEATURE: State machine node switching to visualize account lifecycle -->
+    <div class="card">
+        <div class="card-title">2. State Machine</div>
+        <div class="state-machine" id="stateMachine">
+            <div class="state-node active" data-state="0">Pending</div>
+            <div class="state-arrow">→</div>
+            <div class="state-node" data-state="1">Trialing</div>
+            <div class="state-arrow">→</div>
+            <div class="state-node" data-state="2">Active</div>
+        </div>
+    </div>
+
+    <!-- FEATURE: Asynchronous task flow stepper (reserve -> confirm) -->
+    <div class="card">
+        <div class="card-title">3. Async Flow</div>
+        <div class="stepper" id="stepper">
+            <div class="step completed" data-step="0">
+                <div class="step-indicator"></div>
+                <div class="step-label">Reserve Funds</div>
+            </div>
+            <div class="step active" data-step="1">
+                <div class="step-indicator"></div>
+                <div class="step-label">Await Callback</div>
+            </div>
+            <div class="step" data-step="2">
+                <div class="step-indicator"></div>
+                <div class="step-label">Commit Transaction</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURE: Code diff review with sequential row-level highlighting -->
+    <div class="card">
+        <div class="card-title">4. Diff Review</div>
+        <div class="diff-container" id="diffViewer">
+            <div class="diff-line">  func Calculate() {</div>
+            <div class="diff-line remove">    rate := 0.05</div>
+            <div class="diff-line add">    rate := getDynamicRate()</div>
+            <div class="diff-line add">    if rate < 0 { return err }</div>
+            <div class="diff-line">    return amount * rate</div>
+            <div class="diff-line">  }</div>
+        </div>
+    </div>
+
+    <!-- FEATURE: Metric number counting up and sparkline drawing -->
+    <div class="card">
+        <div class="card-title">5. Metric & Trend</div>
+        <div class="metric-container">
+            <div class="metric-value" id="metricCounter">99.00%</div>
+            <svg class="sparkline-svg" viewBox="0 0 100 40" preserveAspectRatio="none">
+                <path class="sparkline-path" id="sparkline" d="M 0 30 L 20 25 L 40 28 L 60 15 L 80 20 L 100 5" />
+            </svg>
+        </div>
+    </div>
+
+    <!-- FEATURE: Attention spotlight to gently guide focus to a risk element -->
+    <div class="card">
+        <div class="card-title">6. Attention Spotlight</div>
+        <div class="spotlight-wrapper" id="spotlight">
+            <div class="spotlight-overlay"></div>
+            <div class="spotlight-card">
+                <div>Node A</div>
+                <div style="color:var(--text-muted);margin-top:4px;">Healthy</div>
+            </div>
+            <div class="spotlight-card risk">
+                <div>Node B</div>
+                <div style="color:var(--accent-red);margin-top:4px;">Latency spike</div>
+            </div>
+            <div class="spotlight-card">
+                <div>Node C</div>
+                <div style="color:var(--text-muted);margin-top:4px;">Healthy</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let isPaused = false;
+
+    // Toggle Motion
+    const toggleBtn = document.getElementById('motionToggle');
+    toggleBtn.addEventListener('click', () => {
+        isPaused = !isPaused;
+        document.body.classList.toggle('motion-paused', isPaused);
+        toggleBtn.textContent = isPaused ? 'Play Animations' : 'Pause Animations';
+    });
+
+    // 2. State Machine Logic
+    const stateNodes = document.querySelectorAll('#stateMachine .state-node');
+    let currentState = 0;
+    setInterval(() => {
+        if (isPaused) return;
+        stateNodes.forEach(n => n.classList.remove('active'));
+        currentState = (currentState + 1) % stateNodes.length;
+        stateNodes[currentState].classList.add('active');
+    }, 2500);
+
+    // 3. Stepper Logic
+    const steps = document.querySelectorAll('#stepper .step');
+    let currentStep = 1;
+    setInterval(() => {
+        if (isPaused) return;
+        steps.forEach(s => {
+            s.classList.remove('active', 'completed');
+            const stepNum = parseInt(s.dataset.step);
+            if (stepNum < currentStep) s.classList.add('completed');
+            if (stepNum === currentStep) s.classList.add('active');
+        });
+        currentStep = (currentStep + 1) % 4; // 0, 1, 2, 3(reset)
+        if(currentStep === 3) {
+            currentStep = 0; // reset to beginning quickly
+        }
+    }, 2000);
+
+    // 4. Diff Review Logic
+    const diffLines = document.querySelectorAll('#diffViewer .add, #diffViewer .remove');
+    let diffIndex = 0;
+    setInterval(() => {
+        if (isPaused) return;
+        if (diffIndex === 0) {
+            diffLines.forEach(l => l.classList.remove('highlight'));
+        }
+        if (diffIndex < diffLines.length) {
+            diffLines[diffIndex].classList.add('highlight');
+        }
+        diffIndex++;
+        if (diffIndex > diffLines.length + 2) diffIndex = 0;
+    }, 800);
+
+    // 5. Metric Logic
+    const counterEl = document.getElementById('metricCounter');
+    const sparkline = document.getElementById('sparkline');
+    let val = 99.00;
+    
+    function resetMetric() {
+        if (isPaused) return;
+        val = 99.00;
+        sparkline.classList.remove('draw');
+        // trigger reflow
+        void sparkline.offsetWidth;
+        sparkline.classList.add('draw');
+        
+        let interval = setInterval(() => {
+            if (isPaused) {
+                clearInterval(interval);
+                return;
+            }
+            val += 0.05;
+            counterEl.textContent = val.toFixed(2) + '%';
+            if (val >= 99.99) {
+                counterEl.textContent = '99.99%';
+                clearInterval(interval);
+            }
+        }, 50);
+    }
+    resetMetric();
+    setInterval(resetMetric, 4000);
+
+    // 6. Spotlight Logic
+    const spotlightWrapper = document.getElementById('spotlight');
+    setInterval(() => {
+        if (isPaused) return;
+        spotlightWrapper.classList.toggle('active');
+    }, 3000);
+
+</script>
+</body>
+</html>

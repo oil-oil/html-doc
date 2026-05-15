@@ -1,0 +1,4 @@
+interface:
+  display_name: "HTML Doc"
+  short_description: "Create readable HTML docs"
+  default_prompt: "Use $html-doc when Markdown is too flat for a review artifact. Create simple JSON for comparisons, flows, architecture maps, state changes, diffs, evidence boards, nested structures, or lightweight editors, then render it with the bundled script."
