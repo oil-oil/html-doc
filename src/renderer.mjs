@@ -6,9 +6,9 @@ import { fileURLToPath } from "node:url";
 
 let _currentGlossary = {};
 const moduleDir = path.dirname(fileURLToPath(import.meta.url));
-const logoDataUri = readAssetDataUri("../assets/brand/html-doc-logo-toolbar.png", "image/png");
-const faviconDataUri = readAssetDataUri("../assets/brand/html-doc-favicon.png", "image/png");
-const appleTouchDataUri = readAssetDataUri("../assets/brand/html-doc-apple-touch.png", "image/png");
+const logoDataUri = readAssetDataUri("../assets/brand/html-doc-logo-toolbar-07.png", "image/png");
+const faviconDataUri = readAssetDataUri("../assets/brand/html-doc-favicon-07.png", "image/png");
+const appleTouchDataUri = readAssetDataUri("../assets/brand/html-doc-apple-touch-07.png", "image/png");
 
 export function renderArtifact(doc) {
   _currentGlossary = (doc.meta || {}).glossary || {};
