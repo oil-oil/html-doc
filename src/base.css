@@ -1287,7 +1287,7 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
 .sp-title { font-size: 1.35rem; font-weight: 720; color: var(--text-main); line-height: 1.25; margin-bottom: var(--space-2); }
 .sp-cell.sp-primary .sp-title { font-size: 2rem; }
 .split-panel.sp-tb .sp-cell.sp-top .sp-title { font-size: 1.75rem; }
-.sp-body { font-size: var(--fs-sm); color: var(--text-muted); line-height: 1.65; }
+.sp-body { font-size: var(--fs-base); color: var(--text-muted); line-height: 1.65; }
 .sp-meta { font-size: var(--fs-xs); color: var(--text-faint); margin-top: var(--space-2); }
 .sp-list { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
 .sp-list li { font-size: var(--fs-sm); color: var(--text-muted); padding-left: var(--space-3); position: relative; line-height: 1.5; }

@@ -82,9 +82,12 @@ node scripts/render-html-doc.mjs examples/cicd-review.md dist/cicd-review.html
 5. **Vary visual rhythm**. Alternate anchor blocks (`hero`, `splitPanel quote`, `metrics`) with detail blocks (`splitPanel`, `flow`, `matrix`). Readers lose engagement after three blocks of equal visual weight — aim for one anchor every 2–3 detail blocks.
 6. **Use inline emphasis naturally**. Use backtick code and `**bold**` for identifiers and conclusions. Use `[[Term|definition]]` for inline tooltips, or define `meta.glossary` for terms used in 3+ places.
 7. **Let the renderer own the visual system**. Block content describes structure, relationships, and interactions; the renderer handles all styling automatically.
-8. **Make `motionStage` show a real UI, not a flowchart**. Objects should look like recognizable interface elements — phone screens, app windows, metric cards, status badges. Each step must change something visible: content, status color, position, or opacity. Steps that only update the caption while the stage stays static add nothing.
+8. **Reach for `motionStage` whenever a workflow has visible state changes**. A 5-step animation showing a real UI in motion communicates more than 5 splitPanel cells of text describing the same thing. If content describes a product's feature flow, a user's journey through an interface, or any sequence where something changes on screen — motionStage is almost always the right call over splitPanel + body text.
+   - **Trigger signals**: "how does X work?", feature walkthroughs, before/after UI states, AI model loops, checkout flows, editor workflows, status progressions
+   - **Objects must look like real UI**: phone screens, app windows, metric cards, status badges — not abstract colored boxes
+   - Each step must change something visible: content, status color, position, or opacity. Steps that only update the caption while the stage stays static add nothing.
    - BAD: three colored boxes moving left to right with step labels like "Step 1 → Step 2 → Step 3"
-   - GOOD: a phone screen showing a cart, a window showing a payment form, a badge updating from "待支付" to "支付成功", a metric revealing ETA — each step changes real UI state
+   - GOOD: an editor window showing draft text, a badge updating to "AI 检查中", a score metric fading in at 78 — each step reveals real product behavior
 9. **Add export actions where they improve review**. Reviews, diffs, editors, boards, and matrices often benefit from copy buttons. Add `embed` when the reader benefits from seeing a source or live page inline.
 
 ## Component Choice
@@ -124,7 +127,7 @@ Pick the component whose shape matches the content's structure.
 **Architecture & visual**
 - `layeredArchitecture`: service map with swim lanes and routed arrows — use when spatial tier (layer, zone) carries meaning
 - `stage`: free-position diagram or UI sketch — use when layout geometry itself is the content
-- `motionStage`: step-by-step UI demo — each step must change a visible object (content, status, position, opacity); never use for static flowcharts
+- `motionStage`: step-by-step UI demo — **default choice for any product feature walkthrough, user journey, or UI state sequence**; objects must look like real interface elements; each step changes something visible; never use for static flowcharts
 - `relationshipMap`: directed connections — use when direction and cardinality tell the story, not spatial position
 
 **Narrative & evidence**
