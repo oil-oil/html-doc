@@ -74,7 +74,7 @@ node scripts/render-html-doc.mjs examples/cicd-review.md dist/cicd-review.html
 ## Core Principles
 
 1. **Write Markdown, render HTML**. Author a `.md` file with YAML frontmatter and `~~~componentType` fenced blocks. Hand-written HTML is only useful when debugging the renderer.
-2. **Choose by information shape**. Pick components for structure, relationships, sequence, comparison, change, evidence, or editable values.
+2. **Choose by information shape — then think in the component's native language**. Pick components for structure, relationships, sequence, comparison, change, evidence, or editable values. But selecting the right component is only the first step. Each component has its own grammar: `matrix` thinks in row–column intersections; `splitPanel` thinks in contrast and juxtaposition; `motionStage` thinks in state machines — what objects exist, what events trigger transitions, what visible thing changes at each step. After choosing a component, restructure the information to fit that grammar. Pouring the original text into a new container without restructuring it produces the wrong result in a fancier wrapper.
 3. **Title carries the message**. Write each block's title so it delivers the key insight on its own. If the body restates what the title already says, delete the body — body copy exists only for context the title cannot hold. Leave out renderer commentary such as "this page uses stage" or "visual component".
    - BAD: `"body": "本文档使用 motionStage 展示发布流程，便于可视化理解。"`
    - GOOD: `"body": "草稿到三平台发布的完整链路。"` — or omit `body` entirely.
