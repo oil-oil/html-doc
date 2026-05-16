@@ -75,11 +75,11 @@ node scripts/render-html-doc.mjs examples/cicd-review.md dist/cicd-review.html
 
 1. **Write Markdown, render HTML**. Author a `.md` file with YAML frontmatter and `~~~componentType` fenced blocks. Hand-written HTML is only useful when debugging the renderer.
 2. **Choose by information shape**. Pick components for structure, relationships, sequence, comparison, change, evidence, or editable values.
-3. **Keep visible text about the subject**. Leave out renderer commentary such as "this page uses stage" or "visual component".
+3. **Title carries the message**. Write each block's title so it delivers the key insight on its own. If the body restates what the title already says, delete the body — body copy exists only for context the title cannot hold. Leave out renderer commentary such as "this page uses stage" or "visual component".
    - BAD: `"body": "本文档使用 motionStage 展示发布流程，便于可视化理解。"`
    - GOOD: `"body": "草稿到三平台发布的完整链路。"` — or omit `body` entirely.
 4. **Turn flat text into visible structure**. When a block reads like a paragraph or list, recast it as a table, flow, comparison, or annotation. Keep copy direct and specific — omit filler and body text when the title already states the context.
-5. **Use `matrix` for discrete objects needing column comparison** across 4+ rows and 3+ columns. Prefer `variantGrid` for ≤ 3 items, `flow` or `timeline` for sequences.
+5. **Vary visual rhythm**. Alternate anchor blocks (`hero`, `splitPanel quote`, `metrics`) with detail blocks (`splitPanel`, `flow`, `matrix`). Readers lose engagement after three blocks of equal visual weight — aim for one anchor every 2–3 detail blocks.
 6. **Use inline emphasis naturally**. Use backtick code and `**bold**` for identifiers and conclusions. Use `[[Term|definition]]` for inline tooltips, or define `meta.glossary` for terms used in 3+ places.
 7. **Let the renderer own the visual system**. Block content describes structure, relationships, and interactions; the renderer handles all styling automatically.
 8. **Make `motionStage` show a real UI, not a flowchart**. Objects should look like recognizable interface elements — phone screens, app windows, metric cards, status badges. Each step must change something visible: content, status color, position, or opacity. Steps that only update the caption while the stage stays static add nothing.
@@ -89,26 +89,52 @@ node scripts/render-html-doc.mjs examples/cicd-review.md dist/cicd-review.html
 
 ## Component Choice
 
-Use the narrowest component that fits:
+Pick the component whose shape matches the content's structure.
 
-- `hero`: document title, premise, tags
-- `metrics`: key numbers and trends
-- `chart`: data series as bar, line, or area chart
-- `flow`: short process or simple state chain
-- `timeline`: time-ordered events
-- `matrix`: wide comparison or decision table
-- `diffReview`: code/config diff with findings
-- `codeAnnotation`: code snippet with notes
-- `layeredArchitecture`: service map with lanes and routed arrows
-- `stage`: static free-position diagram or UI sketch
-- `motionStage`: step-by-step visual demo with persistent objects
-- `relationshipMap`: source-to-target relationships
-- `structureTree`: nested data or outline
-- `emphasisPanel`: highlight entities inside text
-- `evidenceBoard`: claims, evidence, rules, outputs
-- `variantGrid`: side-by-side options
-- `kanban`: grouped issue, task, risk, or feedback buckets
-- `formEditor`, `sliderLab`, `promptEditor`: one-off editing or tuning surfaces
-- `splitPanel`: PPT-style spatial layouts — left/right split (`lr`/`rl`), top/bottom (`tb`), multi-column (`2col`/`3col`/`4col`), or centered quote (`quote`)
-- `crossRef`: primary document with highlighted links and bezier arrows to referenced files
-- `embed`: iframe preview with fallback link
+**Opening & numbers**
+- `hero`: opening block — title, premise, tags. Use as the first block in every document.
+- `metrics`: 2–6 key numbers with trends — use when numbers anchor the story before detail
+- `chart`: time-series or category comparison — use when the pattern across values matters more than individual figures
+
+**Sequence**
+- `flow`: 3–7 ordered steps or states — stop at 7 nodes; each node should change something
+- `timeline`: time-ordered events with dates — prefer `flow` when dates are absent or irrelevant
+
+**Spatial layout**
+- `splitPanel`: PPT-style layouts — choose variant by the shape of the content:
+
+  | Variant | Choose when |
+  |---------|-------------|
+  | `quote` | Single powerful statement — brand moment, design principle, philosophy |
+  | `4col` / `3col` | 3–5 parallel items of roughly equal content weight (steps, features, personas) |
+  | `2col` | Two complementary or contrasting views; concept vs implementation |
+  | `lr` 1:2 ratio | Left is a short label or context; right holds the list or detail |
+  | `lr` 2:1 ratio | Left is the full explanation; right is highlights or a short summary |
+  | `tb` | Top row is the concept or premise; bottom row is example or implementation |
+
+**Comparison & decision**
+- `matrix`: 4+ rows × 3+ columns — dense cross-comparison; add `sortable` for filtering. Prefer `variantGrid` for ≤ 3 items.
+- `variantGrid`: 2–3 side-by-side options — use when the reader needs to pick one; use `matrix` when attributes matter more than the choice itself
+
+**Code & technical review**
+- `diffReview`: code/config diff with findings — use when a human must approve a specific change
+- `codeAnnotation`: single snippet with line notes — use when explaining how the code works
+- `crossRef`: primary document linking to referenced files — use when tracing a feature across a codebase
+
+**Architecture & visual**
+- `layeredArchitecture`: service map with swim lanes and routed arrows — use when spatial tier (layer, zone) carries meaning
+- `stage`: free-position diagram or UI sketch — use when layout geometry itself is the content
+- `motionStage`: step-by-step UI demo — each step must change a visible object (content, status, position, opacity); never use for static flowcharts
+- `relationshipMap`: directed connections — use when direction and cardinality tell the story, not spatial position
+
+**Narrative & evidence**
+- `structureTree`: nested data or outline — use when hierarchy depth is the point
+- `emphasisPanel`: annotated prose — use when entities inside running text need highlighting and side-panel detail
+- `evidenceBoard`: claims, evidence, rules, outputs — use for audit trails and compliance reasoning
+- `kanban`: status-grouped tasks, risks, or feedback — use when grouping by status matters; use `matrix` when attributes matter more than status
+
+**Editing surfaces**
+- `formEditor`, `sliderLab`, `promptEditor`: lightweight editing or tuning surfaces — use when the reader needs to copy or adjust output
+
+**Utility**
+- `embed`: iframe preview with fallback link — use when the reader benefits from seeing a live page inline
