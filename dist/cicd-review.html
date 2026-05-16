@@ -74,7 +74,7 @@ button:hover { border-color: var(--text-main); }
   gap: var(--space-4);
   align-items: center;
   min-height: 44px;
-  padding: var(--space-2) var(--space-6);
+  padding: 7px var(--space-6);
   background: rgba(249, 248, 246, .94);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border-base);
@@ -86,16 +86,65 @@ button:hover { border-color: var(--text-main); }
   min-width: 0;
 }
 .toolbar-logo {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   flex: 0 0 auto;
   display: block;
 }
-.toolbar-title { display: flex; align-items: baseline; gap: var(--space-3); }
-.toolbar-title strong { font-family: var(--font-human); font-weight: 500; font-size: var(--fs-md); }
-.toolbar-title span { color: var(--text-muted); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .04em; }
-.toolbar-actions { display: flex; gap: var(--space-2); align-items: center; }
-.toolbar button.primary { background: var(--text-main); color: white; border-color: var(--text-main); border-radius: 999px; padding-inline: 14px; }
+.toolbar-title {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+.toolbar-title strong {
+  display: block;
+  max-width: min(34vw, 220px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-human);
+  font-weight: 500;
+  font-size: var(--fs-md);
+}
+.toolbar-menu {
+  position: relative;
+  flex: 0 0 auto;
+}
+.toolbar-menu summary {
+  list-style: none;
+  user-select: none;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border-radius: var(--radius);
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.toolbar-menu summary::-webkit-details-marker { display: none; }
+.toolbar-menu[open] summary { border-color: var(--text-main); }
+.toolbar-menu-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 7px);
+  z-index: 40;
+  display: grid;
+  gap: 6px;
+  width: min(260px, calc(100vw - 24px));
+  padding: var(--space-2);
+  border: 1px solid var(--border-base);
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 10px 24px rgba(44,43,41,.08);
+}
+.toolbar-menu-panel button {
+  width: 100%;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.toolbar-menu-panel button.primary {
+  background: var(--text-main);
+  color: white;
+  border-color: var(--text-main);
+}
 .artifact-shell {
   display: grid;
   grid-template-columns: var(--nav-width) minmax(0, var(--content-max));
@@ -465,8 +514,15 @@ pre { font: 12px/1.55 var(--font-mono); color: var(--text-main); }
 .diff-remove { background: #FAEAEA; color: #AD3232; }
 .diff-context { color: #6B6965; }
 .diff-num { width: 30px; user-select: none; opacity: .5; flex: 0 0 auto; }
+.layered-arch-scroll {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
 .layered-arch {
   position: relative;
+  width: max(100%, var(--arch-width, 1180px));
   min-height: var(--arch-height, 620px);
   border: 1px solid var(--border-base);
   overflow: hidden;
@@ -558,6 +614,9 @@ pre { font: 12px/1.55 var(--font-mono); color: var(--text-main); }
   color: var(--text-muted);
   font: 11px/1.35 var(--font-mono);
   white-space: nowrap;
+  max-width: 112px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .arch-legend {
   position: absolute;
@@ -929,9 +988,13 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 5px; height
 .motion-wrap {
   border: 1px solid var(--border-base);
   background: var(--bg-surface);
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 .motion-canvas {
   position: relative;
+  width: max(100%, var(--motion-width, 100%));
   aspect-ratio: var(--motion-ratio, 16 / 9);
   min-height: 390px;
   overflow: hidden;
@@ -963,9 +1026,20 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 5px; height
   background: rgba(255,255,255,.72);
   color: var(--text-main);
   overflow: hidden;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  overflow-wrap: break-word;
+  word-break: normal;
   transition: border-color .32s ease, background-color .32s ease;
+}
+.motion-surface strong,
+.motion-surface p,
+.motion-surface [data-motion-title],
+.motion-surface [data-motion-body],
+.motion-surface [data-motion-label] {
+  white-space: pre-line;
+}
+.motion-surface strong {
+  display: block;
+  line-height: 1.28;
 }
 @keyframes motion-text-in {
   from { opacity: 0; transform: translateY(5px); }
@@ -1100,6 +1174,7 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 5px; height
   .motion-text-in { animation: none; }
 }
 .embed-wrap {
+  position: relative;
   border: 1px solid var(--border-base);
   background: var(--bg-surface);
 }
@@ -1110,12 +1185,28 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 5px; height
   display: block;
   background: white;
 }
-.embed-fallback {
-  border-top: 1px solid var(--border-base);
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
+.embed-open-link {
+  position: absolute;
+  top: 50%;
+  right: -1px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 52px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-base);
+  border-right: none;
+  border-radius: var(--radius) 0 0 var(--radius);
+  color: var(--text-faint);
+  font-size: 14px;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity .18s ease, color .18s ease;
 }
+.embed-wrap:hover .embed-open-link { opacity: 1; }
+.embed-open-link:hover { color: var(--text-main); }
 .stage-wrap {
   position: relative;
   width: 100%;
@@ -1167,6 +1258,7 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 5px; height
 }
 .stage-panel p {
   line-height: 1.42;
+  white-space: pre-line;
 }
 .stage-panel-title {
   font-size: var(--fs-xs);
@@ -1184,6 +1276,7 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 5px; height
   max-width: 100%;
   max-height: 100%;
   overflow: hidden;
+  white-space: pre-line;
 }
 .stage-note {
   height: 100%;
@@ -1194,6 +1287,7 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 5px; height
   padding: var(--space-2);
   font: 12px/1.5 var(--font-human);
   color: var(--text-muted);
+  white-space: pre-line;
 }
 .stage-panel code,
 .stage-note code,
@@ -1366,12 +1460,16 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
   .code-wrap, .diff-wrap, .form-grid { grid-template-columns: 1fr; }
   /* crossRef */
   .crossref-layout { grid-template-columns: 1fr; }
+  .crossref-arrows { display: none; }
+  .crossref-refs { gap: var(--space-3); }
+  .crossref-section pre,
+  .crossref-ref pre { max-height: none; }
   /* vu-* legacy components */
   .vu-rel-grid { grid-template-columns: 1fr; gap: var(--space-4); }
   .vu-rel-lines { display: none; }
   .vu-emphasis-grid { grid-template-columns: 1fr; }
-  /* layeredArchitecture — scroll instead of clip */
-  .layered-arch { overflow: auto; }
+  /* layeredArchitecture — keep spatial diagrams readable by scrolling the canvas */
+  .layered-arch { min-width: var(--arch-width, 980px); }
   /* motionStage canvas */
   .motion-canvas { min-height: 280px; }
   /* splitPanel: 3col/4col → 2col; lr stays as-is until 600px */
@@ -1383,7 +1481,26 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
 
 @media (max-width: 600px) {
   /* Toolbar */
-  .toolbar { flex-wrap: wrap; gap: var(--space-2); padding-inline: var(--space-3); }
+  .toolbar {
+    flex-wrap: nowrap;
+    gap: var(--space-2);
+    padding-inline: var(--space-3);
+  }
+  .toolbar-logo {
+    width: 22px;
+    height: 22px;
+  }
+  .toolbar-title strong {
+    max-width: 46vw;
+    font-size: var(--fs-sm);
+  }
+  .toolbar-menu summary {
+    padding: 4px 9px;
+    font-size: var(--fs-sm);
+  }
+  .toolbar-menu-panel {
+    right: calc(-1 * var(--space-1));
+  }
   /* splitPanel: all layouts → single column */
   .split-panel.sp-lr,
   .split-panel.sp-columns { grid-template-columns: 1fr !important; }
@@ -1407,11 +1524,9 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
   <header class="toolbar">
     <div class="toolbar-brand">
       <img class="toolbar-logo" src="data:image/png;base64,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" alt="" aria-hidden="true">
-      <div class="toolbar-title"><strong>CI/CD 发布管道架构审查</strong><span>v2.3 → v2.4 升级评估</span></div>
+      <div class="toolbar-title" title="v2.3 → v2.4 升级评估"><strong>CI/CD 发布管道架构审查</strong></div>
     </div>
-    <div class="toolbar-actions">
-      
-    </div>
+    
   </header>
   <main class="artifact-shell">
     <aside class="side-nav"><a href="#hero-0">CI/CD 发布管道 v2.4</a><a href="#chart-2">发布成功率趋势</a><a href="#pipeline-arch">发布管道架构</a><a href="#canary-flow"><span class="tt">Canary<span class="tt-b">金丝雀发布，先将新版本推送到少量实例上观察稳定性再扩量</span></span> 发布流程</a><a href="#timeline-5">v2.4 发布事件轴</a><a href="#risk-matrix">风险评估矩阵</a><a href="#decisionTree-7">发布决策树</a><a href="#diffReview-8">关键配置变更 — livenessProbe 超时</a><a href="#kanban-9">发布前检查清单</a></aside>
@@ -1462,14 +1577,15 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
     </div>
     <button class="copy-mini" data-copy-block="pipeline-arch">Copy</button>
   </div>
-  <div class="layered-arch" style="--arch-height:560px">
-    <section class="arch-lane" style="--x:28px;--w:267.5px">
+  <div class="layered-arch-scroll">
+  <div class="layered-arch" style="--arch-width:1180px;--arch-height:560px">
+    <section class="arch-lane" style="--x:28px;--w:243.5px">
       <div class="arch-lane-title">CI 层<span>构建 / 测试 / 打包</span></div>
-    </section><section class="arch-lane" style="--x:313.5px;--w:267.5px">
+    </section><section class="arch-lane" style="--x:321.5px;--w:243.5px">
       <div class="arch-lane-title">制品层<span>镜像仓库 / 版本管理</span></div>
-    </section><section class="arch-lane" style="--x:599px;--w:267.5px">
+    </section><section class="arch-lane" style="--x:615px;--w:243.5px">
       <div class="arch-lane-title">CD 层<span>灰度 / 发布 / 回滚</span></div>
-    </section><section class="arch-lane" style="--x:884.5px;--w:267.5px">
+    </section><section class="arch-lane" style="--x:908.5px;--w:243.5px">
       <div class="arch-lane-title">可观测层<span>指标 / 告警 / 日志</span></div>
     </section>
     <svg class="arch-edges" viewBox="0 0 1180 560" preserveAspectRatio="none">
@@ -1478,47 +1594,48 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
           <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--accent-primary)"></path>
         </marker>
       </defs>
-      <path class="arch-edge " d="M 161.75 200 L 161.75 230" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge " d="M 161.75 308 L 161.75 338" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge " d="M 278.5 377 L 304.5 377 L 304.5 161 L 330.5 161" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge " d="M 564 161 L 590 161 L 590 161 L 616 161" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge " d="M 732.75 200 L 732.75 230" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge " d="M 732.75 308 L 732.75 338" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge dashed" d="M 849.5 377 L 875.5 377 L 875.5 161 L 901.5 161" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge dashed" d="M 1018.25 200 L 1018.25 230" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge dashed" d="M 901.5 269 L 875.5 269 L 875.5 161 L 849.5 161" marker-end="url(#arch-arrow-pipeline-arch)"></path>
+      <path class="arch-edge " d="M 149.75 200 L 149.75 230" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge " d="M 149.75 308 L 149.75 338" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge " d="M 254.5 377 L 296.5 377 L 296.5 161 L 338.5 161" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge " d="M 548 161 L 590 161 L 590 161 L 632 161" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge " d="M 736.75 200 L 736.75 230" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge " d="M 736.75 308 L 736.75 338" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge dashed" d="M 841.5 377 L 883.5 377 L 883.5 161 L 925.5 161" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge dashed" d="M 1030.25 200 L 1030.25 230" marker-end="url(#arch-arrow-pipeline-arch)"></path><path class="arch-edge dashed" d="M 925.5 269 L 883.5 269 L 883.5 161 L 841.5 161" marker-end="url(#arch-arrow-pipeline-arch)"></path>
     </svg>
-    <span class="arch-step" style="--x:256.5px;--y:207px">1</span><span class="arch-edge-label" style="--x:284.5px;--y:207px">trigger</span><span class="arch-step" style="--x:256.5px;--y:315px">2</span><span class="arch-edge-label" style="--x:284.5px;--y:315px">on success</span><span class="arch-step" style="--x:254.5px;--y:102px">3</span><span class="arch-edge-label" style="--x:282.5px;--y:102px">push image</span><span class="arch-step" style="--x:540px;--y:102px">4</span><span class="arch-edge-label" style="--x:568px;--y:102px">detect tag</span><span class="arch-step" style="--x:827.5px;--y:207px">5</span><span class="arch-edge-label" style="--x:855.5px;--y:207px">deploy</span><span class="arch-step" style="--x:827.5px;--y:315px">6</span><span class="arch-edge-label" style="--x:855.5px;--y:315px">traffic shift</span><span class="arch-edge-label" style="--x:853.5px;--y:102px">metrics</span><span class="arch-edge-label" style="--x:1141px;--y:207px">threshold</span><span class="arch-edge-label" style="--x:853.5px;--y:102px">rollback</span>
-    <div class="arch-box api" style="--x:45px;--y:122px;--w:233.5px;--h:78px">
+    <span class="arch-step" style="--x:155.75px;--y:207px">1</span><span class="arch-edge-label" style="--x:177.75px;--y:207px">trigger</span><span class="arch-step" style="--x:155.75px;--y:315px">2</span><span class="arch-edge-label" style="--x:177.75px;--y:315px">on success</span><span class="arch-step" style="--x:274.5px;--y:261px">3</span><span class="arch-edge-label" style="--x:235.5px;--y:353px">push image</span><span class="arch-step" style="--x:568px;--y:153px">4</span><span class="arch-edge-label" style="--x:529px;--y:137px">detect tag</span><span class="arch-step" style="--x:742.75px;--y:207px">5</span><span class="arch-edge-label" style="--x:764.75px;--y:207px">deploy</span><span class="arch-step" style="--x:742.75px;--y:315px">6</span><span class="arch-edge-label" style="--x:764.75px;--y:315px">traffic shift</span><span class="arch-edge-label" style="--x:822.5px;--y:353px">metrics</span><span class="arch-edge-label" style="--x:1058.25px;--y:207px">threshold</span><span class="arch-edge-label" style="--x:864.5px;--y:245px">rollback</span>
+    <div class="arch-box api" style="--x:45px;--y:122px;--w:209.5px;--h:78px">
       <div class="label">api</div>
       <strong>GitHub Actions</strong>
       <p>PR merge 触发</p>
-    </div><div class="arch-box worker" style="--x:45px;--y:230px;--w:233.5px;--h:78px">
+    </div><div class="arch-box worker" style="--x:45px;--y:230px;--w:209.5px;--h:78px">
       <div class="label">worker</div>
       <strong>Build Worker</strong>
       <p>Docker 多阶段构建</p>
-    </div><div class="arch-box worker" style="--x:45px;--y:338px;--w:233.5px;--h:78px">
+    </div><div class="arch-box worker" style="--x:45px;--y:338px;--w:209.5px;--h:78px">
       <div class="label">worker</div>
       <strong>Test Runner</strong>
       <p>单测 + 集成测试</p>
-    </div><div class="arch-box data" style="--x:330.5px;--y:122px;--w:233.5px;--h:78px">
+    </div><div class="arch-box data" style="--x:338.5px;--y:122px;--w:209.5px;--h:78px">
       <div class="label">data</div>
       <strong>ECR</strong>
       <p>镜像存储与漏洞扫描</p>
-    </div><div class="arch-box api" style="--x:616px;--y:122px;--w:233.5px;--h:78px">
+    </div><div class="arch-box api" style="--x:632px;--y:122px;--w:209.5px;--h:78px">
       <div class="label">api</div>
       <strong>Argo CD</strong>
       <p>GitOps 控制器</p>
-    </div><div class="arch-box worker" style="--x:616px;--y:230px;--w:233.5px;--h:78px">
+    </div><div class="arch-box worker" style="--x:632px;--y:230px;--w:209.5px;--h:78px">
       <div class="label">worker</div>
       <strong>Canary Controller</strong>
       <p>流量 5% → 50% → 100%</p>
-    </div><div class="arch-box worker" style="--x:616px;--y:338px;--w:233.5px;--h:78px">
+    </div><div class="arch-box worker" style="--x:632px;--y:338px;--w:209.5px;--h:78px">
       <div class="label">worker</div>
       <strong>Kubernetes</strong>
       <p>滚动更新 + 健康检查</p>
-    </div><div class="arch-box data" style="--x:901.5px;--y:122px;--w:233.5px;--h:78px">
+    </div><div class="arch-box data" style="--x:925.5px;--y:122px;--w:209.5px;--h:78px">
       <div class="label">data</div>
       <strong>Prometheus</strong>
       <p>指标采集</p>
-    </div><div class="arch-box provider" style="--x:901.5px;--y:230px;--w:233.5px;--h:78px">
+    </div><div class="arch-box provider" style="--x:925.5px;--y:230px;--w:209.5px;--h:78px">
       <div class="label">provider</div>
       <strong>AlertManager</strong>
       <p>告警路由</p>
     </div>
     
+  </div>
   </div>
   </article>
 <article class="block" id="canary-flow" style="--span:12;">
@@ -1530,7 +1647,7 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
     </div>
     <button class="copy-mini" data-copy-block="canary-flow">Copy</button>
   </div><div class="motion-wrap" data-motion="canary-flow" data-index="0" data-autoplay="true">
-    <div class="motion-canvas" style="--motion-ratio:1180 / 460">
+    <div class="motion-canvas" style="--motion-width:1180px;--motion-ratio:1180 / 460">
       <div class="motion-object motion-window" data-motion-object="lb" data-status="" data-emphasis="" style="--x:4.2373%;--y:36.9565%;--w:16.9492%;--h:26.0870%;--opacity:1;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface">
       <div class="motion-window-bar"><span></span><span></span><span></span></div>
       
@@ -1769,7 +1886,7 @@ function escapeHtml(value) {
 function inlineRich(value) {
   const placeholders = [];
   const inlineCodePattern = new RegExp("\\x60([^\\x60\\n]+)\\x60", "g");
-  const text = String(value ?? "").replace(inlineCodePattern, (_, code) => {
+  const text = String(value ?? "").replace(/\\n/g, "\n").replace(inlineCodePattern, (_, code) => {
     const index = placeholders.push("<code>" + escapeHtml(code) + "</code>") - 1;
     return "@@HTML_DOC_INLINE_" + index + "@@";
   });

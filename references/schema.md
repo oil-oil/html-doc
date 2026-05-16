@@ -68,6 +68,7 @@ Keep this formatting short. Use components for structure and use inline emphasis
 | code/config diff | `diffReview` |
 | service lanes and request paths | `layeredArchitecture` |
 | static custom diagram with short labels | `stage` |
+| high-fidelity UI prototype or custom interaction canvas | standalone HTML from `references/prototype-html.md`, embedded with `embed` |
 | step-by-step visual demo with real state changes | `motionStage` |
 | source-to-target relationships | `relationshipMap` |
 | nested data or outline | `structureTree` |
@@ -249,7 +250,7 @@ Use `variant: "state"` for simple state chains:
 
 ### stage
 
-Use `stage` for static custom diagrams, UI sketches, ER-like relationships, and free-position flowcharts. It works best with short labels and clear spatial relationships. Paragraph-heavy UI mockups and complex hand-routed architecture usually read better as `layeredArchitecture`, `matrix`, `flow`, or `motionStage`.
+Use `stage` for static custom diagrams, UI sketches, ER-like relationships, and free-position flowcharts. It works best with short labels and clear spatial relationships. Paragraph-heavy UI mockups and complex hand-routed architecture usually read better as `layeredArchitecture`, `matrix`, `flow`, or `motionStage`. When the reader needs to inspect a real product surface, build a standalone HTML prototype with `references/prototype-html.md`, reuse the exported html-doc CSS, and embed it with `embed`.
 
 ```json
 {
@@ -483,6 +484,8 @@ Use `crossRef` to show how a primary document references other files, with highl
 `primary.sections[]` each take a `title` (optional) and `content` (preformatted text). `links[]` define which text strings inside `content` should be highlighted — the renderer finds each `text` occurrence and draws an arrow to the `references[]` entry whose `id` matches `to`. Each `references[].preview` is shown truncated; keep it representative but concise.
 
 ### embed
+
+Use `embed` for important external pages and local prototype pages. For custom UI prototypes, create a standalone HTML file, export shared CSS with `node scripts/export-html-doc-css.mjs dist/html-doc.css`, then embed the prototype URL.
 
 ```json
 {

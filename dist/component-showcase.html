@@ -74,7 +74,7 @@ button:hover { border-color: var(--text-main); }
   gap: var(--space-4);
   align-items: center;
   min-height: 44px;
-  padding: var(--space-2) var(--space-6);
+  padding: 7px var(--space-6);
   background: rgba(249, 248, 246, .94);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border-base);
@@ -86,16 +86,65 @@ button:hover { border-color: var(--text-main); }
   min-width: 0;
 }
 .toolbar-logo {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   flex: 0 0 auto;
   display: block;
 }
-.toolbar-title { display: flex; align-items: baseline; gap: var(--space-3); }
-.toolbar-title strong { font-family: var(--font-human); font-weight: 500; font-size: var(--fs-md); }
-.toolbar-title span { color: var(--text-muted); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .04em; }
-.toolbar-actions { display: flex; gap: var(--space-2); align-items: center; }
-.toolbar button.primary { background: var(--text-main); color: white; border-color: var(--text-main); border-radius: 999px; padding-inline: 14px; }
+.toolbar-title {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+.toolbar-title strong {
+  display: block;
+  max-width: min(34vw, 220px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-human);
+  font-weight: 500;
+  font-size: var(--fs-md);
+}
+.toolbar-menu {
+  position: relative;
+  flex: 0 0 auto;
+}
+.toolbar-menu summary {
+  list-style: none;
+  user-select: none;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border-radius: var(--radius);
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.toolbar-menu summary::-webkit-details-marker { display: none; }
+.toolbar-menu[open] summary { border-color: var(--text-main); }
+.toolbar-menu-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 7px);
+  z-index: 40;
+  display: grid;
+  gap: 6px;
+  width: min(260px, calc(100vw - 24px));
+  padding: var(--space-2);
+  border: 1px solid var(--border-base);
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 10px 24px rgba(44,43,41,.08);
+}
+.toolbar-menu-panel button {
+  width: 100%;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.toolbar-menu-panel button.primary {
+  background: var(--text-main);
+  color: white;
+  border-color: var(--text-main);
+}
 .artifact-shell {
   display: grid;
   grid-template-columns: var(--nav-width) minmax(0, var(--content-max));
@@ -465,8 +514,15 @@ pre { font: 12px/1.55 var(--font-mono); color: var(--text-main); }
 .diff-remove { background: #FAEAEA; color: #AD3232; }
 .diff-context { color: #6B6965; }
 .diff-num { width: 30px; user-select: none; opacity: .5; flex: 0 0 auto; }
+.layered-arch-scroll {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
 .layered-arch {
   position: relative;
+  width: max(100%, var(--arch-width, 1180px));
   min-height: var(--arch-height, 620px);
   border: 1px solid var(--border-base);
   overflow: hidden;
@@ -558,6 +614,9 @@ pre { font: 12px/1.55 var(--font-mono); color: var(--text-main); }
   color: var(--text-muted);
   font: 11px/1.35 var(--font-mono);
   white-space: nowrap;
+  max-width: 112px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .arch-legend {
   position: absolute;
@@ -929,9 +988,13 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 5px; height
 .motion-wrap {
   border: 1px solid var(--border-base);
   background: var(--bg-surface);
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 .motion-canvas {
   position: relative;
+  width: max(100%, var(--motion-width, 100%));
   aspect-ratio: var(--motion-ratio, 16 / 9);
   min-height: 390px;
   overflow: hidden;
@@ -963,9 +1026,20 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 5px; height
   background: rgba(255,255,255,.72);
   color: var(--text-main);
   overflow: hidden;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  overflow-wrap: break-word;
+  word-break: normal;
   transition: border-color .32s ease, background-color .32s ease;
+}
+.motion-surface strong,
+.motion-surface p,
+.motion-surface [data-motion-title],
+.motion-surface [data-motion-body],
+.motion-surface [data-motion-label] {
+  white-space: pre-line;
+}
+.motion-surface strong {
+  display: block;
+  line-height: 1.28;
 }
 @keyframes motion-text-in {
   from { opacity: 0; transform: translateY(5px); }
@@ -1100,6 +1174,7 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 5px; height
   .motion-text-in { animation: none; }
 }
 .embed-wrap {
+  position: relative;
   border: 1px solid var(--border-base);
   background: var(--bg-surface);
 }
@@ -1110,12 +1185,28 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 5px; height
   display: block;
   background: white;
 }
-.embed-fallback {
-  border-top: 1px solid var(--border-base);
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
+.embed-open-link {
+  position: absolute;
+  top: 50%;
+  right: -1px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 52px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-base);
+  border-right: none;
+  border-radius: var(--radius) 0 0 var(--radius);
+  color: var(--text-faint);
+  font-size: 14px;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity .18s ease, color .18s ease;
 }
+.embed-wrap:hover .embed-open-link { opacity: 1; }
+.embed-open-link:hover { color: var(--text-main); }
 .stage-wrap {
   position: relative;
   width: 100%;
@@ -1167,6 +1258,7 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 5px; height
 }
 .stage-panel p {
   line-height: 1.42;
+  white-space: pre-line;
 }
 .stage-panel-title {
   font-size: var(--fs-xs);
@@ -1184,6 +1276,7 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 5px; height
   max-width: 100%;
   max-height: 100%;
   overflow: hidden;
+  white-space: pre-line;
 }
 .stage-note {
   height: 100%;
@@ -1194,6 +1287,7 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 5px; height
   padding: var(--space-2);
   font: 12px/1.5 var(--font-human);
   color: var(--text-muted);
+  white-space: pre-line;
 }
 .stage-panel code,
 .stage-note code,
@@ -1366,12 +1460,16 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
   .code-wrap, .diff-wrap, .form-grid { grid-template-columns: 1fr; }
   /* crossRef */
   .crossref-layout { grid-template-columns: 1fr; }
+  .crossref-arrows { display: none; }
+  .crossref-refs { gap: var(--space-3); }
+  .crossref-section pre,
+  .crossref-ref pre { max-height: none; }
   /* vu-* legacy components */
   .vu-rel-grid { grid-template-columns: 1fr; gap: var(--space-4); }
   .vu-rel-lines { display: none; }
   .vu-emphasis-grid { grid-template-columns: 1fr; }
-  /* layeredArchitecture — scroll instead of clip */
-  .layered-arch { overflow: auto; }
+  /* layeredArchitecture — keep spatial diagrams readable by scrolling the canvas */
+  .layered-arch { min-width: var(--arch-width, 980px); }
   /* motionStage canvas */
   .motion-canvas { min-height: 280px; }
   /* splitPanel: 3col/4col → 2col; lr stays as-is until 600px */
@@ -1383,7 +1481,26 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
 
 @media (max-width: 600px) {
   /* Toolbar */
-  .toolbar { flex-wrap: wrap; gap: var(--space-2); padding-inline: var(--space-3); }
+  .toolbar {
+    flex-wrap: nowrap;
+    gap: var(--space-2);
+    padding-inline: var(--space-3);
+  }
+  .toolbar-logo {
+    width: 22px;
+    height: 22px;
+  }
+  .toolbar-title strong {
+    max-width: 46vw;
+    font-size: var(--fs-sm);
+  }
+  .toolbar-menu summary {
+    padding: 4px 9px;
+    font-size: var(--fs-sm);
+  }
+  .toolbar-menu-panel {
+    right: calc(-1 * var(--space-1));
+  }
   /* splitPanel: all layouts → single column */
   .split-panel.sp-lr,
   .split-panel.sp-columns { grid-template-columns: 1fr !important; }
@@ -1407,11 +1524,14 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
   <header class="toolbar">
     <div class="toolbar-brand">
       <img class="toolbar-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAYaElEQVR4nO1db4xdx1U/c+/7s+v137W9tmM7ThonaSpKSIJaIxVZqCDUKAWFyEKUllZUtBJ8qADxBYmiqoFKlA+IT4FPSJVQhZH40DZU/UC7QqFpmqSq2jgFO3FCbK/tOo4T/9l97917B52ZOTPnzMzd3bfZl0J5o8T73r1z5885Z875nTNn7gOYlmmZlmmZlmmZlmmZlmmZlv9vRW3kmRMnThSXL1/eyLM/tWVhYUGfPHmyAQA9yX6KSTb+U1LUpCpjXX3kyJGZ7XNzH66q6k5okN1NYdlSaKqTPIdyYar4axoarGtu0HOmNL5aAaC1AqU1FBHfG+xYK9+gUrqBBsxAlFaglTa3GvyvgaIoeH9uBNh2aeqZquaWuy/7E+MLY7D3ysLOt9b69L7Tp7+yCFC10KGVqOspZoz3HLnn3Z0t5T8VpXovaG2exj+hL2qO9W0+KvoPtKir7fOmLeVHbVtxD4ii6b9wS/natm3TlDJN4nd729W2gxXTx/thTO6amIMcRKhpR2H6deMvNHy3urV84sVXXnmVaLYZDDB1Dhw4MLt9+7ZnO53OfVU1GiksuTk5QhBZ7GdP/TAFO3PwTAi0bB1aaJdXY1f8YIiwUZ++XSkExFEapyGoGEO0uH3jWLcx3RZloTtl2R0Nh0//7M89+IGTJ0/q9TCgs1aF48ePl4uLi9Xc3NyHyrK4rxqNRoVS3UIVUDc11HXtJY5PFCcTS5afrCAg5K8JWYwqRPTjz9gVEC5Y6eRNh3VoxsgkyIpU1F8L7bFu06B2LKAsS8OI0WhUdbqdY6dOff8YADwFACVqp7fFACplWd6rlLJ9FwoGwwF0u13YtWveMAEnIpY7Gz2pBq9mcssGUqYZxmbWQvy8ZJR8wgqHrS+H17b43QhaNDhnkm40rAwGUFcjxwTDfV0Nm7uRAcePH1eLi4uwKQxoVKO1VqooFIxGFczPz8MTT/wdHDp8CEaDIaiiyC1uPymm2b1ZAJ1ezy6I7OKJV1faT6jJGMDVobNhwvYIuybbDd80NE0DvV4fzp07D5/+9Kfg2rU3oNvpmNaDglq7rJ8BqGlK2/xgZQXe9a674IEHH4K6GgCqIzHdSA3EhRtLaMML0fU8FHmHSjLGMJq9C/vg8OHDcPnyJej1urzC5jIASWyWmDU4UFcVVKMBVNXIGS9EeY1VM90u6NEIoMHK5skgcag3y9Lozmo4dEyISOv1diTZft5kAdHYkmnm64eJdmZ1BLHHvnX4y+uK5mK1GqqURWXogkIY28FNZYAx5zgOtsDKooRa4dKwk1IzswB1BfWPL0Jnz37Q/RL0YAUAV4iZKEB/dhZu3ngLRsMB7Jzfg4bLGDBpKW0fAsnQajFfCP9zxRD+WtpyleHuE+GVU5fEIEN8voqdssJH/LBSWIqfUJCUIT4nfK02nQHGx/EIgnemjaSr3gwMX/4RXPzin0K19Bp09h2G/X/yBejfdQ80w4F5otefgWeffgoWv/EkDAcrcP9D74dffuTXPBohQSOwaU0E6TPSw9Yw+wpMOnOgSHx2Rj086iAwZzi1KUhooTQNx9CArQ5DD/GIrbVOso5R0cNDGnNAN6h+Lv3N5+Dm809DMxzBre99G378t58H3TSmXrfXg6Vzr8FXTn4Zrr3xhjHk3/z61+D7330Guv0Zi6c98XFCNCmSZO7GORbR5B344YIRagamBCXD/YUwKUtIbmqJnLZv0xtNnhWh5PBLWahNZwB5FMRtMZmyA831N6FeOgfd+b1Gz5fze2F44VVoblxHowFF2YGLS+dhOBjA7OwWKIsCZmZnYencOQtVAzSKphUb4NgcOxXi9X2CecK4mTqKoUqKnUJBolvyS/bxgoxcrY23H1wz4ZdggPwfnElVQbFjJ3TvvBtGly8ZyFRdWoL+XfdBsX2n+V6PhnDo9iOwZes2uHnjOoyGI2MH7jh6FC1zkMRoEoJwTpw9guUl+i71P10RayxRp0a4M2MQZJd+HYOu4xnf8W2A9ahCEe66VQP7/vjzAN0ejM7+F8z9/C/Cwmf+DEBbTxnR0t59B+Cx3/44fPPrXzXOywPv+zC85/4HjD1A5y6nLKSLy/wBFennCNHKmJNsU5Kcajs1Qw3xqfIPhLoiM+j/IF3qVZ3fDTNAjENMr1CgqyF0Fg7AoS/8PTTX34Ji2w7Q9cjCUVyeqoDhcAXe8zPvhbvvvRfqpjEqCIkfEyPrGrQ6AjERiUu5+NOqDZlndGsdq+pyYzP0YCsgWiSb5AeUbn4I9Sls0DTQoPpwk9WDAWi9AoB+wK3rdtAo2QZl2gEuL99y0A1g+eZN89kPm8H9WMcEBJK/54nLxSShFFthbVwWYpYWa4/D+sL5xytXQbn5jpizQr6gWim7fRMDcfiNufkkcbGDZC6mClzFQsccJjKy/nGmh6hfhlzE8+kcohhF9Kzog13Lx0LstaILZdmJ2p+MCgpGXilYWVmBCxfOOxWCGN6HCeUTbPV7c0oiq1ZRB9BCKP95DWKn1JYOlo9DMapyeiftRlgM/RZAk9c3tAhu33hl/QxoQKsO2pcGZmdn4aWXX4KHH/6QGQhi+NjvDE4Dk1In+eFftfo0hSA6Y2uWvw0D8+ti0fAPYsOG5Me1wyNxUZGoLB019ouRAPyOsbGZ2RmjjkoooR7DERtnBXD3xWB9xPQG/2KoQWNIms8gMyn3bxLfz/HNqzOGaJBehTLhb4xG2vhLA2WHqwDnCzgJD9IcvINVDTwLgYjxemPudveUgrqqDR1MLb8nYjcBJgtDFZgYzs0bN01gTkg21xa+OhHFfRcqBCKTQIRzkNHuWVomo3ZtapjbMgf9ft8BgAKuXXsz9OkIItSfEAamhth4pUaiLdIw5pgUfBVt27YVik7HgBI3is1HQVBgfMsGBlDy9+8/AL/ysV+FxmzGhGBasnLZpAMxOcbXAimyy2I14LN1XRmd+73nn4cXXvghdMoSZrfMwqO/8Rh0e12zKvLWIVKPfmMoMIIivXYTiNSaC60zPEDFRHULBWWnC08++TW4euUKdGglTiQaisJmAmYKhqMR3H777fDZz/45/CTKX3/xr+CZ73wHduzYDlu3boW/ePxxg5N/UuWHP/gBXLywBL1ez11Z/1jW7we49AvTPMby6wpGg2UYVZVXMabkLCgVH0KMl4qWnWWQK5a6amB2bisMhwNjhBsjEAVcvfq6YQTaBrIBPmqqM+Ni26e0Oyw7Zp+TjAEJR82+Bu6LozPqBHScMt6aMWFaUhkaOp2uJYIfIDdddrDWbY+xOqOuZgEVuhOFmQMxKuN3IO7m/pK95qTOtZVhv2eM7JfXy0PXyGJ5xuCnTqdkvKVP9eQy3cxwmCcY36V/nbbntGWDZxcV33VxwTFupLX8KGyJz2rgRAusTwpvkoVz+Ga+DHjJfttmG9/XgHu3E2BAiozzQ+NXZQ0iesZXgIgxfuWE1SXJTHCwDfLKi5hgF5KwgluvE8at5ti1OI7OgHtD3s6zt78COCbPDsQPlE+NK4RYz7KiomvMibKbIlS45k4JkrqEuJHCmUyLro2oMY7KipG4wpPG9BhbkuMn23L6CDmL9XZQI7GsBadIZTiZjt0IVnSZiE8bIZxkHFba3ki6CYJ6fOuf4POwchAU1JqF7027uCSss4wPXFmnQhJ9ZoEra06ApDKqw1GLp2r7lGhLRbQUx46oOe9ZyxaEMuX9ci8sNthCdsYJQG88FmT8gBQ50ADD2jZpGhRmzvr+4kGwYuMo47JYArpyjcberPgeqzKKJbANdpPCgn9iZEOdpgjau4mc0GRLGKRWbyNrf0MbMvnilnJRmAyxwWAg7pgG4rxN4HqTMIjtBp2axuSeWu+WEzzJeOaINixJb8iLRru4fWBO1oRF3zFNgLx/vxnv9oezUMOtOvRGYGIqaDU2mGBZAf/2r1+F0y+egl4fiWg2kx1icXEjTwTtHzUhAB9LAVjYtw8++Mijrg2JTcLWdJr+66mLhO/PwMrpF2Hpc38IRaew7ZMTxnJGkxXFnC+sW3RnYP9fPgGd+T2gK9zhi6cd1BwWl6W56YlZRmV7Y8gTXt13VDvLN6/Dc99+CpZv2d0uH6rmUenE1Cof2KLdsvP/fRYePPYBOHjkDhN7knibop3tBtHEp5DIoxUYvPqfUOIuHQbquLfKhSCjKlVZQjMaQrlth4Gx9IxYjd43IgH0tTZ9SzIZpU9WMl+U2efdMrcVPvjIr8PpUy9AiZFSTxV2uMKFc8FHefkS1ibt8dCRO2HhtoMw8umL6brOi1lQY3aFKCh7M6AwUGbsSmSc/dcINjtVU2BKTbcf0mYYcrJ9hJVI29DKpjhNYEuSeiSVkcHHyISH3v8L8OD7MEWeDVbsNlGTIDbFiBm0x4DEpzykZM1EKEe2Sj27sDFGEl2kNDh3blgUvnaPescOrxshaZxqZECg5aTNRoDQeDaAoSCxEjlS0XaHqLVIfwpWQ0lx2JrdCJo3CX5FdZ09iNMYYykmG+ukINRg35M5UNsR0JhIVoTtxZ6ZSwrnBqZuJPEBBv0iKAsuwOfXr3gm99mvey/IYoiCfAwQcU8tYqBRpI5H9kOk8taE0UEVmVmOYYTHyozLuTC50eU9XDdlLyo8LT2erZdJe5cTkOq4tPbYGNvoQmwlKd+HVeJtiptsfzmGvGx2gqHyDgbsJ2ADkKvRuJPiobc9uMZmKIwjjVuL0ynsvtuZIuPLtxHC08KxYLcYWmF2hTt5YsByiOmUzBhTnZ8XMJsGBYUuJrEjprXf6HFwzg/G/XVU7XT7Jhk3nVWM2nXLxNBwVsYIc5QoioeFga2yN6bHeaynzeb4eE68riVDc8Ubd1JfxvnZdBuAsKAM+tfr+SCFqA5wX/TShXPw2isv2w37eLB8s117DBsmi2GIpoaF/bfB4TvvMpA0eJ9U4nMBPLhMZKR+ZPtGS0fJtCRIfi9CQFT3LFORpu3MqvT50ROBoXZxub7SaDoOGrcqV5Zvwb/845fg6pVLbseMPGGnUkhiWSadYhkG5rRJ0xhGfvz3PwMLB26DajR0TAj9+975yRlSgWJsYQnl1l+A9WFF8RLWUbQGffPpEp0MCmI+VTwGv0qRCWUHtu/aZVLQy04JTd2II6fGQ3X5PUAMidIa8fv27TuhPzPLMi7kFgtlpoVjqJmzZn7AkcWMadYir8l2cK6wPQtqaiLh6AL9GLIBxoEhNce0rtH/XXj0tz4KV19/ncFORgTujWkZSjYry7W7Y9cu2LptO1S46R8TgGciGwcrgpwZ5CJhKLvPc5pitSIgM29AzimF3ROMhhK6seeCJdzD75gnhGfB8DBGG7IQLar8Lcxw8Ccws2jfMpfI55VStMfgA2XsfFjoP+Nf8KFl9yFMgCJOR1/LWdg8FaRyoQBjHty2nFEJjQugtRE4zpBWTHw5DE1wY9JOerKGoTLvBsQH+9Jmk1P6vn6bXWDfXb5qDhVPZkfM610e3iSs76aDTPFLOBDDS0vuSJKmaBYP2OdmxFDKGkeDDIPK0kQ222Ew4SaJpjwA6nZa4bRfebH3PJFzwqHHNIFD2FEWLmYOWTupdPJRSna7rsonQgXFpKsKmmtXAXouHO1Ql+Wxq8ftUtwXggCThNu0DoVnZ4/LgXGMsM24S4KTfESW8GXZhdJIzcZLgzZgNGLbwbH0thUGceoKil3zsPujnwKFkNi8b0GmEogcp8TVwDei1FD0ZqEzNwfaZ95JO2ObYcycTHo6nmTEfHjXkdulCtkAVvcj9r/+5jW4eOG8z+EPqipHRC3UkV09APO7d8Puhf1QVW4/gBfyHXw7wS/gr33SoyH09h+CvX/0uOjR97XGjLmSaoYr7rVaNN94X5M5mJPJjkaD6AJg7LKXf/e+BDS+//ylf4BLS+eh28FXuLjhRdIVO1VKpIJr2LJlDj7ye38AO+ft63Bi6QxulrNFMYHdMtV1BQ2GNJiW8HZKSLBMq49lXBWlPwPAGUN/C5rHpHJDk9cBWngRPrNR1xpf56Khwg11Nqs4DKFZqjq9AMkabxtOMV40TxfnfYuUkTxMpdWlOqg7Q52gPYM+Dcl6ctfM3rYTpFAFM2seZREUduGLCagg9HeYuy6mTO5fo6HX78NjH/kYLF04Lx0jH45gEqyZ4XaMwS1APAewZ+8+mN+z18SC/J6rp5v4Eg00Z7DZRnS8MU1/aU8iUY2RF53pjfwRrwIzMbDNzYqg4ziRTseXXyDBdu3eA3v27c9Atxhp6KhxZszr2pzCYW6ybArky/6SNvw92nhx5PGrlgXm/JMsv8FvEAUIHZPBf6Ydt3Qim/q+IAkWEhQU0ASGDxDBcF8xdxxP5646tSBfAhWNxcUFvbfKSuCXiz0xMWfsFYbbfohObXLHMBGcFvmxExgnO31jfkBefkOauRligQ47c2zEkpeHJHiR+nmVCL2HfXFqQG6lcWLHuieIj84yiaQ7vA4hjJQcwjBPO/sJnA+QFcNbB8Mlnkpu//feMlf0JFmrBrC06EdcchAYnzfII5OhED5FkSSKmnqkGLI1BBRO2qMtTZUgL1l/PASEZf3WorSH9Fo74kvWuwb+BFyLBwnikpCuKJ1cgCAGF2MExFeHWDs8smlyRkkwYkCZjiaVszRINz7px2WAWVXxYueHpJ28cUnl0u8lKHiimtX0/7Jcz+B2y9XGA4G0ySN6jQSFoGL+WHg0ozUApDfaCdDaGAvGTOtliIAQaVJFIiP5nROarsSiJNdETjFQrqjPJ80+Q7rbhke80nBqKAyLU5SNl3ifTHDdEH/TVVD7oQTGjLaUlFD0KrPTiaqinS+hoFi3HAUJ8+vSXmT+deg3zkRJxkGHERNNlJF0H3zUE2QAvssoNjcSKmfmwVFITgUAu8/azsaM+CV5BJUrHJ8xzc6DhXBHG9Vz/aV63q0nWU+Cc7q0bn20oZMFeV676XKixLtTHn3Iovjn+FWRhu0yEV3uRmWkTnjqnDBcIHJE56uNDLV10HhdAR74WMMlvfkMMEiMDbRtJ8otiRTK8UFK3a6ZDg7sizdlJLwM1jKxhn7DSB4ObIe9wh5E9cPxuyxkCG1scF94HBTEDpfGEkRrIqPT5TCj4SumxwLK9t9IEJOmYiQeF34klfUr8kmZEHhJT9uxR5HkDJLxbBABjauCBEZL3tTFdH1rIYPhVYQOlzO6lJjgTcmaA6R/+UpiNyO1TZKtI6bS62FzNqPNa1jt6mplY6fLHJ2FZk5EsmUwFj8mVZXT9fY7D25FG/Z0NaJtyiNabZGPkCjH9H2fFJYIjJfHWJMSJ/tO4mUdjWCWHQ7G7O2bcW0klMYnTdZaUqGjxGu766QyeUNmj8DtStH7g8yLk/CVOe6eT9RipyG9lAtpiU1xjG/i+XBAG/a8zcEPvi8Ck3tnnJ8wbbpjEi4mYr1TpYsviMVTmN1OyIwDgK1zc9Dtz0JX057tO1QMo0uTI2VPYY7f97oZ0C3Lhl7ThUdIz549C4vf+hYcPHgQRiP7+hiIEUyC1XJGGfxZ3EA72YZZ3TW9g7oPp06dMm9Hwdfgv/nWW/DMs8/B/oW99tU5Zh/aSX/2QGDUR+aazO/J1bOr0dLhFXjppTMwMzNjrplzceUEGFDXtSqK0owOzwHfuHEDPvnJ37U/WsDzI6NXffmDzrRKaePJurFAtXwd/sMO3negc2P21ztwonNb58wqWFlehk984neg38ODdEw1uN23YErW8V5DBhJ4aXMLsY+V5RX7uhzMgzVhEdDFZF7YVJwuikLVUGEqnJVAL20hLu8PNduLTO0ydOKhhBYzM8xxJ+35DwMRv+wPBoFXQeaxooBe0TNpLERAU58l/dqzdsFDjl/WIuERt6ZeUrznHeTG2h48x2z3s50taLSqmvoM1lhcXFwTFq1HaZk6x44dm3njypXnur3ufU1dj2qNGimknHPBsVupfPCZcVAsSTPjxzftc8lezAYxUnsniKKzudObYREG6CnSK3kl1n2eIPw0j5+0+Rmralj9+4/OnPkl9/im/I4Y0I+SHTly5N1zW2a/rBTcj49S9iFB0uCEM04Ij5XUA+tay3CCOEMQTTZaMNxXayFTyNv02RfubrIIMnKfLZFRocMeRihq+I/hzZu/eeb8+fOu1qYxwI/r6NGjfaXUw6VSd6B33AjIZXWfjTWac7nxmUg6YyNKzerY+yVgu/xZd/TMvhcj+sXBeJbuDRF2DPa4mn/O/dSLb9dlOxFw5UBVJfXte7O1dqcg8bMZQqkaVDtnzpx90uPojXhl6yjTH/Ncu4yFRTcCmtUJgOLy8ePvIOD+31+cwZ34z9lOy7RMy7RMy7RMy7RMy7RMC/yfL/8DT1GcxPl0yTsAAAAASUVORK5CYII=" alt="" aria-hidden="true">
-      <div class="toolbar-title"><strong>html-doc</strong><span>Component Showcase — 全组件参考</span></div>
+      <div class="toolbar-title" title="Component Showcase — 全组件参考"><strong>html-doc</strong></div>
     </div>
-    <div class="toolbar-actions">
-      <button class="primary" data-copy="node scripts/render-html-doc.mjs examples/component-showcase.md dist/component-showcase.html" data-action="0">View Source</button>
-    </div>
+    <details class="toolbar-menu">
+        <summary>复制</summary>
+        <div class="toolbar-menu-panel">
+          <button class="primary" data-copy="node scripts/render-html-doc.mjs examples/component-showcase.md dist/component-showcase.html" data-action="0">View Source</button>
+        </div>
+      </details>
   </header>
   <main class="artifact-shell">
     <aside class="side-nav"><a href="#hero">用 Markdown 栅栏块组合出高质量、可读、可交互的文档</a><a href="#metrics">metrics — 关键指标</a><a href="#chart-demo">chart — 数据趋势图</a><a href="#stage-demo">stage — 自由定位图</a><a href="#prompt">promptEditor — 模板编辑器</a><a href="#motion-demo">motionStage — 外卖下单支付流程</a><a href="#arch-demo">layeredArchitecture — 分层服务架构图</a><a href="#flow-demo">flow — 线性流程</a><a href="#decision-demo">decisionTree — 决策树</a><a href="#matrix-demo">matrix — 决策矩阵</a><a href="#diff-demo">diffReview — 代码变更审查</a><a href="#timeline-demo">timeline — 时间轴</a><a href="#code-demo">codeAnnotation — 代码批注</a><a href="#sliders-demo">sliderLab — 调节面板</a><a href="#variants-demo">variantGrid — 方案对比</a><a href="#evidence-demo">evidenceBoard — 证据板</a><a href="#crossref-demo">crossRef — GitHub Actions 部署流水线</a><a href="#relmap-demo">relationshipMap — RBAC 权限分配</a><a href="#tree-demo">structureTree — 嵌套结构</a><a href="#kanban-demo">kanban — 分组清单</a><a href="#form-demo">formEditor — 结构化表单</a><a href="#prompt2">promptEditor — 提示词模板（独立示例）</a></aside>
@@ -1458,7 +1578,7 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
       
     </div>
     
-  </div><div class="chart-wrap"><svg class="chart-svg" viewBox="0 0 720 280" preserveAspectRatio="xMidYMid meet"><line x1="48" y1="242.0" x2="700" y2="242.0" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="246.0" text-anchor="end" fill="var(--text-faint)" font-size="11">0</text><line x1="48" y1="186.5" x2="700" y2="186.5" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="190.5" text-anchor="end" fill="var(--text-faint)" font-size="11">2k</text><line x1="48" y1="131.0" x2="700" y2="131.0" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="135.0" text-anchor="end" fill="var(--text-faint)" font-size="11">4k</text><line x1="48" y1="75.5" x2="700" y2="75.5" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="79.5" text-anchor="end" fill="var(--text-faint)" font-size="11">5k</text><line x1="48" y1="20.0" x2="700" y2="20.0" stroke="var(--border-base)" stroke-width="1"/><text x="42" y="24.0" text-anchor="end" fill="var(--text-faint)" font-size="11">7k</text><line x1="48" y1="20" x2="48" y2="242" stroke="var(--border-base)" stroke-width="1"/><polyline points="48.0,108.8 178.4,89.8 308.8,80.3 439.2,64.4 569.6,45.4 700.0,26.3" fill="none" stroke="var(--accent-primary)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="48.0" cy="108.8" r="3.5" fill="var(--accent-primary)"/><circle cx="178.4" cy="89.8" r="3.5" fill="var(--accent-primary)"/><circle cx="308.8" cy="80.3" r="3.5" fill="var(--accent-primary)"/><circle cx="439.2" cy="64.4" r="3.5" fill="var(--accent-primary)"/><circle cx="569.6" cy="45.4" r="3.5" fill="var(--accent-primary)"/><circle cx="700.0" cy="26.3" r="3.5" fill="var(--accent-primary)"/><polyline points="48.0,175.4 178.4,153.2 308.8,134.2 439.2,118.3 569.6,96.1 700.0,77.1" fill="none" stroke="var(--accent-secondary)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="48.0" cy="175.4" r="3.5" fill="var(--accent-secondary)"/><circle cx="178.4" cy="153.2" r="3.5" fill="var(--accent-secondary)"/><circle cx="308.8" cy="134.2" r="3.5" fill="var(--accent-secondary)"/><circle cx="439.2" cy="118.3" r="3.5" fill="var(--accent-secondary)"/><circle cx="569.6" cy="96.1" r="3.5" fill="var(--accent-secondary)"/><circle cx="700.0" cy="77.1" r="3.5" fill="var(--accent-secondary)"/><text x="48.0" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">Jan</text><text x="178.4" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">Feb</text><text x="308.8" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">Mar</text><text x="439.2" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">Apr</text><text x="569.6" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">May</text><text x="700.0" y="270" text-anchor="middle" fill="var(--text-faint)" font-size="11">Jun</text></svg><div class="chart-legend"><span class="chart-legend-item"><span class="chart-dot" style="background:var(--accent-primary)"></span>Web MAU</span><span class="chart-legend-item"><span class="chart-dot" style="background:var(--accent-secondary)"></span>Mobile MAU</span></div></div>
+  </div>
   </article>
 <article class="block" id="stage-demo" style="--span:8;">
     <div class="block-header">
@@ -1496,7 +1616,7 @@ Prefer diagrams and matrices over long prose.</div>
     </div>
     <button class="copy-mini" data-copy-block="motion-demo">Copy</button>
   </div><div class="motion-wrap" data-motion="motion-demo" data-index="0" data-autoplay="true">
-    <div class="motion-canvas" style="--motion-ratio:1180 / 500">
+    <div class="motion-canvas" style="--motion-width:1180px;--motion-ratio:1180 / 500">
       <div class="motion-object motion-phone" data-motion-object="phone" data-status="" data-emphasis="" style="--x:4.6610%;--y:10.0000%;--w:21.1864%;--h:78.0000%;--opacity:1;--scale:1;--rotate:0deg;--z:1"><div class="motion-surface"><div class="motion-phone-screen">
       
       <strong data-motion-title>午餐外卖</strong>
@@ -1540,12 +1660,13 @@ Prefer diagrams and matrices over long prose.</div>
     </div>
     <button class="copy-mini" data-copy-block="arch-demo">Copy</button>
   </div>
-  <div class="layered-arch" style="--arch-height:500px">
-    <section class="arch-lane" style="--x:28px;--w:362.6666666666667px">
+  <div class="layered-arch-scroll">
+  <div class="layered-arch" style="--arch-width:1180px;--arch-height:500px">
+    <section class="arch-lane" style="--x:28px;--w:341.3333333333333px">
       <div class="arch-lane-title">客户端<span>Web / Mobile</span></div>
-    </section><section class="arch-lane" style="--x:408.6666666666667px;--w:362.6666666666667px">
+    </section><section class="arch-lane" style="--x:419.3333333333333px;--w:341.3333333333333px">
       <div class="arch-lane-title">API 层<span>网关 / 认证 / 业务</span></div>
-    </section><section class="arch-lane" style="--x:789.3333333333334px;--w:362.6666666666667px">
+    </section><section class="arch-lane" style="--x:810.6666666666666px;--w:341.3333333333333px">
       <div class="arch-lane-title">数据层<span>持久化 / 缓存 / 队列</span></div>
     </section>
     <svg class="arch-edges" viewBox="0 0 1180 500" preserveAspectRatio="none">
@@ -1554,43 +1675,44 @@ Prefer diagrams and matrices over long prose.</div>
           <path d="M 0 0 L 8 4 L 0 8 z" fill="var(--accent-primary)"></path>
         </marker>
       </defs>
-      <path class="arch-edge " d="M 373.6666666666667 161 L 399.6666666666667 161 L 399.6666666666667 161 L 425.6666666666667 161" marker-end="url(#arch-arrow-arch-demo)"></path><path class="arch-edge " d="M 373.6666666666667 269 L 399.6666666666667 269 L 399.6666666666667 161 L 425.6666666666667 161" marker-end="url(#arch-arrow-arch-demo)"></path><path class="arch-edge " d="M 590 200 L 590 230" marker-end="url(#arch-arrow-arch-demo)"></path><path class="arch-edge " d="M 590 308 L 590 338" marker-end="url(#arch-arrow-arch-demo)"></path><path class="arch-edge " d="M 754.3333333333334 377 L 780.3333333333334 377 L 780.3333333333334 161 L 806.3333333333334 161" marker-end="url(#arch-arrow-arch-demo)"></path><path class="arch-edge dashed" d="M 754.3333333333334 377 L 780.3333333333334 377 L 780.3333333333334 269 L 806.3333333333334 269" marker-end="url(#arch-arrow-arch-demo)"></path><path class="arch-edge dashed" d="M 754.3333333333334 377 L 780.3333333333334 377 L 780.3333333333334 377 L 806.3333333333334 377" marker-end="url(#arch-arrow-arch-demo)"></path>
+      <path class="arch-edge " d="M 352.3333333333333 161 L 394.3333333333333 161 L 394.3333333333333 161 L 436.3333333333333 161" marker-end="url(#arch-arrow-arch-demo)"></path><path class="arch-edge " d="M 352.3333333333333 269 L 394.3333333333333 269 L 394.3333333333333 161 L 436.3333333333333 161" marker-end="url(#arch-arrow-arch-demo)"></path><path class="arch-edge " d="M 590 200 L 590 230" marker-end="url(#arch-arrow-arch-demo)"></path><path class="arch-edge " d="M 590 308 L 590 338" marker-end="url(#arch-arrow-arch-demo)"></path><path class="arch-edge " d="M 743.6666666666666 377 L 785.6666666666666 377 L 785.6666666666666 161 L 827.6666666666666 161" marker-end="url(#arch-arrow-arch-demo)"></path><path class="arch-edge dashed" d="M 743.6666666666666 377 L 785.6666666666666 377 L 785.6666666666666 269 L 827.6666666666666 269" marker-end="url(#arch-arrow-arch-demo)"></path><path class="arch-edge dashed" d="M 743.6666666666666 377 L 785.6666666666666 377 L 785.6666666666666 377 L 827.6666666666666 377" marker-end="url(#arch-arrow-arch-demo)"></path>
     </svg>
-    <span class="arch-step" style="--x:349.6666666666667px;--y:102px">1</span><span class="arch-edge-label" style="--x:377.6666666666667px;--y:102px">HTTPS</span><span class="arch-step" style="--x:349.6666666666667px;--y:102px">2</span><span class="arch-edge-label" style="--x:377.6666666666667px;--y:102px">HTTPS</span><span class="arch-step" style="--x:732.3333333333334px;--y:207px">3</span><span class="arch-edge-label" style="--x:760.3333333333334px;--y:207px">verify token</span><span class="arch-step" style="--x:732.3333333333334px;--y:315px">4</span><span class="arch-edge-label" style="--x:760.3333333333334px;--y:315px">authorized</span><span class="arch-step" style="--x:730.3333333333334px;--y:102px">5</span><span class="arch-edge-label" style="--x:758.3333333333334px;--y:102px">read / write</span><span class="arch-edge-label" style="--x:758.3333333333334px;--y:210px">cache get/set</span><span class="arch-edge-label" style="--x:758.3333333333334px;--y:318px">enqueue job</span>
-    <div class="arch-box api" style="--x:45px;--y:122px;--w:328.6666666666667px;--h:78px">
+    <span class="arch-step" style="--x:372.3333333333333px;--y:153px">1</span><span class="arch-edge-label" style="--x:333.3333333333333px;--y:137px">HTTPS</span><span class="arch-step" style="--x:372.3333333333333px;--y:207px">2</span><span class="arch-edge-label" style="--x:333.3333333333333px;--y:245px">HTTPS</span><span class="arch-step" style="--x:596px;--y:207px">3</span><span class="arch-edge-label" style="--x:618px;--y:207px">verify token</span><span class="arch-step" style="--x:596px;--y:315px">4</span><span class="arch-edge-label" style="--x:618px;--y:315px">authorized</span><span class="arch-step" style="--x:763.6666666666666px;--y:261px">5</span><span class="arch-edge-label" style="--x:724.6666666666666px;--y:353px">read / write</span><span class="arch-edge-label" style="--x:724.6666666666666px;--y:353px">cache get/set</span><span class="arch-edge-label" style="--x:724.6666666666666px;--y:353px">enqueue job</span>
+    <div class="arch-box api" style="--x:45px;--y:122px;--w:307.3333333333333px;--h:78px">
       <div class="label">api</div>
       <strong>Browser</strong>
       <p>SPA · React</p>
-    </div><div class="arch-box api" style="--x:45px;--y:230px;--w:328.6666666666667px;--h:78px">
+    </div><div class="arch-box api" style="--x:45px;--y:230px;--w:307.3333333333333px;--h:78px">
       <div class="label">api</div>
       <strong>Mobile App</strong>
       <p>iOS / Android</p>
-    </div><div class="arch-box api" style="--x:425.6666666666667px;--y:122px;--w:328.6666666666667px;--h:78px">
+    </div><div class="arch-box api" style="--x:436.3333333333333px;--y:122px;--w:307.3333333333333px;--h:78px">
       <div class="label">api</div>
       <strong>API Gateway</strong>
       <p>限流 · 路由</p>
-    </div><div class="arch-box worker" style="--x:425.6666666666667px;--y:230px;--w:328.6666666666667px;--h:78px">
+    </div><div class="arch-box worker" style="--x:436.3333333333333px;--y:230px;--w:307.3333333333333px;--h:78px">
       <div class="label">worker</div>
       <strong>Auth Service</strong>
       <p>JWT · OAuth2</p>
-    </div><div class="arch-box worker" style="--x:425.6666666666667px;--y:338px;--w:328.6666666666667px;--h:78px">
+    </div><div class="arch-box worker" style="--x:436.3333333333333px;--y:338px;--w:307.3333333333333px;--h:78px">
       <div class="label">worker</div>
       <strong>Business API</strong>
       <p>核心逻辑</p>
-    </div><div class="arch-box data" style="--x:806.3333333333334px;--y:122px;--w:328.6666666666667px;--h:78px">
+    </div><div class="arch-box data" style="--x:827.6666666666666px;--y:122px;--w:307.3333333333333px;--h:78px">
       <div class="label">data</div>
       <strong>PostgreSQL</strong>
       <p>主库 · 只读副本</p>
-    </div><div class="arch-box data" style="--x:806.3333333333334px;--y:230px;--w:328.6666666666667px;--h:78px">
+    </div><div class="arch-box data" style="--x:827.6666666666666px;--y:230px;--w:307.3333333333333px;--h:78px">
       <div class="label">data</div>
       <strong>Redis</strong>
       <p>会话 · 热数据</p>
-    </div><div class="arch-box provider" style="--x:806.3333333333334px;--y:338px;--w:328.6666666666667px;--h:78px">
+    </div><div class="arch-box provider" style="--x:827.6666666666666px;--y:338px;--w:307.3333333333333px;--h:78px">
       <div class="label">provider</div>
       <strong>Message Queue</strong>
       <p>异步任务</p>
     </div>
     
+  </div>
   </div>
   </article>
 <article class="block" id="flow-demo" style="--span:8;">
@@ -1613,28 +1735,6 @@ Prefer diagrams and matrices over long prose.</div>
       
     </div>
     
-  </div><div class="decision-tree">
-    <div class="decision-node" data-level="0" style="--indent:0px">
-        <span class="dt-cond">需要对比多个选项</span>
-        <span class="dt-sep">→</span>
-        <span class="dt-res">matrix 或 variantGrid</span>
-      </div><div class="decision-node" data-level="1" style="--indent:20px">
-        <span class="dt-cond">≥ 4 行 + 3 列</span>
-        <span class="dt-sep">→</span>
-        <span class="dt-res">matrix（支持排序过滤）</span>
-      </div><div class="decision-node" data-level="1" style="--indent:20px">
-        <span class="dt-cond">≤ 3 个方案</span>
-        <span class="dt-sep">→</span>
-        <span class="dt-res">variantGrid（更直观）</span>
-      </div><div class="decision-node" data-level="0" style="--indent:0px">
-        <span class="dt-cond">需要演示状态变化</span>
-        <span class="dt-sep">→</span>
-        <span class="dt-res">motionStage</span>
-      </div><div class="decision-node" data-level="0" style="--indent:0px">
-        <span class="dt-cond">需要服务架构图</span>
-        <span class="dt-sep">→</span>
-        <span class="dt-res">layeredArchitecture</span>
-      </div>
   </div>
   </article>
 <article class="block" id="matrix-demo" style="--span:12;">
@@ -1678,8 +1778,6 @@ Prefer diagrams and matrices over long prose.</div>
       
     </div>
     
-  </div><div class="timeline-line">
-    <div class="timeline-item "><div class="label">09:15</div><strong>PR 合并</strong><p class="text-sm">feat: 优化发布逻辑</p></div><div class="timeline-item active"><div class="label">09:31</div><strong>测试通过</strong><p class="text-sm">450 个用例</p></div><div class="timeline-item active"><div class="label">09:52</div><strong>发布完成</strong><p class="text-sm">全量切换</p></div>
   </div>
   </article>
 <article class="block" id="code-demo" style="--span:6;">
@@ -1730,8 +1828,6 @@ Prefer diagrams and matrices over long prose.</div>
       
     </div>
     
-  </div><div class="masonry">
-    <div class="note"><div class="label">USER</div><strong>不喜欢容器过度嵌套</strong><p class="text-sm">整体采用铺地砖式 grid，组件之间共用 1px 分割线。</p></div><div class="note"><div class="label">DESIGN</div><strong>人文感字体</strong><p class="text-sm">标题使用 Optima / Avenir Next，中文回退苹方。</p></div><div class="note"><div class="label">RULE</div><strong>文字尽量少</strong><p class="text-sm">正文保持轻量；细节交给矩阵、批注或展开材料。</p></div><div class="note"><div class="label">HTML</div><strong>充分利用水平空间</strong><p class="text-sm">12 列 span 机制，支持 4/8、6/6、8/4 分列。</p></div>
   </div>
   </article>
 <article class="block" id="crossref-demo" style="--span:12;">
@@ -1742,117 +1838,6 @@ Prefer diagrams and matrices over long prose.</div>
       
     </div>
     
-  </div><div class="crossref" data-crossref="crossref-demo">
-    <svg class="crossref-arrows"><defs><marker id="cr-arrow-crossref-demo" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="var(--accent-tertiary)"/></marker></defs></svg>
-    <div class="crossref-layout">
-      <div class="crossref-primary"><div class="crossref-file-label">.github/workflows/deploy.yml</div><div class="crossref-section"><div class="crossref-section-title">触发器 &amp; 环境变量</div><pre>on:
-  push:
-    branches: [main]
-  workflow_dispatch:
-
-env:
-  APP_ENV: production
-  # 从 <mark class="crossref-hl" data-cr-from="envfile">config/.env.production</mark> 注入
-  REGISTRY: ${{ secrets.ECR_REGISTRY }}
-  IMAGE_TAG: ${{ github.sha }}
-  APP_PORT:  ${{ vars.APP_PORT }}</pre></div><div class="crossref-section"><div class="crossref-section-title">build-and-push job</div><pre>build:
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v4
-    - name: Build image
-      run: |
-        docker build \
-          -f <mark class="crossref-hl" data-cr-from="dockerfile">docker/Dockerfile</mark> \
-          --build-arg APP_ENV=$APP_ENV \
-          -t $REGISTRY/app:$IMAGE_TAG .
-    - name: Scan for vulnerabilities
-      uses: aquasecurity/trivy-action@master
-      with:
-        image-ref: $REGISTRY/app:$IMAGE_TAG
-    - name: Push to ECR
-      run: docker push $REGISTRY/app:$IMAGE_TAG</pre></div><div class="crossref-section"><div class="crossref-section-title">helm-deploy job</div><pre>deploy:
-  needs: [build]
-  runs-on: ubuntu-latest
-  steps:
-    - name: Helm upgrade
-      run: |
-        helm upgrade --install app ./helm \
-          -f <mark class="crossref-hl" data-cr-from="helmvalues">helm/values.yaml</mark> \
-          --set image.tag=$IMAGE_TAG \
-          --set env=$APP_ENV \
-          --atomic --timeout 5m
-    - name: Verify k8s rollout
-      run: |
-        kubectl apply -f <mark class="crossref-hl" data-cr-from="k8sdeploy">k8s/deployment.yaml</mark>
-        kubectl rollout status \
-          deployment/app --timeout=3m</pre></div><div class="crossref-section"><div class="crossref-section-title">post-deploy checks</div><pre>verify:
-  needs: [deploy]
-  steps:
-    - name: Smoke test
-      run: |
-        curl -sf https://$APP_HOST/healthz \
-          || (kubectl rollout undo deployment/app &amp;&amp; exit 1)
-    - name: Notify Slack
-      if: always()
-      run: |
-        STATUS=${{ job.status }}
-        curl -X POST ${{ secrets.SLACK_WEBHOOK }} \
-          -d &quot;{\&quot;text\&quot;:\&quot;deploy $IMAGE_TAG: $STATUS\&quot;}&quot;</pre></div></div>
-      <div class="crossref-refs"><div class="crossref-ref" data-cr-target="envfile"><div class="crossref-ref-label">config/.env.production</div><pre># Production environment
-APP_PORT=8080
-APP_HOST=app.example.com
-DB_POOL_MAX=20
-DB_POOL_IDLE=5
-LOG_LEVEL=warn
-CACHE_TTL=300
-FEATURE_CANARY=true
-FEATURE_NEW_CHECKOUT=false</pre></div><div class="crossref-ref" data-cr-target="dockerfile"><div class="crossref-ref-label">docker/Dockerfile</div><pre>FROM node:20-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-RUN npm run build
-
-FROM node:20-alpine
-WORKDIR /app
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-EXPOSE 8080
-CMD [&quot;node&quot;, &quot;dist/server.js&quot;]</pre></div><div class="crossref-ref" data-cr-target="helmvalues"><div class="crossref-ref-label">helm/values.yaml</div><pre>replicaCount: 3
-image:
-  repository: 123456.dkr.ecr.us-east-1.amazonaws.com/app
-  tag: latest
-  pullPolicy: IfNotPresent
-resources:
-  requests: { cpu: 250m, memory: 256Mi }
-  limits:   { cpu: 500m, memory: 512Mi }
-autoscaling:
-  enabled: true
-  minReplicas: 3
-  maxReplicas: 10
-  targetCPUUtilizationPercentage: 70
-ingress:
-  enabled: true
-  host: app.example.com</pre></div><div class="crossref-ref" data-cr-target="k8sdeploy"><div class="crossref-ref-label">k8s/deployment.yaml</div><pre>apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: app
-spec:
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
-  template:
-    spec:
-      containers:
-        - name: app
-          livenessProbe:
-            httpGet: { path: /healthz, port: 8080 }
-            initialDelaySeconds: 15
-          readinessProbe:
-            httpGet: { path: /ready, port: 8080 }</pre></div></div>
-    </div>
   </div>
   </article>
 <article class="block" id="relmap-demo" style="--span:12;">
@@ -1920,52 +1905,6 @@ spec:
       
     </div>
     
-  </div><div class="vu-tree">
-    <div class="vu-tree-node" data-tree-node>
-    <span class="vu-tree-toggle open" style="">▶</span>
-    <span class="vu-tree-key">document</span>
-    <span class="vu-tree-type">.md 文件</span>
-  </div><div class="vu-tree-children" style=""><div class="vu-tree-node" data-tree-node>
-    <span class="vu-tree-toggle open" style="">▶</span>
-    <span class="vu-tree-key">frontmatter</span>
-    <span class="vu-tree-type">YAML</span>
-  </div><div class="vu-tree-children" style=""><div class="vu-tree-node" >
-    <span class="vu-tree-toggle " style="visibility:hidden;">▶</span>
-    <span class="vu-tree-key">title</span>:<span class="vu-tree-value">&quot;文档标题&quot;</span>
-    <span class="vu-tree-type">String</span>
-  </div><div class="vu-tree-node" >
-    <span class="vu-tree-toggle " style="visibility:hidden;">▶</span>
-    <span class="vu-tree-key">subtitle</span>:<span class="vu-tree-value">&quot;副标题&quot;</span>
-    <span class="vu-tree-type">String</span>
-  </div><div class="vu-tree-node" >
-    <span class="vu-tree-toggle " style="visibility:hidden;">▶</span>
-    <span class="vu-tree-key">glossary</span>:<span class="vu-tree-value">{ 术语: 释义 }</span>
-    <span class="vu-tree-type">Object</span>
-  </div></div><div class="vu-tree-node" data-tree-node>
-    <span class="vu-tree-toggle open" style="">▶</span>
-    <span class="vu-tree-key">~~~hero</span>
-    <span class="vu-tree-type">Block</span>
-  </div><div class="vu-tree-children" style=""><div class="vu-tree-node" >
-    <span class="vu-tree-toggle " style="visibility:hidden;">▶</span>
-    <span class="vu-tree-key">title</span>:<span class="vu-tree-value">&quot;...&quot;</span>
-    <span class="vu-tree-type">String</span>
-  </div><div class="vu-tree-node" >
-    <span class="vu-tree-toggle " style="visibility:hidden;">▶</span>
-    <span class="vu-tree-key">span</span>:<span class="vu-tree-value">12</span>
-    <span class="vu-tree-type">Number</span>
-  </div></div><div class="vu-tree-node" data-tree-node>
-    <span class="vu-tree-toggle open" style="">▶</span>
-    <span class="vu-tree-key">~~~matrix</span>
-    <span class="vu-tree-type">Block</span>
-  </div><div class="vu-tree-children" style=""><div class="vu-tree-node" >
-    <span class="vu-tree-toggle " style="visibility:hidden;">▶</span>
-    <span class="vu-tree-key">columns</span>:<span class="vu-tree-value">[...]</span>
-    <span class="vu-tree-type">Array</span>
-  </div><div class="vu-tree-node" >
-    <span class="vu-tree-toggle " style="visibility:hidden;">▶</span>
-    <span class="vu-tree-key">rows</span>:<span class="vu-tree-value">[...]</span>
-    <span class="vu-tree-type">Array</span>
-  </div></div></div>
   </div>
   </article>
 <article class="block" id="emphasis-demo" style="--span:6;">
@@ -2146,7 +2085,7 @@ function escapeHtml(value) {
 function inlineRich(value) {
   const placeholders = [];
   const inlineCodePattern = new RegExp("\\x60([^\\x60\\n]+)\\x60", "g");
-  const text = String(value ?? "").replace(inlineCodePattern, (_, code) => {
+  const text = String(value ?? "").replace(/\\n/g, "\n").replace(inlineCodePattern, (_, code) => {
     const index = placeholders.push("<code>" + escapeHtml(code) + "</code>") - 1;
     return "@@HTML_DOC_INLINE_" + index + "@@";
   });
@@ -2411,15 +2350,6 @@ document.querySelectorAll("[data-rel-map]").forEach((map) => {
     item.addEventListener("mouseleave", clear);
   });
 });
-document.querySelectorAll("[data-tree-node]").forEach((node) => {
-  node.addEventListener("click", () => {
-    const toggle = node.querySelector(".vu-tree-toggle");
-    const children = node.nextElementSibling;
-    if (!toggle || !children?.classList.contains("vu-tree-children")) return;
-    const open = toggle.classList.toggle("open");
-    children.style.display = open ? "block" : "none";
-  });
-});
 document.querySelectorAll("[data-flow-state]").forEach((flow) => {
   const block = artifactSpec.content.find((item) => item.id === flow.dataset.flowState) || {};
   const states = block.states || [];
@@ -2433,33 +2363,6 @@ document.querySelectorAll("[data-flow-state]").forEach((flow) => {
     });
   });
 });
-requestAnimationFrame(() => requestAnimationFrame(() => {
-  document.querySelectorAll("[data-crossref]").forEach((container) => {
-    const svg = container.querySelector(".crossref-arrows");
-    if (!svg) return;
-    const cRect = container.getBoundingClientRect();
-    const markerId = "cr-arrow-" + (container.dataset.crossref || "main");
-    container.querySelectorAll("[data-cr-from]").forEach((fromEl) => {
-      const toId = fromEl.dataset.crFrom;
-      const toEl = container.querySelector('[data-cr-target="' + toId + '"]');
-      if (!toEl) return;
-      const fRect = fromEl.getBoundingClientRect();
-      const tRect = toEl.getBoundingClientRect();
-      const x1 = fRect.right - cRect.left;
-      const y1 = fRect.top + fRect.height / 2 - cRect.top;
-      const x2 = tRect.left - cRect.left;
-      const y2 = tRect.top + tRect.height * 0.28 - cRect.top;
-      const mx = (x1 + x2) / 2;
-      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      path.setAttribute("d", "M" + x1 + "," + y1 + " C" + mx + "," + y1 + " " + mx + "," + y2 + " " + x2 + "," + y2);
-      path.setAttribute("fill", "none");
-      path.setAttribute("stroke", "var(--accent-tertiary)");
-      path.setAttribute("stroke-width", "1.5");
-      path.setAttribute("marker-end", "url(#" + markerId + ")");
-      svg.appendChild(path);
-    });
-  });
-}));
 document.querySelectorAll("[data-emphasis-panel]").forEach((panel) => {
   panel.querySelectorAll("[data-info-id]").forEach((hl) => {
     hl.addEventListener("mouseenter", () => {

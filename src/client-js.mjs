@@ -23,7 +23,7 @@ function escapeHtml(value) {
 function inlineRich(value) {
   const placeholders = [];
   const inlineCodePattern = new RegExp("\\\\x60([^\\\\x60\\\\n]+)\\\\x60", "g");
-  const text = String(value ?? "").replace(inlineCodePattern, (_, code) => {
+  const text = String(value ?? "").replace(/\\\\n/g, "\\n").replace(inlineCodePattern, (_, code) => {
     const index = placeholders.push("<code>" + escapeHtml(code) + "</code>") - 1;
     return "@@HTML_DOC_INLINE_" + index + "@@";
   });
@@ -288,15 +288,6 @@ document.querySelectorAll("[data-rel-map]").forEach((map) => {
     item.addEventListener("mouseleave", clear);
   });
 });
-document.querySelectorAll("[data-tree-node]").forEach((node) => {
-  node.addEventListener("click", () => {
-    const toggle = node.querySelector(".vu-tree-toggle");
-    const children = node.nextElementSibling;
-    if (!toggle || !children?.classList.contains("vu-tree-children")) return;
-    const open = toggle.classList.toggle("open");
-    children.style.display = open ? "block" : "none";
-  });
-});
 document.querySelectorAll("[data-flow-state]").forEach((flow) => {
   const block = artifactSpec.content.find((item) => item.id === flow.dataset.flowState) || {};
   const states = block.states || [];
@@ -310,33 +301,6 @@ document.querySelectorAll("[data-flow-state]").forEach((flow) => {
     });
   });
 });
-requestAnimationFrame(() => requestAnimationFrame(() => {
-  document.querySelectorAll("[data-crossref]").forEach((container) => {
-    const svg = container.querySelector(".crossref-arrows");
-    if (!svg) return;
-    const cRect = container.getBoundingClientRect();
-    const markerId = "cr-arrow-" + (container.dataset.crossref || "main");
-    container.querySelectorAll("[data-cr-from]").forEach((fromEl) => {
-      const toId = fromEl.dataset.crFrom;
-      const toEl = container.querySelector('[data-cr-target="' + toId + '"]');
-      if (!toEl) return;
-      const fRect = fromEl.getBoundingClientRect();
-      const tRect = toEl.getBoundingClientRect();
-      const x1 = fRect.right - cRect.left;
-      const y1 = fRect.top + fRect.height / 2 - cRect.top;
-      const x2 = tRect.left - cRect.left;
-      const y2 = tRect.top + tRect.height * 0.28 - cRect.top;
-      const mx = (x1 + x2) / 2;
-      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      path.setAttribute("d", "M" + x1 + "," + y1 + " C" + mx + "," + y1 + " " + mx + "," + y2 + " " + x2 + "," + y2);
-      path.setAttribute("fill", "none");
-      path.setAttribute("stroke", "var(--accent-tertiary)");
-      path.setAttribute("stroke-width", "1.5");
-      path.setAttribute("marker-end", "url(#" + markerId + ")");
-      svg.appendChild(path);
-    });
-  });
-}));
 document.querySelectorAll("[data-emphasis-panel]").forEach((panel) => {
   panel.querySelectorAll("[data-info-id]").forEach((hl) => {
     hl.addEventListener("mouseenter", () => {

@@ -46,14 +46,22 @@ if (typeof lucide !== "undefined") lucide.createIcons();
 function renderToolbar(doc) {
   const meta = doc.meta || {};
   const actions = Array.isArray(doc.actions) ? doc.actions : [];
+  const isZh = String(meta.lang || "").toLowerCase().startsWith("zh");
+  const copyLabel = isZh ? "复制" : "Copy";
+  const actionMenu = actions.length
+    ? `<details class="toolbar-menu">
+        <summary>${copyLabel}</summary>
+        <div class="toolbar-menu-panel">
+          ${actions.map((action, i) => `<button class="${action.primary ? "primary" : ""}" data-copy="${esc(action.copy || action.label || "")}" data-action="${i}">${rich(action.label || copyLabel)}</button>`).join("")}
+        </div>
+      </details>`
+    : "";
   return `<header class="toolbar">
     <div class="toolbar-brand">
       ${logoDataUri ? `<img class="toolbar-logo" src="${logoDataUri}" alt="" aria-hidden="true">` : ""}
-      <div class="toolbar-title"><strong>${rich(meta.title || "html-doc")}</strong><span>${rich(meta.subtitle || "visual doc")}</span></div>
+      <div class="toolbar-title" title="${escAttr(meta.subtitle || "")}"><strong>${rich(meta.title || "html-doc")}</strong></div>
     </div>
-    <div class="toolbar-actions">
-      ${actions.map((action, i) => `<button class="${action.primary ? "primary" : ""}" data-copy="${esc(action.copy || action.label || "")}" data-action="${i}">${rich(action.label || "Copy")}</button>`).join("")}
-    </div>
+    ${actionMenu}
   </header>`;
 }
 
@@ -87,7 +95,7 @@ function renderBlock(block) {
 function defaultSpan(type) {
   return {
     hero: 12,
-    metrics: 8,
+    metrics: 12,
     promptEditor: 4,
     diffReview: 8,
     matrix: 12,
@@ -126,17 +134,11 @@ function renderByType(block) {
     layeredArchitecture: renderLayeredArchitecture,
     motionStage: renderMotionStage,
     relationshipMap: renderRelationshipMap,
-    structureTree: renderStructureTree,
     emphasisPanel: renderEmphasisPanel,
     embed: renderEmbed,
-    timeline: renderTimeline,
     matrix: renderMatrix,
-    decisionTree: renderDecisionTree,
     codeAnnotation: renderCodeAnnotation,
     diffReview: renderDiffReview,
-    chart: renderChart,
-    crossRef: renderCrossRef,
-    evidenceBoard: renderEvidenceBoard,
     variantGrid: renderVariantGrid,
     kanban: renderKanban,
     splitPanel: renderSplitPanel,
@@ -217,13 +219,13 @@ function renderMotionStage(block) {
   const steps = Array.isArray(block.steps) ? block.steps : [];
   const objects = Array.isArray(block.objects) ? block.objects : [];
   return `${renderHead(block, copyButton(block))}<div class="motion-wrap" data-motion="${escAttr(block.id || "")}" data-index="0" data-autoplay="true">
-    <div class="motion-canvas" style="--motion-ratio:${width} / ${height}">
+    <div class="motion-canvas" style="--motion-width:${width}px;--motion-ratio:${width} / ${height}">
       ${objects.map((obj) => renderMotionObject(obj, width, height)).join("")}
     </div>
     <div class="motion-footer">
       <div class="motion-caption" data-motion-caption>
-        <strong>${rich(steps[0]?.title || "")}</strong>
-        <span>${rich(steps[0]?.body || "")}</span>
+        <strong>${motionRich(steps[0]?.title || "")}</strong>
+        <span>${motionRich(steps[0]?.body || "")}</span>
       </div>
       <div class="motion-controls">
         <button data-motion-prev>‹</button>
@@ -277,38 +279,38 @@ function renderMotionSurface(obj, state) {
   if (obj.type === "phone") {
     return `<div class="motion-surface"><div class="motion-phone-screen">
       ${state.label ? `<div class="label" data-motion-label>${rich(state.label)}</div>` : ""}
-      ${state.title ? `<strong data-motion-title>${rich(state.title)}</strong>` : ""}
+      ${state.title ? `<strong data-motion-title>${motionRich(state.title)}</strong>` : ""}
       ${renderMotionList(props.items || obj.items || [])}
     </div></div>`;
   }
   if (obj.type === "window") {
     return `<div class="motion-surface">
       <div class="motion-window-bar"><span></span><span></span><span></span></div>
-      ${state.label ? `<div class="label" data-motion-label>${rich(state.label)}</div>` : ""}
-      ${state.title ? `<strong data-motion-title>${rich(state.title)}</strong>` : ""}
-      ${state.body ? `<p class="text-sm" data-motion-body>${rich(state.body)}</p>` : `<p class="text-sm" data-motion-body></p>`}
+      ${state.label ? `<div class="label" data-motion-label>${motionRich(state.label)}</div>` : ""}
+      ${state.title ? `<strong data-motion-title>${motionRich(state.title)}</strong>` : ""}
+      ${state.body ? `<p class="text-sm" data-motion-body>${motionRich(state.body)}</p>` : `<p class="text-sm" data-motion-body></p>`}
       ${renderMotionList(props.items || obj.items || [])}
     </div>`;
   }
   if (obj.type === "metric") {
     return `<div class="motion-surface">
-      <div class="motion-value" data-motion-value>${rich(state.value)}</div>
-      <p class="text-sm" data-motion-label>${rich(state.label)}</p>
+      <div class="motion-value" data-motion-value>${motionRich(state.value)}</div>
+      <p class="text-sm" data-motion-label>${motionRich(state.label)}</p>
     </div>`;
   }
   if (obj.type === "badge" || obj.type === "button") {
-    return `<div class="motion-surface" data-motion-title>${rich(state.title || state.label || state.body)}</div>`;
+    return `<div class="motion-surface" data-motion-title>${motionRich(state.title || state.label || state.body)}</div>`;
   }
   if (obj.type === "line") {
     return `<div class="motion-surface"></div>`;
   }
   if (obj.type === "text") {
-    return `<div class="motion-surface"><div class="stage-text" data-motion-title>${rich(state.title || state.body || state.label)}</div></div>`;
+    return `<div class="motion-surface"><div class="stage-text" data-motion-title>${motionRich(state.title || state.body || state.label)}</div></div>`;
   }
   return `<div class="motion-surface">
-    ${state.label ? `<div class="label" data-motion-label>${rich(state.label)}</div>` : ""}
-    ${state.title ? `<strong data-motion-title>${rich(state.title)}</strong>` : `<strong data-motion-title></strong>`}
-    ${state.body ? `<p class="text-sm" data-motion-body>${rich(state.body)}</p>` : `<p class="text-sm" data-motion-body></p>`}
+    ${state.label ? `<div class="label" data-motion-label>${motionRich(state.label)}</div>` : ""}
+    ${state.title ? `<strong data-motion-title>${motionRich(state.title)}</strong>` : `<strong data-motion-title></strong>`}
+    ${state.body ? `<p class="text-sm" data-motion-body>${motionRich(state.body)}</p>` : `<p class="text-sm" data-motion-body></p>`}
     ${renderMotionList(props.items || obj.items || [])}
   </div>`;
 }
@@ -316,8 +318,8 @@ function renderMotionSurface(obj, state) {
 function renderMotionList(items = []) {
   if (!Array.isArray(items) || !items.length) return "";
   return `<div class="motion-list">${items.map((item) => {
-    if (typeof item === "string") return `<div class="motion-list-item"><span>${rich(item)}</span></div>`;
-    return `<div class="motion-list-item"><span>${rich(item.label || item.title || "")}</span>${item.value ? `<span class="motion-pill">${rich(item.value)}</span>` : ""}</div>`;
+    if (typeof item === "string") return `<div class="motion-list-item"><span>${motionRich(item)}</span></div>`;
+    return `<div class="motion-list-item"><span>${motionRich(item.label || item.title || "")}</span>${item.value ? `<span class="motion-pill">${motionRich(item.value)}</span>` : ""}</div>`;
   }).join("")}</div>`;
 }
 
@@ -408,24 +410,24 @@ function renderStageElement(el, block, width, height) {
   const clickAttrs = interaction?.action === "setState" ? `data-set-state="${escAttr(interaction.target)}"` : "";
   const attrs = `class="stage-el" data-el="${escAttr(el.id || "")}" data-visible-states="${escAttr(states)}" style="${style}" ${clickAttrs}`;
   if (el.type === "panel") {
-    return `<div ${attrs}><div class="stage-panel">${el.title ? `<div class="stage-panel-title">${rich(el.title)}</div>` : ""}${el.content ? `<p>${rich(el.content)}</p>` : ""}</div></div>`;
+    return `<div ${attrs}><div class="stage-panel">${el.title ? `<div class="stage-panel-title">${rich(el.title)}</div>` : ""}${el.content ? `<p>${stageRich(el.content)}</p>` : ""}</div></div>`;
   }
   if (el.type === "button") {
-    return `<div ${attrs}><button class="stage-button ${el.variant === "primary" ? "primary" : ""}">${rich(el.content || el.label || "Button")}</button></div>`;
+    return `<div ${attrs}><button class="stage-button ${el.variant === "primary" ? "primary" : ""}">${stageRich(el.content || el.label || "Button")}</button></div>`;
   }
   if (el.type === "input") {
-    return `<div ${attrs}><div class="stage-input">${rich(el.placeholder || el.content || "")}</div></div>`;
+    return `<div ${attrs}><div class="stage-input">${stageRich(el.placeholder || el.content || "")}</div></div>`;
   }
   if (el.type === "toggle") {
     return `<div ${attrs}><label class="stage-toggle"><input class="switch" type="checkbox" ${el.checked ? "checked" : ""}> ${rich(el.label || "")}</label></div>`;
   }
   if (el.type === "annotation") {
-    return `<div ${attrs}><div class="stage-note">${rich(el.content || "")}</div></div>`;
+    return `<div ${attrs}><div class="stage-note">${stageRich(el.content || "")}</div></div>`;
   }
   if (el.type === "hotspot") {
     return `<div ${attrs}><div class="stage-hotspot" title="${escAttr(el.label || "")}"></div></div>`;
   }
-  return `<div ${attrs}><div class="stage-text">${rich(el.content || el.label || "")}</div></div>`;
+  return `<div ${attrs}><div class="stage-text">${stageRich(el.content || el.label || "")}</div></div>`;
 }
 
 function renderStageStepper(block, states, initialState) {
@@ -442,12 +444,6 @@ function visibleStates(el, block) {
 
 function pct(value, total) {
   return `${((Number(value || 0) / total) * 100).toFixed(4)}%`;
-}
-
-function renderTimeline(block) {
-  return `${renderHead(block)}<div class="timeline-line">
-    ${(block.items || []).map((item) => `<div class="timeline-item ${escAttr(item.status || "")}"><div class="label">${rich(item.time || item.label || "")}</div><strong>${rich(item.title || "")}</strong><p class="text-sm">${rich(item.body || "")}</p></div>`).join("")}
-  </div>`;
 }
 
 function renderMatrix(block) {
@@ -566,19 +562,6 @@ function sortValue(value) {
   return plainCell(value);
 }
 
-function renderDecisionTree(block) {
-  return `${renderHead(block)}<div class="decision-tree">
-    ${(block.items || []).map((item) => {
-      const level = item.level || 0;
-      return `<div class="decision-node" data-level="${level}" style="--indent:${level * 20}px">
-        <span class="dt-cond">${rich(item.condition || item.title || "")}</span>
-        <span class="dt-sep">→</span>
-        <span class="dt-res">${rich(item.result || item.body || "")}</span>
-      </div>`;
-    }).join("")}
-  </div>`;
-}
-
 function renderCodeAnnotation(block) {
   return `${renderHead(block, copyButton(block))}<div class="code-wrap">
     <pre>${esc(block.code || "")}</pre>
@@ -631,21 +614,6 @@ function renderRelationshipMap(block) {
   </div>`;
 }
 
-function renderStructureTree(block) {
-  return `${renderHead(block)}<div class="vu-tree">
-    ${(block.nodes || []).map((node) => renderTreeNode(node)).join("")}
-  </div>`;
-}
-
-function renderTreeNode(node) {
-  const hasChildren = Array.isArray(node.children) && node.children.length;
-  return `<div class="vu-tree-node" ${hasChildren ? "data-tree-node" : ""}>
-    <span class="vu-tree-toggle ${hasChildren && node.open !== false ? "open" : ""}" style="${hasChildren ? "" : "visibility:hidden;"}">▶</span>
-    <span class="vu-tree-key">${rich(node.key || node.name || "")}</span>${node.value != null ? `:<span class="vu-tree-value">${rich(node.value)}</span>` : ""}
-    ${node.type ? `<span class="vu-tree-type">${rich(node.type)}</span>` : ""}
-  </div>${hasChildren ? `<div class="vu-tree-children" style="${node.open === false ? "display:none;" : ""}">${node.children.map((child) => renderTreeNode(child)).join("")}</div>` : ""}`;
-}
-
 function renderEmphasisPanel(block) {
   const items = block.items || [];
   const activeId = block.active || items[0]?.id || "";
@@ -672,7 +640,8 @@ function renderEmphasisPanel(block) {
 function renderLayeredArchitecture(block) {
   const layout = layoutLayeredArchitecture(block);
   return `${renderHead(block, copyButton(block))}
-  <div class="layered-arch" style="--arch-height:${layout.height}px">
+  <div class="layered-arch-scroll">
+  <div class="layered-arch" style="--arch-width:${layout.width}px;--arch-height:${layout.height}px">
     ${layout.lanes.map((lane) => `<section class="arch-lane" style="--x:${lane.x}px;--w:${lane.w}px">
       <div class="arch-lane-title">${rich(lane.title || lane.id)}${lane.subtitle ? `<span>${rich(lane.subtitle)}</span>` : ""}</div>
     </section>`).join("")}
@@ -691,6 +660,7 @@ function renderLayeredArchitecture(block) {
       ${node.body || node.note ? `<p>${rich(node.body || node.note)}</p>` : ""}
     </div>`).join("")}
     ${layout.legend.length ? `<div class="arch-legend">${layout.legend.map((item) => `<span class="arch-legend-item"><span class="arch-legend-swatch ${escAttr(item.kind || "")}"></span>${rich(item.label || item.kind || "")}</span>`).join("")}</div>` : ""}
+  </div>
   </div>`;
 }
 
@@ -702,7 +672,7 @@ function layoutLayeredArchitecture(block) {
   const nodes = Array.isArray(block.nodes) ? block.nodes : [];
   const edges = Array.isArray(block.edges) ? block.edges : [];
   const margin = 28;
-  const gap = Number(stage.gap || 18);
+  const gap = Number(stage.gap || 50);
   const laneTotal = width - margin * 2 - gap * Math.max(0, lanes.length - 1);
   const laneWeights = lanes.map((lane) => Number(lane.weight || 1));
   const weightTotal = laneWeights.reduce((sum, value) => sum + value, 0) || lanes.length || 1;
@@ -732,25 +702,35 @@ function layoutLayeredArchitecture(block) {
     if (!from || !to) return null;
     const dx = to.x - from.x;
     const sameLane = Math.abs(dx) < 60;
-    let path, labelX, labelY;
+    let path, labelX, labelY, stepX, stepY;
     if (sameLane) {
       const goDown = to.y >= from.y;
       const start = anchorPoint(from, goDown ? "bottom" : "top");
       const end = anchorPoint(to, goDown ? "top" : "bottom");
       path = `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
-      labelX = from.x + from.w + 6;
-      labelY = (start.y + end.y) / 2 - 8;
+      // Place step circle just right of the arrow center; label further right
+      const midY = (start.y + end.y) / 2 - 8;
+      stepX = start.x + 6;
+      stepY = midY;
+      labelX = start.x + 28;
+      labelY = midY;
     } else {
       const goRight = dx > 0;
       const start = anchorPoint(from, goRight ? "right" : "left");
       const end = anchorPoint(to, goRight ? "left" : "right");
-      const midX = (start.x + end.x) / 2;
-      path = `M ${start.x} ${start.y} L ${midX} ${start.y} L ${midX} ${end.y} L ${end.x} ${end.y}`;
-      labelX = midX - 22;
-      labelY = Math.min(from.y, to.y) - 20;
+      // Route vertical segment through the centre of the inter-lane gap
+      const fromLane = laneById.get(from.lane);
+      const toLane = laneById.get(to.lane);
+      const gapMidX = goRight
+        ? (fromLane && toLane ? (fromLane.x + fromLane.w + toLane.x) / 2 : (start.x + end.x) / 2)
+        : (fromLane && toLane ? (fromLane.x + toLane.x + toLane.w) / 2 : (start.x + end.x) / 2);
+      path = `M ${start.x} ${start.y} L ${gapMidX} ${start.y} L ${gapMidX} ${end.y} L ${end.x} ${end.y}`;
+      const midY = (start.y + end.y) / 2 - 8;
+      stepX = gapMidX - 22;
+      stepY = midY;
+      labelX = (start.x + gapMidX) / 2 - 40;
+      labelY = start.y - 24;
     }
-    const stepX = labelX - 28;
-    const stepY = labelY;
     return { ...edge, path, labelX, labelY, stepX, stepY };
   }).filter(Boolean);
   return { width, height, lanes: laneLayouts, nodes: nodeLayouts, edges: edgeLayouts, legend: block.legend || [] };
@@ -763,11 +743,7 @@ function anchorPoint(node, side) {
   return { x: node.x + node.w, y: node.y + node.h / 2 };
 }
 
-function renderEvidenceBoard(block) {
-  return `${renderHead(block)}<div class="masonry">
-    ${(block.items || []).map((item) => `<div class="note"><div class="label">${rich(item.label || "")}</div><strong>${rich(item.title || "")}</strong><p class="text-sm">${rich(item.body || "")}</p></div>`).join("")}
-  </div>`;
-}
+
 
 function renderVariantGrid(block) {
   return `${renderHead(block, copyButton(block))}<div class="variant-grid">
@@ -917,105 +893,8 @@ function renderEmbed(block) {
   const height = block.height || "520px";
   return `${renderHead(block)}<div class="embed-wrap" style="--embed-height:${escAttr(height)}">
     <iframe class="embed-frame" src="${escAttr(block.url || "about:blank")}" title="${escAttr(block.title || "Embedded content")}" loading="lazy" sandbox="${escAttr(block.sandbox || "allow-scripts allow-same-origin allow-forms allow-popups")}"></iframe>
-    <div class="embed-fallback">如果预览无法加载，可以打开：<a href="${escAttr(block.url || "#")}" target="_blank" rel="noopener noreferrer">${rich(block.url || "")}</a></div>
+    <a class="embed-open-link" href="${escAttr(block.url || "#")}" target="_blank" rel="noopener noreferrer" title="在新标签页中打开">↗</a>
   </div>`;
-}
-
-function renderCrossRef(block) {
-  const primary = block.primary || {};
-  const refs = Array.isArray(block.references) ? block.references : [];
-  const links = Array.isArray(block.links) ? block.links : [];
-  const markerId = `cr-arrow-${escAttr(block.id || "main")}`;
-  function highlightContent(content) {
-    let html = esc(String(content || ""));
-    links.forEach(link => {
-      const escaped = esc(link.text || "");
-      if (!escaped) return;
-      const safe = escaped.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      html = html.replace(new RegExp(safe, "g"),
-        `<mark class="crossref-hl" data-cr-from="${escAttr(link.to)}">${escaped}</mark>`);
-    });
-    return html;
-  }
-  const sectionsHtml = (primary.sections || []).map(s =>
-    `<div class="crossref-section">${s.title ? `<div class="crossref-section-title">${esc(s.title)}</div>` : ""}<pre>${highlightContent(s.content)}</pre></div>`
-  ).join("");
-  const refsHtml = refs.map(ref =>
-    `<div class="crossref-ref" data-cr-target="${escAttr(ref.id)}"><div class="crossref-ref-label">${esc(ref.label || ref.id)}</div><pre>${esc(ref.preview || "")}</pre></div>`
-  ).join("");
-  return `${renderHead(block)}<div class="crossref" data-crossref="${escAttr(block.id || "main")}">
-    <svg class="crossref-arrows"><defs><marker id="${markerId}" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="var(--accent-tertiary)"/></marker></defs></svg>
-    <div class="crossref-layout">
-      <div class="crossref-primary"><div class="crossref-file-label">${esc(primary.label || "")}</div>${sectionsHtml}</div>
-      <div class="crossref-refs">${refsHtml}</div>
-    </div>
-  </div>`;
-}
-
-function renderChart(block) {
-  const variant = block.variant || "bar";
-  const data = block.data || {};
-  const labels = data.labels || [];
-  const series = Array.isArray(data.series) ? data.series : [];
-  const W = 720, H = 280, padL = 48, padR = 20, padT = 20, padB = 38;
-  const plotW = W - padL - padR, plotH = H - padT - padB;
-  const allVals = series.flatMap(s => (s.values || []).map(Number)).filter(isFinite);
-  const yMax = niceChartMax(allVals.length ? Math.max(...allVals) : 10);
-  const COLORS = ["var(--accent-primary)", "var(--accent-secondary)", "var(--accent-tertiary)", "#637699", "#9B7BA8"];
-  const toY = v => padT + plotH * (1 - Math.max(0, Math.min(1, Number(v) / yMax)));
-  const toX = i => padL + (labels.length > 1 ? (i / (labels.length - 1)) * plotW : plotW / 2);
-  const p = [];
-  for (let t = 0; t <= 4; t++) {
-    const frac = t / 4, y = padT + plotH * (1 - frac);
-    p.push(`<line x1="${padL}" y1="${y.toFixed(1)}" x2="${W - padR}" y2="${y.toFixed(1)}" stroke="var(--border-base)" stroke-width="1"/>`);
-    p.push(`<text x="${padL - 6}" y="${(y + 4).toFixed(1)}" text-anchor="end" fill="var(--text-faint)" font-size="11">${formatChartVal(yMax * frac)}</text>`);
-  }
-  p.push(`<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + plotH}" stroke="var(--border-base)" stroke-width="1"/>`);
-  if (variant === "bar") {
-    const gw = plotW / Math.max(labels.length, 1);
-    const bw = series.length ? (gw * 0.72) / series.length : gw * 0.72;
-    labels.forEach((lbl, i) => {
-      const gx = padL + i * gw + gw * 0.14;
-      series.forEach((s, j) => {
-        const val = Number((s.values || [])[i] ?? 0);
-        const bh = Math.max(0, (val / yMax) * plotH);
-        p.push(`<rect x="${(gx + j * bw).toFixed(1)}" y="${(padT + plotH - bh).toFixed(1)}" width="${Math.max(1, bw - 1).toFixed(1)}" height="${bh.toFixed(1)}" fill="${COLORS[j % COLORS.length]}" opacity="0.9"/>`);
-      });
-      p.push(`<text x="${(padL + i * gw + gw / 2).toFixed(1)}" y="${H - 10}" text-anchor="middle" fill="var(--text-faint)" font-size="11">${esc(String(lbl))}</text>`);
-    });
-  } else {
-    series.forEach((s, j) => {
-      const pts = (s.values || []).map((v, i) => `${toX(i).toFixed(1)},${toY(v).toFixed(1)}`);
-      if (pts.length < 2) return;
-      const color = COLORS[j % COLORS.length];
-      if (variant === "area") {
-        p.push(`<polygon points="${pts.join(" ")} ${toX((s.values || []).length - 1).toFixed(1)},${padT + plotH} ${toX(0).toFixed(1)},${padT + plotH}" fill="${color}" opacity="0.12"/>`);
-      }
-      p.push(`<polyline points="${pts.join(" ")}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`);
-      (s.values || []).forEach((v, i) => {
-        p.push(`<circle cx="${toX(i).toFixed(1)}" cy="${toY(v).toFixed(1)}" r="3.5" fill="${color}"/>`);
-      });
-    });
-    labels.forEach((lbl, i) => {
-      p.push(`<text x="${toX(i).toFixed(1)}" y="${H - 10}" text-anchor="middle" fill="var(--text-faint)" font-size="11">${esc(String(lbl))}</text>`);
-    });
-  }
-  const legend = series.length > 1
-    ? `<div class="chart-legend">${series.map((s, j) => `<span class="chart-legend-item"><span class="chart-dot" style="background:${COLORS[j % COLORS.length]}"></span>${rich(s.label || "")}</span>`).join("")}</div>`
-    : "";
-  return `${renderHead(block)}<div class="chart-wrap"><svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${p.join("")}</svg>${legend}</div>`;
-}
-
-function niceChartMax(val) {
-  if (val <= 0) return 10;
-  const exp = Math.pow(10, Math.floor(Math.log10(val)));
-  return Math.ceil(val / exp) * exp;
-}
-
-function formatChartVal(val) {
-  if (val >= 1e6) return `${(val / 1e6).toFixed(1)}M`;
-  if (val >= 1e3) return `${(val / 1e3).toFixed(0)}k`;
-  return String(Math.round(val * 100) / 100);
 }
 
 function renderSection(block) {
@@ -1052,6 +931,14 @@ function rich(value) {
   return esc(s)
     .replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>")
     .replace(/@@P(\d+)@@/g, (_, i) => ph[Number(i)] || "");
+}
+
+function stageRich(value) {
+  return rich(String(value ?? "").replace(/\\n/g, "\n"));
+}
+
+function motionRich(value) {
+  return rich(String(value ?? "").replace(/\\n/g, "\n"));
 }
 
 function escAttr(value) {
