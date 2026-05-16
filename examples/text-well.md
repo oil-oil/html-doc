@@ -76,15 +76,15 @@ lang: zh-CN
     {
       "id": "editor",
       "type": "window",
-      "x": 30, "y": 20, "w": 570, "h": 460,
+      "x": 30, "y": 20, "w": 555, "h": 455,
       "label": "Text-Well 编辑器",
       "title": "发布前的最后一步",
       "body": "最后做一遍全文检查，对比修改前后，确认没有遗漏。"
     },
     {
-      "id": "sidebar",
+      "id": "ai-panel",
       "type": "panel",
-      "x": 630, "y": 20, "w": 520, "h": 265,
+      "x": 615, "y": 20, "w": 535, "h": 200,
       "label": "AI 工具",
       "title": "选择一个步骤开始",
       "body": "AI 检查  ·  AI 评审  ·  包装工具  ·  AI 翻译"
@@ -92,24 +92,49 @@ lang: zh-CN
     {
       "id": "status",
       "type": "badge",
-      "x": 630, "y": 295, "w": 145, "h": 40,
+      "x": 615, "y": 228, "w": 160, "h": 38,
       "title": "就绪"
+    },
+    {
+      "id": "note-1",
+      "type": "note",
+      "x": 615, "y": 302, "w": 255, "h": 56,
+      "opacity": 0,
+      "label": "建议 1",
+      "title": "「最后」→「最终」"
+    },
+    {
+      "id": "note-2",
+      "type": "note",
+      "x": 880, "y": 302, "w": 270, "h": 56,
+      "opacity": 0,
+      "label": "建议 2",
+      "title": "删除冗余语气词"
     },
     {
       "id": "score",
       "type": "metric",
-      "x": 800, "y": 295, "w": 120, "h": 90,
+      "x": 615, "y": 380, "w": 130, "h": 80,
       "opacity": 0,
-      "value": "—",
+      "value": "78",
       "label": "评审评分"
+    },
+    {
+      "id": "reviewer",
+      "type": "note",
+      "x": 760, "y": 380, "w": 390, "h": 80,
+      "opacity": 0,
+      "label": "技术专家 李明",
+      "title": "逻辑清晰，数据薄弱",
+      "body": "「论点清晰，第二段需要更多数据支撑。」"
     },
     {
       "id": "titles",
       "type": "panel",
-      "x": 630, "y": 405, "w": 520, "h": 75,
+      "x": 615, "y": 440, "w": 535, "h": 50,
       "opacity": 0,
-      "label": "标题候选",
-      "body": "从草稿到爆款：AI 如何重塑内容创作"
+      "label": "热门方向",
+      "title": "从草稿到爆款：AI 如何重塑内容创作"
     }
   ],
   "steps": [
@@ -117,48 +142,58 @@ lang: zh-CN
       "title": "用户写好初稿",
       "body": "编辑器里写好初稿，四个 AI 工具等待激活。",
       "states": {
-        "editor": { "status": "active" },
-        "sidebar": { "label": "AI 工具", "title": "选择一个步骤开始", "body": "AI 检查  ·  AI 评审  ·  包装工具  ·  AI 翻译" },
+        "editor": { "emphasis": "" },
+        "ai-panel": { "label": "AI 工具", "title": "选择一个步骤开始", "body": "AI 检查  ·  AI 评审  ·  包装工具  ·  AI 翻译", "status": "" },
         "status": { "title": "就绪", "emphasis": "" },
+        "note-1": { "opacity": 0 },
+        "note-2": { "opacity": 0 },
         "score": { "opacity": 0 },
+        "reviewer": { "opacity": 0 },
         "titles": { "opacity": 0 }
       }
     },
     {
       "title": "AI 检查：7 种模式扫描全文",
-      "body": "选择「基础检查」，AI 扫描语法错误、去除翻译腔、统一术语格式。",
+      "body": "选择「基础检查」，AI 扫描语法错误、去除翻译腔、统一标点格式。",
       "states": {
-        "editor": { "status": "" },
-        "sidebar": { "label": "AI 检查 · 基础检查", "title": "正在扫描...", "body": "修正语法错误  ·  去除 AI 味儿  ·  统一标点格式" },
-        "status": { "title": "AI 检查中", "emphasis": "focus" }
+        "editor": { "emphasis": "focus" },
+        "ai-panel": { "label": "AI 检查 · 基础检查", "title": "正在扫描...", "body": "修正语法错误  ·  去除 AI 味儿  ·  统一标点格式", "status": "active" },
+        "status": { "title": "AI 检查中", "emphasis": "focus" },
+        "note-1": { "opacity": 0 },
+        "note-2": { "opacity": 0 }
       }
     },
     {
-      "title": "修改建议一键替换",
-      "body": "3 条建议出现在侧栏，每条都有理由说明，点击即可替换进编辑器。",
+      "title": "修改建议飞入，一键替换",
+      "body": "每条建议附有理由说明，点击即可替换进编辑器，实时联动。",
       "states": {
-        "editor": { "title": "发布前的最后一步", "body": "✓ 已应用 3 处建议  ·  标点 / 语气词 / 引号" },
-        "sidebar": { "label": "AI 检查 · 完成", "title": "发现 3 处建议", "body": "「最后」→「最终」  ·  删除冗余语气词  ·  引号改直角" },
-        "status": { "title": "✓ 检查完成", "emphasis": "success" }
+        "editor": { "title": "发布前的最后一步", "body": "✓ 已应用 3 处建议", "emphasis": "success" },
+        "ai-panel": { "label": "AI 检查 · 完成", "title": "发现 3 处建议", "body": "点击建议即可替换进编辑器", "status": "success" },
+        "status": { "title": "✓ 检查完成", "emphasis": "success" },
+        "note-1": { "opacity": 1, "y": 277 },
+        "note-2": { "opacity": 1, "y": 277 }
       }
     },
     {
-      "title": "AI 评审：私人陪审团",
-      "body": "3 位 AI 评审人，每人有独立世界观，0—100 分整体评分，建议可直接替换。",
+      "title": "AI 评审：私人陪审团登场",
+      "body": "3 位 AI 评审人同时给出反馈，评分卡从下方浮现。",
       "states": {
-        "editor": { "title": "发布前的最后一步", "body": "最终做一遍全文检查，对比修改前后，确认没有遗漏。" },
-        "sidebar": { "label": "AI 评审 · 技术专家 李明", "title": "逻辑清晰，数据薄弱", "body": "「论点清晰，第二段需要更多数据支撑。」" },
+        "editor": { "title": "发布前的最后一步", "body": "最终做一遍全文检查，对比修改前后，确认没有遗漏。", "emphasis": "" },
+        "ai-panel": { "label": "AI 评审", "title": "3 位评审人就绪", "body": "每人有独立世界观，0—100 分整体评分", "status": "" },
         "status": { "title": "评审完成", "emphasis": "success" },
-        "score": { "opacity": 1, "value": "78", "label": "整体评分" }
+        "note-1": { "opacity": 0 },
+        "note-2": { "opacity": 0 },
+        "score": { "opacity": 1, "y": 350 },
+        "reviewer": { "opacity": 1, "y": 350 }
       }
     },
     {
-      "title": "标题生成：10 个候选",
-      "body": "深度分析核心主题与情感内核，从五个创意方向生成候选标题，每条配创作理由。",
+      "title": "标题生成：10 个候选从底部滑入",
+      "body": "深度分析核心主题与情感内核，从五个创意方向生成候选标题。",
       "states": {
-        "sidebar": { "label": "包装工具 · 标题生成", "title": "10 个候选标题", "body": "故事型  ·  痛点型  ·  数据对比型  ·  对话型  ·  金句型" },
+        "ai-panel": { "label": "包装工具 · 标题生成", "title": "10 个候选标题", "body": "故事型  ·  痛点型  ·  数据对比型  ·  对话型  ·  金句型" },
         "status": { "title": "标题就绪", "emphasis": "success" },
-        "titles": { "opacity": 1, "label": "热门方向", "body": "从草稿到爆款：AI 如何重塑内容创作" }
+        "titles": { "opacity": 1, "y": 415 }
       }
     }
   ]

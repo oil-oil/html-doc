@@ -168,7 +168,18 @@ document.querySelectorAll("[data-stage]").forEach((stage) => {
 });
 function setMotionText(root, selector, value) {
   const el = root.querySelector(selector);
-  if (el && value != null) el.innerHTML = inlineRich(value);
+  if (el && value != null) {
+    const html = inlineRich(value);
+    if (el._mv === html) return;
+    const prev = el._mv;
+    el._mv = html;
+    el.innerHTML = html;
+    if (prev !== undefined) {
+      el.classList.remove("motion-text-in");
+      void el.offsetWidth;
+      el.classList.add("motion-text-in");
+    }
+  }
 }
 function setMotionBox(el, state, stage) {
   const width = Number(stage.width || 1180);
