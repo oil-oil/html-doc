@@ -116,15 +116,12 @@ button:hover { border-color: var(--text-main); }
   width: 100%;
   justify-self: stretch;
   margin: var(--space-6) 0 var(--space-8);
-  border-left: 1px solid var(--border-base);
 }
 .block {
   grid-column: span var(--span, 12);
   min-height: var(--min-h, auto);
   background: var(--bg-canvas);
-  border-top: 1px solid var(--border-base);
-  border-right: 1px solid var(--border-base);
-  border-bottom: 1px solid var(--border-base);
+  border: 1px solid var(--border-base);
   padding: var(--space-4);
   overflow: hidden;
 }
@@ -1287,8 +1284,8 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
 .split-panel {
   display: grid;
   /* Extend to block edges, counteracting .block padding on left/right/bottom */
+  width: calc(100% + 2 * var(--space-4));
   margin-left: calc(-1 * var(--space-4));
-  margin-right: calc(-1 * var(--space-4));
   margin-bottom: calc(-1 * var(--space-4));
   margin-top: var(--space-3);
 }
@@ -1322,7 +1319,7 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
   /* Shell */
   .artifact-shell { grid-template-columns: 1fr; }
   .side-nav { display: none; }
-  .artifact-grid { width: 100%; margin: 0; border-left: 0; border-right: 0; }
+  .artifact-grid { width: 100%; margin: 0; }
   .block { grid-column: span 12 !important; }
   /* Code / diff / form */
   .code-wrap, .diff-wrap, .form-grid { grid-template-columns: 1fr; }
