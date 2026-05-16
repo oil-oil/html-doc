@@ -33,6 +33,18 @@ button:hover { border-color: var(--text-main); }
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border-base);
 }
+.toolbar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.toolbar-logo {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  display: block;
+}
 .toolbar-title { display: flex; align-items: baseline; gap: var(--space-3); }
 .toolbar-title strong { font-family: var(--font-human); font-weight: 500; font-size: var(--fs-md); }
 .toolbar-title span { color: var(--text-muted); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .04em; }
@@ -150,7 +162,20 @@ strong { color: var(--text-main); font-weight: 650; }
   font-size: var(--fs-xs);
   padding: 2px 6px;
 }
-.metrics-grid, .variant-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--border-base); border: 1px solid var(--border-base); }
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1px;
+  background: var(--border-base);
+  /* Edge-to-edge, same pattern as splitPanel */
+  width: calc(100% + 2 * var(--space-4));
+  margin-left: calc(-1 * var(--space-4));
+  margin-bottom: calc(-1 * var(--space-4));
+  margin-top: var(--space-3);
+}
+/* No header above → extend to block top as well */
+.block > .metrics-grid:first-child { margin-top: calc(-1 * var(--space-4)); }
+.variant-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--border-base); border: 1px solid var(--border-base); }
 .metric, .variant { background: var(--bg-canvas); padding: var(--space-3); }
 .metric-value { font: 600 30px/1 var(--font-mono); margin: var(--space-2) 0; }
 .sparkline { width: 100%; height: 22px; margin-top: var(--space-2); }

@@ -1,7 +1,14 @@
 import { clientJs } from "./client-js.mjs";
 import { baseCss } from "./styles.mjs";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 let _currentGlossary = {};
+const moduleDir = path.dirname(fileURLToPath(import.meta.url));
+const logoDataUri = readAssetDataUri("../assets/brand/html-doc-logo-toolbar.png", "image/png");
+const faviconDataUri = readAssetDataUri("../assets/brand/html-doc-favicon.png", "image/png");
+const appleTouchDataUri = readAssetDataUri("../assets/brand/html-doc-apple-touch.png", "image/png");
 
 export function renderArtifact(doc) {
   _currentGlossary = (doc.meta || {}).glossary || {};
@@ -15,6 +22,8 @@ export function renderArtifact(doc) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${esc(title)}</title>
+  ${faviconDataUri ? `<link rel="icon" type="image/png" href="${faviconDataUri}">` : ""}
+  ${appleTouchDataUri ? `<link rel="apple-touch-icon" href="${appleTouchDataUri}">` : ""}
   <style>${baseCss()}</style>
 </head>
 <body>
@@ -38,11 +47,23 @@ function renderToolbar(doc) {
   const meta = doc.meta || {};
   const actions = Array.isArray(doc.actions) ? doc.actions : [];
   return `<header class="toolbar">
-    <div class="toolbar-title"><strong>${rich(meta.title || "html-doc")}</strong><span>${rich(meta.subtitle || "visual doc")}</span></div>
+    <div class="toolbar-brand">
+      ${logoDataUri ? `<img class="toolbar-logo" src="${logoDataUri}" alt="" aria-hidden="true">` : ""}
+      <div class="toolbar-title"><strong>${rich(meta.title || "html-doc")}</strong><span>${rich(meta.subtitle || "visual doc")}</span></div>
+    </div>
     <div class="toolbar-actions">
       ${actions.map((action, i) => `<button class="${action.primary ? "primary" : ""}" data-copy="${esc(action.copy || action.label || "")}" data-action="${i}">${rich(action.label || "Copy")}</button>`).join("")}
     </div>
   </header>`;
+}
+
+function readAssetDataUri(relativePath, mimeType) {
+  try {
+    const filePath = path.join(moduleDir, relativePath);
+    return `data:${mimeType};base64,${fs.readFileSync(filePath).toString("base64")}`;
+  } catch {
+    return "";
+  }
 }
 
 function renderNav(content) {
@@ -147,7 +168,8 @@ function renderHero(block) {
 }
 
 function renderMetrics(block) {
-  return `${renderHead(block)}<div class="metrics-grid">
+  const hasHead = block.kicker || block.title || block.body;
+  return `${hasHead ? renderHead(block) : ""}<div class="metrics-grid">
     ${(block.items || []).map((item) => `<div class="metric">
       <div class="label">${rich(item.label || "")}</div>
       <div class="metric-value">${rich(item.value || "")}</div>
