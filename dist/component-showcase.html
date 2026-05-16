@@ -1283,11 +1283,17 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
 /* splitPanel */
 .split-panel {
   display: grid;
-  /* Extend to block edges, counteracting .block padding on left/right/bottom */
+  /* Extend to all four block edges, counteracting .block padding */
   width: calc(100% + 2 * var(--space-4));
   margin-left: calc(-1 * var(--space-4));
   margin-bottom: calc(-1 * var(--space-4));
-  margin-top: var(--space-3);
+  margin-top: calc(-1 * var(--space-4));
+}
+/* Full-width header row rendered inside the grid, above cells */
+.sp-header {
+  grid-column: 1 / -1;
+  padding: var(--space-4) 20px var(--space-3);
+  border-bottom: 1px solid var(--border-base);
 }
 .split-panel.sp-lr { grid-template-columns: var(--sp-cols, 1fr 1fr); }
 .split-panel.sp-columns { grid-template-columns: repeat(var(--sp-col-count, 3), 1fr); }

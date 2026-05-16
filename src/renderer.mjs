@@ -794,19 +794,31 @@ function renderIcon(name) {
 
 function renderSplitPanel(block) {
   const variant = block.variant || "lr";
-  const head = renderHead(block);
 
   if (variant === "quote") {
+    // quote has no column grid; render block-header normally above the quote content
+    const head = (block.kicker || block.title || block.body) ? renderHead(block) : "";
     return `${head}<div class="sp-quote-wrap">
       <div class="sp-quote-text">${rich(block.quote || "")}</div>
       ${block.attribution ? `<div class="sp-quote-attr">— ${rich(block.attribution)}</div>` : ""}
     </div>`;
   }
 
+  // For grid variants, render the title as a full-width header row INSIDE the grid
+  // so column dividers connect all the way to the block's top border
+  const spHead = (block.kicker || block.title || block.body)
+    ? `<div class="sp-header">
+        ${block.kicker ? `<div class="kicker">${rich(block.kicker)}</div>` : ""}
+        ${block.title ? `<h2>${rich(block.title)}</h2>` : ""}
+        ${block.body ? `<p class="body-copy">${rich(block.body)}</p>` : ""}
+      </div>`
+    : "";
+
   if (["columns", "2col", "3col", "4col"].includes(variant)) {
     const items = block.items || [];
     const cols = block.cols || (variant === "2col" ? 2 : variant === "4col" ? 4 : 3);
-    return `${head}<div class="split-panel sp-columns" style="--sp-col-count:${cols}">
+    return `<div class="split-panel sp-columns" style="--sp-col-count:${cols}">
+      ${spHead}
       ${items.map((item) => `<div class="sp-cell">
         ${item.icon ? `<div class="sp-icon">${renderIcon(item.icon)}</div>` : ""}
         ${item.kicker ? `<div class="sp-kicker">${rich(item.kicker)}</div>` : ""}
@@ -821,7 +833,8 @@ function renderSplitPanel(block) {
   if (variant === "tb") {
     const top = block.top || {};
     const bottom = block.bottom || {};
-    return `${head}<div class="split-panel sp-tb">
+    return `<div class="split-panel sp-tb">
+      ${spHead}
       ${renderSpCell(top, "sp-cell sp-top")}
       ${renderSpCell(bottom, "sp-cell sp-bottom")}
     </div>`;
@@ -834,7 +847,8 @@ function renderSplitPanel(block) {
   const right = block.right || {};
   const leftPrimary = variant !== "rl" && a >= b;
   const rightPrimary = variant === "rl" || b > a;
-  return `${head}<div class="split-panel sp-lr" style="--sp-cols:${a}fr ${b}fr">
+  return `<div class="split-panel sp-lr" style="--sp-cols:${a}fr ${b}fr">
+    ${spHead}
     ${renderSpCell(left, `sp-cell${leftPrimary ? " sp-primary" : ""}`)}
     ${renderSpCell(right, `sp-cell${rightPrimary ? " sp-primary" : ""}`)}
   </div>`;

@@ -1283,11 +1283,17 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
 /* splitPanel */
 .split-panel {
   display: grid;
-  /* Extend to block edges, counteracting .block padding on left/right/bottom */
+  /* Extend to all four block edges, counteracting .block padding */
   width: calc(100% + 2 * var(--space-4));
   margin-left: calc(-1 * var(--space-4));
   margin-bottom: calc(-1 * var(--space-4));
-  margin-top: var(--space-3);
+  margin-top: calc(-1 * var(--space-4));
+}
+/* Full-width header row rendered inside the grid, above cells */
+.sp-header {
+  grid-column: 1 / -1;
+  padding: var(--space-4) 20px var(--space-3);
+  border-bottom: 1px solid var(--border-base);
 }
 .split-panel.sp-lr { grid-template-columns: var(--sp-cols, 1fr 1fr); }
 .split-panel.sp-columns { grid-template-columns: repeat(var(--sp-col-count, 3), 1fr); }
@@ -1380,27 +1386,18 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
     <div class="tags" style="margin-top:var(--space-4)"><span class="tag">AI 写作</span><span class="tag">内容创作</span><span class="tag">评审</span><span class="tag">翻译</span></div>
   </article>
 <article class="block" id="splitPanel-1" style="--span:12;">
-    <div class="block-header">
-    <div>
-      
-      
-      
-    </div>
-    
-  </div><div class="sp-quote-wrap">
+    <div class="sp-quote-wrap">
       <div class="sp-quote-text">最好的想法依然源自于人。我们不会帮你无中生有，而是把你还不错的想法，变成一篇真正出色的文章。</div>
       <div class="sp-quote-attr">— Text-Well 设计原则</div>
     </div>
   </article>
 <article class="block" id="splitPanel-2" style="--span:12;">
-    <div class="block-header">
-    <div>
-      
-      <h2>四步工作流</h2>
-      
-    </div>
-    
-  </div><div class="split-panel sp-columns" style="--sp-col-count:4">
+    <div class="split-panel sp-columns" style="--sp-col-count:4">
+      <div class="sp-header">
+        
+        <h2>四步工作流</h2>
+        
+      </div>
       <div class="sp-cell">
         <div class="sp-icon"><i data-lucide="scan-search"></i></div>
         <div class="sp-kicker">第一步</div>
@@ -1433,53 +1430,45 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
     </div>
   </article>
 <article class="block" id="check-detail" style="--span:12;">
-    <div class="block-header">
-    <div>
-      
-      <h2>AI 检查 — 7 种模式</h2>
-      
-    </div>
-    
-  </div><div class="split-panel sp-lr" style="--sp-cols:1fr 2fr">
+    <div class="split-panel sp-lr" style="--sp-cols:1fr 2fr">
+    <div class="sp-header">
+        
+        <h2>AI 检查 — 7 种模式</h2>
+        
+      </div>
     <div class="sp-cell"><div class="sp-kicker">第一步</div><div class="sp-title">让文章先变得「正确」</div><div class="sp-body">从最基础的错别字修正，到学术写作的严谨标准，每种模式都有特定优化重点。完成这一步，文章就已经很正确了——但我们觉得这还不够。</div></div>
     <div class="sp-cell sp-primary"><ul class="sp-list"><li><strong>基础检查</strong> — 只修正无可争议的错误，不改动任何风格</li><li><strong>去除 AI 味儿</strong> — 消除陈词滥调，打破单调句式结构</li><li><strong>正式写作</strong> — 提升至专业商务标准，中和情绪化语言</li><li><strong>清晰表达</strong> — 拆分复杂长句，降低读者认知负荷</li><li><strong>一致性检查</strong> — 统一全文术语、格式和标点规范</li><li><strong>地道表达</strong> — 修正不符合母语习惯的词语搭配</li><li><strong>学术写作</strong> — 移除主观表达，软化绝对化论断</li></ul></div>
   </div>
   </article>
 <article class="block" id="review-detail" style="--span:12;">
-    <div class="block-header">
-    <div>
-      
-      <h2>AI 评审 — 你的私人陪审团</h2>
-      
-    </div>
-    
-  </div><div class="split-panel sp-lr" style="--sp-cols:2fr 1fr">
+    <div class="split-panel sp-lr" style="--sp-cols:2fr 1fr">
+    <div class="sp-header">
+        
+        <h2>AI 评审 — 你的私人陪审团</h2>
+        
+      </div>
     <div class="sp-cell sp-primary"><div class="sp-kicker">第二步</div><div class="sp-title">3—5 位有独立世界观的评审人</div><div class="sp-body">系统根据文章内容智能创建评审角色，每位都有完整人设和独特批评风格。他们的观点有时相互冲突，避免千篇一律的「专家」式评价。评审完成后，左侧工具栏按评审人分组显示完整意见，与编辑器实时联动。</div></div>
     <div class="sp-cell"><div class="sp-kicker">每位评审人都有</div><ul class="sp-list"><li>含个人故事的生动人设</li><li>指导判断的核心世界观</li><li>独特的批评方式和语言习惯</li><li>0—100 分的整体评分</li><li>可直接替换的优化建议</li></ul></div>
   </div>
   </article>
 <article class="block" id="translate-detail" style="--span:12;">
-    <div class="block-header">
-    <div>
-      
-      <h2>AI 翻译 — 信达雅</h2>
-      
-    </div>
-    
-  </div><div class="split-panel sp-tb">
+    <div class="split-panel sp-tb">
+      <div class="sp-header">
+        
+        <h2>AI 翻译 — 信达雅</h2>
+        
+      </div>
       <div class="sp-cell sp-top"><div class="sp-kicker">第四步</div><div class="sp-title">原文译文对照，每行都可单独重译</div><div class="sp-body">翻译完成后提供逐行对照视图。对任何翻译不满意的行，点击重新翻译按钮即可单独处理——你对每一行都有完全的控制权。格式标记（Markdown、HTML、代码块）在翻译过程中完全保留。</div></div>
       <div class="sp-cell sp-bottom"><ul class="sp-list"><li><strong>信（准确性）</strong> — 准确传达原文意思，专业术语精确翻译</li><li><strong>达（表达力）</strong> — 表达自然流畅，使用目标语言的地道方式</li><li><strong>雅（文采）</strong> — 维持原文的语气、风格和语调，有人味儿</li></ul></div>
     </div>
   </article>
 <article class="block" id="finish-tools" style="--span:12;">
-    <div class="block-header">
-    <div>
-      
-      <h2>包装工具</h2>
-      
-    </div>
-    
-  </div><div class="split-panel sp-columns" style="--sp-col-count:2">
+    <div class="split-panel sp-columns" style="--sp-col-count:2">
+      <div class="sp-header">
+        
+        <h2>包装工具</h2>
+        
+      </div>
       <div class="sp-cell">
         <div class="sp-icon"><i data-lucide="lightbulb"></i></div>
         <div class="sp-kicker">AI 标题生成</div>
