@@ -49,6 +49,7 @@ Most visible text fields support light inline formatting:
 
 - `` `code` `` for identifiers, commands, keys, paths, and short values.
 - `**bold**` for conclusions, status words, and important differences.
+- `[text](url)` for hyperlinks (opens in new tab). Only use `https://` URLs.
 - `[[Term|definition]]` for a one-off hover tooltip on any term.
 - `[[Term]]` to reference a term defined in `meta.glossary` (renders as hover tooltip).
 
@@ -80,6 +81,7 @@ Keep this formatting short. Use components for structure and use inline emphasis
 | tuning controls | `sliderLab` |
 | prompt/template editor | `promptEditor` |
 | file cross-references with arrows | `crossRef` |
+| PPT-style layout: quote, columns, top/bottom, left/right | `splitPanel` |
 | important external page | `embed` |
 
 ## Core Blocks
@@ -153,6 +155,69 @@ Use `variant: "state"` for simple state chains:
   ]
 }
 ```
+
+### splitPanel
+
+PPT-style layouts with multiple variants. Each variant has a different JSON structure.
+
+**`quote`** — a single powerful statement:
+
+```json
+{
+  "type": "splitPanel",
+  "variant": "quote",
+  "quote": "The key insight goes here.",
+  "attribution": "Source name"
+}
+```
+
+`quote` and `attribution` are top-level fields, not nested.
+
+**`3col` / `4col` / `2col`** — parallel items of equal weight:
+
+```json
+{
+  "type": "splitPanel",
+  "variant": "3col",
+  "title": "Section title",
+  "items": [
+    { "icon": "layers", "kicker": "Label", "title": "Item title", "body": "Description" },
+    { "icon": "eye", "kicker": "Label", "title": "Item title", "body": "Description" },
+    { "icon": "share-2", "kicker": "Label", "title": "Item title", "body": "Description" }
+  ]
+}
+```
+
+Each item supports: `icon`, `kicker`, `title`, `body`, `list` (array of strings), `meta`.
+
+**`tb`** — top concept + bottom detail:
+
+```json
+{
+  "type": "splitPanel",
+  "variant": "tb",
+  "title": "Section title",
+  "top": { "kicker": "Context", "title": "Main point", "body": "Explanation" },
+  "bottom": { "list": ["Point one", "Point two", "Point three"] }
+}
+```
+
+`top` and `bottom` each support: `kicker`, `title`, `body`, `list`, `meta`.
+
+**`lr`** — left/right split (default variant):
+
+```json
+{
+  "type": "splitPanel",
+  "variant": "lr",
+  "ratio": "1:2",
+  "title": "Section title",
+  "left": { "kicker": "Label", "title": "Short label" },
+  "right": { "title": "Detail", "body": "Longer explanation", "list": ["Item 1", "Item 2"] }
+}
+```
+
+`left` and `right` each support: `kicker`, `title`, `body`, `list`, `meta`. Use `ratio` to control column widths (e.g. `"1:2"`, `"2:1"`, `"1:1"`).
 
 ### timeline
 

@@ -928,6 +928,8 @@ function rich(value) {
     if (!def) return term.trim();
     return `@@P${ph.push(`<span class="tt">${esc(term.trim())}<span class="tt-b">${esc(def)}</span></span>`) - 1}@@`;
   });
+  s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, (_, text, url) =>
+    `@@P${ph.push(`<a href="${esc(url)}" target="_blank" rel="noopener">${esc(text)}</a>`) - 1}@@`);
   return esc(s)
     .replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>")
     .replace(/@@P(\d+)@@/g, (_, i) => ph[Number(i)] || "");

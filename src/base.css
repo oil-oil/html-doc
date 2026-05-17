@@ -9,6 +9,9 @@ body {
   line-height: 1.48;
   -webkit-font-smoothing: antialiased;
 }
+a { color: var(--accent-tertiary); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent-tertiary) 40%, transparent); text-underline-offset: 2px; transition: text-decoration-color .15s; }
+a:hover { text-decoration-color: var(--accent-tertiary); }
+a:visited { color: var(--text-muted); }
 button, input, textarea, select { font: inherit; }
 button {
   border: 1px solid var(--border-strong);
