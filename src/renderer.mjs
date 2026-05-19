@@ -666,13 +666,17 @@ function renderLayeredArchitecture(block) {
 
 function layoutLayeredArchitecture(block) {
   const stage = block.stage || {};
-  const width = Number(stage.width || 1180);
-  const height = Number(stage.height || 660);
   const lanes = Array.isArray(block.lanes) ? block.lanes : [];
   const nodes = Array.isArray(block.nodes) ? block.nodes : [];
   const edges = Array.isArray(block.edges) ? block.edges : [];
   const margin = 28;
   const gap = Number(stage.gap || 50);
+  const minLaneWidth = Number(stage.minLaneWidth || stage.laneWidth || 220);
+  const requestedWidth = Number(stage.width || 1180);
+  const width = Math.max(
+    requestedWidth,
+    margin * 2 + gap * Math.max(0, lanes.length - 1) + minLaneWidth * Math.max(1, lanes.length),
+  );
   const laneTotal = width - margin * 2 - gap * Math.max(0, lanes.length - 1);
   const laneWeights = lanes.map((lane) => Number(lane.weight || 1));
   const weightTotal = laneWeights.reduce((sum, value) => sum + value, 0) || lanes.length || 1;
@@ -684,7 +688,7 @@ function layoutLayeredArchitecture(block) {
     return item;
   });
   const laneById = new Map(laneLayouts.map((lane) => [lane.id, lane]));
-  const rowGap = Number(stage.rowGap || 108);
+  const rowGap = Number(stage.rowGap || 132);
   const startY = Number(stage.startY || 122);
   const boxHeight = Number(stage.nodeHeight || 78);
   const nodeLayouts = nodes.map((node, index) => {
@@ -693,8 +697,13 @@ function layoutLayeredArchitecture(block) {
     const x = lane.x + (lane.w - w) / 2 + Number(node.dx || 0);
     const row = Number(node.row ?? index);
     const y = Number(node.y ?? startY + row * rowGap + Number(node.dy || 0));
-    return { ...node, x, y, w, h: Number(node.h || boxHeight) };
+    const h = Number(node.h || Math.max(boxHeight, estimateArchNodeHeight(node, w)));
+    return { ...node, x, y, w, h };
   });
+  const height = Math.max(
+    Number(stage.height || 660),
+    ...nodeLayouts.map((node) => node.y + node.h + 86),
+  );
   const nodeById = new Map(nodeLayouts.map((node) => [node.id, node]));
   const edgeLayouts = edges.map((edge) => {
     const from = nodeById.get(edge.from);
@@ -705,15 +714,28 @@ function layoutLayeredArchitecture(block) {
     let path, labelX, labelY, stepX, stepY;
     if (sameLane) {
       const goDown = to.y >= from.y;
-      const start = anchorPoint(from, goDown ? "bottom" : "top");
-      const end = anchorPoint(to, goDown ? "top" : "bottom");
-      path = `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
-      // Place step circle just right of the arrow center; label further right
-      const midY = (start.y + end.y) / 2 - 8;
-      stepX = start.x + 6;
-      stepY = midY;
-      labelX = start.x + 28;
-      labelY = midY;
+      const rowDistance = Math.abs(Number(to.row ?? 0) - Number(from.row ?? 0));
+      if (rowDistance > 1) {
+        const lane = laneById.get(from.lane);
+        const railX = lane ? Math.min(width - margin, lane.x + lane.w + 18) : Math.max(from.x + from.w, to.x + to.w) + 18;
+        const start = anchorPoint(from, "right");
+        const end = anchorPoint(to, "right");
+        path = `M ${start.x} ${start.y} L ${railX} ${start.y} L ${railX} ${end.y} L ${end.x} ${end.y}`;
+        const midY = (start.y + end.y) / 2 - 8;
+        stepX = railX - 10;
+        stepY = midY;
+        labelX = railX + 10;
+        labelY = midY;
+      } else {
+        const start = anchorPoint(from, goDown ? "bottom" : "top");
+        const end = anchorPoint(to, goDown ? "top" : "bottom");
+        path = `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
+        const midY = (start.y + end.y) / 2 - 8;
+        stepX = start.x + 6;
+        stepY = midY;
+        labelX = start.x + 28;
+        labelY = midY;
+      }
     } else {
       const goRight = dx > 0;
       const start = anchorPoint(from, goRight ? "right" : "left");
@@ -728,12 +750,31 @@ function layoutLayeredArchitecture(block) {
       const midY = (start.y + end.y) / 2 - 8;
       stepX = gapMidX - 22;
       stepY = midY;
-      labelX = (start.x + gapMidX) / 2 - 40;
-      labelY = start.y - 24;
+      const labelWidth = Math.min(160, Math.max(34, weightedTextLength(edge.label || "") * 6.6 + 10));
+      labelX = gapMidX - labelWidth / 2;
+      labelY = Math.max(52, Math.min(from.y, to.y) - 24);
     }
     return { ...edge, path, labelX, labelY, stepX, stepY };
   }).filter(Boolean);
   return { width, height, lanes: laneLayouts, nodes: nodeLayouts, edges: edgeLayouts, legend: block.legend || [] };
+}
+
+function estimateArchNodeHeight(node, width) {
+  const contentWidth = Math.max(80, Number(width || 160) - 28);
+  const titleLines = estimateWrappedLines(node.title || node.id || "", contentWidth, 8.5);
+  const bodyLines = estimateWrappedLines(node.body || node.note || "", contentWidth, 7.6);
+  return 30 + titleLines * 21 + (bodyLines ? 6 + bodyLines * 20 : 0);
+}
+
+function estimateWrappedLines(value, width, unitPx) {
+  const text = String(value || "").replace(/`/g, "");
+  if (!text.trim()) return 0;
+  const capacity = Math.max(6, Math.floor(Number(width || 120) / unitPx));
+  return Math.max(1, ...text.split(/\s+/).map((part) => Math.ceil(weightedTextLength(part) / capacity)));
+}
+
+function weightedTextLength(value) {
+  return Array.from(String(value || "")).reduce((sum, char) => sum + (char.charCodeAt(0) > 255 ? 1.7 : 1), 0);
 }
 
 function anchorPoint(node, side) {
