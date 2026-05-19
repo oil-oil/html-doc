@@ -1164,11 +1164,19 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 5px; height
 }
 .embed-wrap:hover .embed-open-link { opacity: 1; }
 .embed-open-link:hover { color: var(--text-main); }
-.stage-wrap {
+.stage-scroll {
   position: relative;
   width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+}
+.stage-wrap {
+  position: relative;
+  width: max(100%, var(--stage-width, 960px));
+  min-width: var(--stage-width, 960px);
   aspect-ratio: var(--stage-ratio, 16 / 9);
-  min-height: 360px;
+  min-height: var(--stage-height, 360px);
   overflow: hidden;
   border: 1px solid var(--border-base);
   background:
@@ -1192,14 +1200,16 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 5px; height
   top: var(--y);
   width: var(--w);
   height: var(--h);
+  min-height: var(--h);
+  overflow: visible;
   transform: translateZ(0);
 }
 [data-visible-states].hidden { display: none; }
 .stage-panel {
-  height: 100%;
-  min-height: 0;
+  height: auto;
+  min-height: 100%;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid var(--border-strong);
   background: rgba(255,255,255,.68);
   padding: var(--space-3);
@@ -1231,14 +1241,14 @@ input[type="range"]::-webkit-slider-thumb { appearance: none; width: 5px; height
   font-size: var(--fs-md);
   line-height: 1.36;
   max-width: 100%;
-  max-height: 100%;
-  overflow: hidden;
+  min-height: 100%;
+  overflow: visible;
   white-space: pre-line;
 }
 .stage-note {
-  height: 100%;
+  min-height: 100%;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
   border-left: 2px solid var(--accent-tertiary);
   background: rgba(255, 248, 232, .8);
   padding: var(--space-2);
@@ -1472,5 +1482,5 @@ mark { background: var(--mark-bg); color: inherit; padding: 0 2px; }
   .split-panel.sp-tb .sp-cell.sp-top .sp-title { font-size: 1.35rem; }
   /* Canvas */
   .motion-canvas { min-height: 220px; }
-  .stage-wrap { min-height: 220px; }
+  .stage-wrap { min-height: var(--stage-height, 220px); }
 }

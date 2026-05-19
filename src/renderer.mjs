@@ -331,13 +331,13 @@ function renderStage(block) {
   const elements = block.elements || [];
   const stateNames = Object.keys(block.states || {});
   const extra = copyButton(block);
-  return `${renderHead(block, extra)}<div class="stage-wrap" data-stage="${escAttr(block.id || "")}" data-state="${escAttr(initialState)}" style="--stage-ratio:${width} / ${height}; --stage-bg:${escAttr(stage.backgroundColor || "#FBF9F6")}">
-    ${renderStageLines(block, width, height)}
-    <div class="stage-layer">
-      ${elements.filter((el) => el.type !== "connection").map((el) => renderStageElement(el, block, width, height)).join("")}
-    </div>
-    ${stateNames.length ? renderStageStepper(block, stateNames, initialState) : ""}
-  </div>`;
+  return `${renderHead(block, extra)}<div class="stage-scroll"><div class="stage-wrap" data-stage="${escAttr(block.id || "")}" data-state="${escAttr(initialState)}" style="--stage-width:${width}px; --stage-height:${height}px; --stage-ratio:${width} / ${height}; --stage-bg:${escAttr(stage.backgroundColor || "#FBF9F6")}">
+      ${renderStageLines(block, width, height)}
+      <div class="stage-layer">
+        ${elements.filter((el) => el.type !== "connection").map((el) => renderStageElement(el, block, width, height)).join("")}
+      </div>
+      ${stateNames.length ? renderStageStepper(block, stateNames, initialState) : ""}
+    </div></div>`;
 }
 
 function renderStageLines(block, width, height) {
