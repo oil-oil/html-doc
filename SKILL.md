@@ -1,6 +1,6 @@
 ---
 name: html-doc
-description: Create readable HTML documents from a Markdown file when Markdown is too flat for human review. Use for wide comparisons, flows, architecture maps, state changes, code diffs, evidence boards, nested structures, decision matrices, and lightweight editors that need copy/export output.
+description: "将 Markdown 和结构化组件渲染为便于人工阅读的 HTML 文档。用于宽表比较、流程、架构、状态变化、代码差异、证据板、决策矩阵和可复制导出的轻量编辑器。不用于短回答、日志、已有固定格式的文件或需要实时双向业务状态的完整应用。"
 metadata:
   short-description: HTML docs for human confirmation
 ---

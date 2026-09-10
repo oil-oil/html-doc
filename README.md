@@ -36,3 +36,25 @@ Copy this folder into your local skills directory:
 ```bash
 cp -R . /path/to/skills/html-doc
 ```
+
+## 配置、依赖与使用边界
+
+Node.js 运行 scripts/render-html-doc.mjs；无需专用账号或 API Key。以 references/schema.md 为组件字段依据。
+
+文档渲染不替代有实时业务状态的应用。只处理选定文件；有外部字体或图表依赖时，离线交付需一起本地化。
+
+使用示例：
+
+```text
+把这份方案对比做成 html-doc，保留来源与宽表。
+```
+
+## GitHub 安装
+
+把 [仓库地址](https://github.com/oil-oil/html-doc) 交给 Agent，要求按 README 安装；也可运行：
+
+```bash
+npx skills add oil-oil/html-doc
+```
+
+安装后由宿主重新加载 Skill。
