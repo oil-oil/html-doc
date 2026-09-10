@@ -1,6 +1,6 @@
 # html-doc
 
-`html-doc` is a general-purpose Skill for turning compact JSON into readable, visual-first HTML review documents.
+把文字、宽表、流程、代码差异和决策依据整理为便于阅读、比较与分享的 HTML 文档。
 
 Use it when Markdown makes the information too flat: wide comparisons, architecture maps, state changes, code diffs, evidence boards, nested structures, decision matrices, and lightweight editors.
 
